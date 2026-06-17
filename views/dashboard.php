@@ -1,95 +1,112 @@
 <?php
 // Query untuk mengambil statistik
 try {
-    // Total Aset
     $stmtAssets = $conn->query("SELECT COUNT(*) as total FROM assets");
     $totalAssets = $stmtAssets->fetch()['total'];
 
-    // Maintenance (Bulan ini)
     $stmtMaintenance = $conn->query("SELECT COUNT(*) as total FROM maintenance WHERE MONTH(tanggal) = MONTH(CURRENT_DATE())");
     $totalMaintenance = $stmtMaintenance->fetch()['total'];
 
-    // Perbaikan Aktif
     $stmtRepairs = $conn->query("SELECT COUNT(*) as total FROM repairs WHERE status = 'Proses'");
     $totalRepairs = $stmtRepairs->fetch()['total'];
 
-    // Total Biaya Perbaikan (Bulan ini)
     $stmtCost = $conn->query("SELECT SUM(biaya) as total FROM repairs WHERE status = 'Selesai' AND MONTH(created_at) = MONTH(CURRENT_DATE())");
     $totalCost = $stmtCost->fetch()['total'] ?? 0;
 } catch (PDOException $e) {
-    // Jika tabel belum ada, set nilai default 0
-    $totalAssets = 0;
-    $totalMaintenance = 0;
-    $totalRepairs = 0;
-    $totalCost = 0;
+    $totalAssets = $totalMaintenance = $totalRepairs = $totalCost = 0;
 }
 ?>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3>Dashboard Ringkasan</h3>
-    <span class="text-muted"><?php echo date('d F Y'); ?></span>
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card p-3 border-start border-primary border-5">
+            <div class="d-flex align-items-center">
+                <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3 text-primary">
+                    <i class="fas fa-boxes fa-2x"></i>
+                </div>
+                <div>
+                    <div class="text-muted small fw-bold">TOTAL ASET</div>
+                    <h3 class="m-0 fw-bold"><?= $totalAssets ?></h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3 border-start border-success border-5">
+            <div class="d-flex align-items-center">
+                <div class="bg-success bg-opacity-10 p-3 rounded-circle me-3 text-success">
+                    <i class="fas fa-check-circle fa-2x"></i>
+                </div>
+                <div>
+                    <div class="text-muted small fw-bold">MAINTENANCE</div>
+                    <h3 class="m-0 fw-bold"><?= $totalMaintenance ?></h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3 border-start border-warning border-5">
+            <div class="d-flex align-items-center">
+                <div class="bg-warning bg-opacity-10 p-3 rounded-circle me-3 text-warning">
+                    <i class="fas fa-exclamation-triangle fa-2x"></i>
+                </div>
+                <div>
+                    <div class="text-muted small fw-bold">DALAM PERBAIKAN</div>
+                    <h3 class="m-0 fw-bold"><?= $totalRepairs ?></h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3 border-start border-danger border-5">
+            <div class="d-flex align-items-center">
+                <div class="bg-danger bg-opacity-10 p-3 rounded-circle me-3 text-danger">
+                    <i class="fas fa-wallet fa-2x"></i>
+                </div>
+                <div>
+                    <div class="text-muted small fw-bold">BIAYA BULAN INI</div>
+                    <h4 class="m-0 fw-bold text-nowrap">Rp <?= number_format($totalCost, 0, ',', '.') ?></h4>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="row">
-
-    <div class="col-md-3 mb-4">
-        <div class="card bg-primary text-white p-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h5>Total Aset</h5>
-                    <h3><?= $totalAssets ?></h3>
+<div class="row g-4">
+    <div class="col-md-8">
+        <div class="card h-100 p-4">
+            <h5 class="fw-bold mb-3">Selamat Datang di Portal Maintenance</h5>
+            <p class="text-muted">Halo <strong><?= $_SESSION['nama'] ?></strong>, sistem siap membantu Anda mengelola infrastruktur IT hari ini. Berikut panduan singkat:</p>
+            <div class="list-group list-group-flush mt-2">
+                <div class="list-group-item bg-transparent d-flex align-items-center px-0">
+                    <div class="bg-light p-2 rounded me-3"><i class="fas fa-plus text-primary"></i></div>
+                    <div>Gunakan menu <strong>Inventaris</strong> untuk mencatat perangkat baru.</div>
                 </div>
-                <i class="fas fa-boxes fa-2x opacity-50"></i>
+                <div class="list-group-item bg-transparent d-flex align-items-center px-0">
+                    <div class="bg-light p-2 rounded me-3"><i class="fas fa-sync text-success"></i></div>
+                    <div>Catat pemeriksaan rutin di menu <strong>Maintenance</strong>.</div>
+                </div>
+                <div class="list-group-item bg-transparent d-flex align-items-center px-0">
+                    <div class="bg-light p-2 rounded me-3"><i class="fas fa-wrench text-warning"></i></div>
+                    <div>Pantau status kerusakan di menu <strong>Perbaikan</strong>.</div>
+                </div>
             </div>
         </div>
     </div>
-
-    <div class="col-md-3 mb-4">
-        <div class="card bg-success text-white p-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h5>Maintenance</h5>
-                    <h3><?= $totalMaintenance ?></h3>
-                </div>
-                <i class="fas fa-tools fa-2x opacity-50"></i>
+    <div class="col-md-4">
+        <div class="card h-100 p-4 bg-dark text-white">
+            <h5 class="fw-bold mb-4">Informasi Sistem</h5>
+            <div class="mb-4">
+                <div class="small opacity-50 mb-1">DIBUAT PADA</div>
+                <div>Juni 2026</div>
             </div>
-            <small>Bulan ini</small>
-        </div>
-    </div>
-
-    <div class="col-md-3 mb-4">
-        <div class="card bg-warning text-dark p-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h5>Perbaikan</h5>
-                    <h3><?= $totalRepairs ?></h3>
-                </div>
-                <i class="fas fa-wrench fa-2x opacity-50"></i>
+            <div class="mb-4">
+                <div class="small opacity-50 mb-1">VERSI APLIKASI</div>
+                <div>v1.0.0 Stable</div>
             </div>
-            <small>Status: Proses</small>
-        </div>
-    </div>
-
-    <div class="col-md-3 mb-4">
-        <div class="card bg-danger text-white p-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h5>Biaya</h5>
-                    <h3>Rp <?= number_format($totalCost, 0, ',', '.') ?></h3>
-                </div>
-                <i class="fas fa-money-bill-wave fa-2x opacity-50"></i>
+            <div class="mt-auto">
+                <button class="btn btn-primary w-100">Cek Log Aktivitas</button>
             </div>
-            <small>Selesai (Bulan ini)</small>
-        </div>
-    </div>
-
-</div>
-
-<div class="row">
-    <div class="col-md-12">
-        <div class="card p-4">
-            <h5>Selamat Datang, <?= $_SESSION['nama'] ?>!</h5>
-            <p class="text-muted">Gunakan menu di sebelah kiri untuk mengelola aset IT, mencatat maintenance rutin, atau memantau perbaikan perangkat.</p>
         </div>
     </div>
 </div>
