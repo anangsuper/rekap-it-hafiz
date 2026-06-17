@@ -2,7 +2,7 @@
     "name": "rekap-it/rekap-it-hafiz",
     "description": "IT Maintenance System",
     "require": {
-        "php": "^8.0"
+        "php": "^8.2"
     },
     "config": {
         "allow-plugins": {
