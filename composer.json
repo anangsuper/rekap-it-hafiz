@@ -1,0 +1,12 @@
+{
+    "name": "rekap-it/rekap-it-hafiz",
+    "description": "IT Maintenance System",
+    "require": {
+        "php": "^8.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    }
+}
