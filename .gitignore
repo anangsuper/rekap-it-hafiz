@@ -1,5 +1,5 @@
 # Database
-config/database.php
+# config/database.php (Removed from ignore to allow Railway deployment)
 
 # Uploads
 uploads/*
