@@ -13,9 +13,10 @@ class ActivityLog {
                 FROM activity_logs l 
                 LEFT JOIN users u ON l.user_id = u.id 
                 ORDER BY l.created_at DESC 
-                LIMIT ?";
+                LIMIT :limit";
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([$limit]);
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
