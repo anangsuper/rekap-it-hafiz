@@ -25,6 +25,11 @@ if (isset($_POST['login'])) {
             $_SESSION['nama']     = $user['nama'];
             $_SESSION['role']     = $user['role'];
 
+            // Log Login
+            require_once 'models/ActivityLog.php';
+            $logModel = new ActivityLog($conn);
+            $logModel->add($user['id'], 'LOGIN', 'User berhasil login ke sistem.');
+
             header('Location: index.php');
             exit();
         } else {

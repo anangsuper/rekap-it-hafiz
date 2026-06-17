@@ -95,17 +95,23 @@ try {
     </div>
     <div class="col-md-4">
         <div class="card h-100 p-4 bg-dark text-white">
-            <h5 class="fw-bold mb-4">Informasi Sistem</h5>
-            <div class="mb-4">
-                <div class="small opacity-50 mb-1">DIBUAT PADA</div>
-                <div>Juni 2026</div>
+            <h5 class="fw-bold mb-4">Aktivitas Terbaru</h5>
+            <div class="activity-feed">
+                <?php
+                require_once 'models/ActivityLog.php';
+                $logModel = new ActivityLog($conn);
+                $recentLogs = $logModel->getRecent(5);
+                foreach ($recentLogs as $log):
+                ?>
+                    <div class="mb-3 border-start border-primary border-2 ps-3">
+                        <div class="small fw-bold text-primary"><?= $log['action'] ?></div>
+                        <div class="small opacity-75"><?= $log['description'] ?></div>
+                        <div class="text-muted" style="font-size: 0.7rem;"><?= date('d/m H:i', strtotime($log['created_at'])) ?> oleh <?= $log['nama'] ?></div>
+                    </div>
+                <?php endforeach; ?>
             </div>
-            <div class="mb-4">
-                <div class="small opacity-50 mb-1">VERSI APLIKASI</div>
-                <div>v1.0.0 Stable</div>
-            </div>
-            <div class="mt-auto">
-                <button class="btn btn-primary w-100">Cek Log Aktivitas</button>
+            <div class="mt-auto pt-3">
+                <button class="btn btn-outline-light btn-sm w-100">Lihat Semua Log</button>
             </div>
         </div>
     </div>
