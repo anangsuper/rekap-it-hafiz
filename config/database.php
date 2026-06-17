@@ -6,14 +6,14 @@
  */
 
 // 1. Ambil variabel dari Environment Railway (prioritas) atau default Lokal
-$db_host = getenv('MYSQLHOST')     ?: '127.0.0.1';
-$db_port = getenv('MYSQLPORT')     ?: '3306';
-$db_user = getenv('MYSQLUSER')     ?: 'root';
-$db_pass = getenv('MYSQLPASSWORD') ?: '';
-$db_name = getenv('MYSQLDATABASE') ?: 'rekap_it';
+$db_host = getenv('DB_HOST')     ?: getenv('MYSQLHOST')     ?: '127.0.0.1';
+$db_port = getenv('DB_PORT')     ?: getenv('MYSQLPORT')     ?: '3306';
+$db_user = getenv('DB_USERNAME') ?: getenv('MYSQLUSER')     ?: 'root';
+$db_pass = getenv('DB_PASSWORD') ?: getenv('MYSQLPASSWORD') ?: '';
+$db_name = getenv('DB_DATABASE') ?: getenv('MYSQLDATABASE') ?: 'rekap_it';
 
 // 2. Validasi: Jika sedang di Railway tapi variabel penting kosong
-if (getenv('RAILWAY_ENVIRONMENT') && empty(getenv('MYSQLHOST'))) {
+if (getenv('RAILWAY_ENVIRONMENT') && empty($db_host)) {
     die("Error: Variabel environment database belum dikonfigurasi di Railway.");
 }
 
