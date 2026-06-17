@@ -8,8 +8,11 @@ $message = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['action'])) {
         if ($_POST['action'] == 'add') {
-            if ($assetCtrl->store($_POST, $_FILES)) {
+            $result = $assetCtrl->store($_POST, $_FILES);
+            if ($result === true) {
                 $message = '<div class="alert alert-success">Aset berhasil ditambahkan!</div>';
+            } elseif ($result === "duplicate") {
+                $message = '<div class="alert alert-danger">Gagal! Kode Aset sudah digunakan. Gunakan kode lain.</div>';
             }
         } elseif ($_POST['action'] == 'delete') {
             if ($assetCtrl->destroy($_POST['id'])) {

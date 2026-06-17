@@ -18,23 +18,30 @@ class AssetController
 
     public function store($data, $files)
     {
-        $foto = '';
+        try {
+            $foto = '';
 
-        if (
-            isset($files['foto']) &&
-            $files['foto']['error'] === 0
-        ) {
-            $fileName = time() . '_' . basename($files['foto']['name']);
-            $target = __DIR__ . '/../uploads/' . $fileName;
+            if (isset($files['foto']) && $files['foto']['error'] === 0) {
+                $fileName = time() . '_' . basename($files['foto']['name']);
+                $target = __DIR__ . '/../uploads/' . $fileName;
 
-            if (move_uploaded_file($files['foto']['tmp_name'], $target)) {
-                $foto = 'uploads/' . $fileName;
+                if (!is_dir(__DIR__ . '/../uploads/')) {
+                    mkdir(__DIR__ . '/../uploads/', 0777, true);
+                }
+
+                if (move_uploaded_file($files['foto']['tmp_name'], $target)) {
+                    $foto = 'uploads/' . $fileName;
+                }
             }
+
+            $data['foto'] = $foto;
+            return $this->assetModel->create($data);
+        } catch (PDOException $e) {
+            if ($e->getCode() == 23000) {
+                return "duplicate";
+            }
+            throw $e;
         }
-
-        $data['foto'] = $foto;
-
-        return $this->assetModel->create($data);
     }
 
     public function update($id, $data, $files)
