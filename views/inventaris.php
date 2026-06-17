@@ -58,7 +58,7 @@ $assets = $assetCtrl->index();
                             <tr>
                                 <td>
                                     <?php if ($asset['foto']): ?>
-                                        <img src="<?= $asset['foto'] ?>" alt="Foto" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
+                                        <img src="/<?= $asset['foto'] ?>" alt="Foto" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
                                     <?php else: ?>
                                         <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; border-radius: 5px;">
                                             <i class="fas fa-image"></i>
