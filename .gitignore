@@ -1,0 +1,15 @@
+# Database
+config/database.php
+
+# Uploads
+uploads/*
+!uploads/.gitkeep
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# PHP temporary
+*.log
+composer.lock
+vendor/
