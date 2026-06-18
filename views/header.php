@@ -348,6 +348,9 @@
         <a href="index.php?page=maintenance" class="nav-link <?= ($page == 'maintenance') ? 'active' : '' ?>">
             <i class="bi bi-tools me-2"></i> Perawatan Rutin
         </a>
+        <a href="index.php?page=laporan_maintenance" class="nav-link <?= ($page == 'laporan_maintenance') ? 'active' : '' ?>">
+            <i class="bi bi-file-earmark-check me-2"></i> Laporan Maintenance
+        </a>
         <a href="index.php?page=perbaikan" class="nav-link <?= ($page == 'perbaikan') ? 'active' : '' ?>">
             <i class="bi bi-wrench-adjustable me-2"></i> Perbaikan Aset
         </a>
