@@ -25,6 +25,13 @@ class Karyawan {
         return $stmt->execute($data);
     }
 
+    public function isNipExists($nip) {
+        if (empty($nip)) return false;
+        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM " . $this->table . " WHERE nip = ?");
+        $stmt->execute([$nip]);
+        return $stmt->fetchColumn() > 0;
+    }
+
     public function delete($id) {
         $stmt = $this->conn->prepare("DELETE FROM " . $this->table . " WHERE id = ?");
         return $stmt->execute([$id]);

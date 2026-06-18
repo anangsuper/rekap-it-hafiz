@@ -11,20 +11,34 @@ $karyawans = $karyawanModel->getAll();
 $cabangs = $cabangModel->getAll();
 $divisis = $divisiModel->getAll();
 
+$error_msg = "";
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
+    $nip = trim($_POST['nip']);
     $data = [
         'nama_karyawan' => $_POST['nama_karyawan'],
-        'nip' => $_POST['nip'],
+        'nip' => !empty($nip) ? $nip : null,
         'id_cabang' => $_POST['id_cabang'],
         'id_divisi' => $_POST['id_divisi'],
         'jabatan' => $_POST['jabatan']
     ];
-    if ($karyawanModel->create($data)) {
-        header("Location: index.php?page=karyawan&status=success");
-        exit();
+
+    if (!empty($data['nip']) && $karyawanModel->isNipExists($data['nip'])) {
+        $error_msg = "Gagal! NIP [ " . $data['nip'] . " ] sudah terdaftar di sistem.";
+    } else {
+        if ($karyawanModel->create($data)) {
+            header("Location: index.php?page=karyawan&status=success");
+            exit();
+        }
     }
 }
 ?>
+
+<?php if ($error_msg): ?>
+    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+        <i class="fas fa-exclamation-triangle me-2"></i> <?= $error_msg ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+<?php endif; ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h4 class="fw-bold">Manajemen Karyawan</h4>
