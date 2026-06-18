@@ -1,95 +1,76 @@
-# 🖥️ Rekap IT - Professional Maintenance & Asset Management System
+# 🖥️ Rekap IT - Sistem Manajemen Aset & Maintenance Profesional
 
-Aplikasi web manajemen aset dan maintenance IT profesional berbasis **PHP Native (PDO)**. Sistem ini dirancang untuk memantau siklus hidup perangkat IT, mulai dari inventarisasi, mutasi, maintenance berkala, hingga perbaikan kerusakan di berbagai cabang perusahaan secara terpusat.
+Aplikasi **Rekap IT** adalah solusi manajemen infrastruktur IT berbasis web yang dirancang untuk membantu tim IT dalam mengelola, memantau, dan merawat aset perusahaan secara efisien dan terorganisir. Aplikasi ini telah ditingkatkan dengan tampilan **Premium UI/UX** yang estetik dan fitur fungsional yang lengkap.
 
 ---
 
-## 🚀 Fitur Utama yang Telah Diimplementasikan
+## ✨ Fitur Unggulan
 
-### 📊 Dashboard Monitoring
-* Statistik real-time total aset, kondisi perangkat (Baik/Rusak), dan biaya perbaikan.
-* Ringkasan aktivitas operasional IT dalam satu layar.
+### 🎨 Premium & Aesthetic Interface
+*   **Modern Design:** Menggunakan desain berbasis *glassmorphism* dan kartu bergradien yang memberikan kesan bersih, mewah, dan profesional.
+*   **Responsive Layout:** Tampilan yang optimal baik di layar desktop maupun perangkat mobile.
+*   **Plus Jakarta Sans Typography:** Tipografi modern yang nyaman di mata untuk penggunaan jangka panjang.
 
 ### 🏢 Manajemen Organisasi (Master Data)
-* **Manajemen Cabang:** Pengelolaan data lokasi cabang perusahaan.
-* **Manajemen Divisi:** Pengelolaan struktur departemen.
-* **Manajemen Karyawan:** Database pemegang aset dengan validasi NIP unik (opsional).
+*   **Struktur Multi-Cabang:** Kelola data aset di berbagai lokasi cabang dan divisi secara terpusat.
+*   **Database Karyawan Pintar:** Pencatatan pemegang aset dengan sistem validasi NIP unik dan filter otomatis berdasarkan cabang.
 
-### 🖥️ Inventaris Aset Terperinci
-* Pencatatan spesifikasi teknis lengkap (SN, Merk, Model, Kategori).
-* Relasi otomatis antara aset dengan Cabang, Divisi, dan Pemegang (Karyawan).
-* **Smart Filter:** Filter data aset berdasarkan cabang untuk mempermudah pencarian.
-* **Dynamic Input:** Form tambah aset cerdas yang menyaring daftar karyawan berdasarkan cabang yang dipilih.
+### 🖥️ Inventaris Aset Terpadu
+*   **Spesifikasi Teknis Lengkap:** Pantau Serial Number, Merk, Model, hingga kondisi fisik perangkat.
+*   **Smart Filtering:** Filter cepat berdasarkan cabang untuk memantau distribusi aset di seluruh perusahaan.
+*   **Dynamic Assignee:** Sistem otomatis menyaring nama karyawan sesuai cabang yang dipilih saat input data aset baru.
 
-### 🔧 Modul Maintenance (Rutin & Massal)
-* **Maintenance Individu:** Pencatatan temuan, tindakan, dan rekomendasi teknisi untuk satu perangkat.
-* **Maintenance Massal (Bulk):** Fitur unggulan untuk memproses maintenance banyak komputer sekaligus dalam satu cabang menggunakan sistem *Checklist*. Sangat efisien untuk kegiatan rutin bulanan.
+### 🔧 Operasional IT (Maintenance & Repair)
+*   **Maintenance Massal (Bulk):** Fitur efisiensi tinggi yang memungkinkan teknisi melakukan maintenance puluhan komputer sekaligus dalam satu klik menggunakan sistem *Checklist*.
+*   **Sistem Tiket Perbaikan:** Pantau setiap kerusakan perangkat mulai dari pengajuan, proses perbaikan, hingga estimasi biaya yang dikeluarkan.
+*   **Log Riwayat:** Setiap tindakan maintenance dan perbaikan tercatat rapi untuk kebutuhan audit di masa depan.
 
-### 🚨 Manajemen Perbaikan (Repair Ticketing)
-* Sistem tiket perbaikan untuk memantau perangkat yang sedang rusak.
-* **Update Aksi:** Teknisi dapat menginput tindakan solusi, biaya perbaikan, dan mengubah status (Proses/Selesai/Batal).
-* Histori perbaikan yang lengkap untuk setiap aset.
-
-### 📄 Modul Laporan & Export
-* Laporan operasional IT yang dapat difilter berdasarkan **Rentang Tanggal** dan **Cabang**.
-* **Export Excel:** Mengunduh data Aset, Maintenance, dan Perbaikan dalam format tabel Excel.
-* **Cetak PDF:** Fitur cetak yang dioptimalkan untuk menghasilkan dokumen PDF yang rapi langsung dari browser.
+### 📊 Laporan & Analitik
+*   **Dashboard Statistik:** Visualisasi jumlah aset, status kondisi perangkat, dan akumulasi biaya operasional bulan berjalan.
+*   **Export Data:** Unduh laporan lengkap dalam format **Excel (.xls)** untuk kebutuhan administratif.
+*   **Smart Print (PDF):** Fitur cetak laporan yang dioptimalkan untuk menghasilkan dokumen fisik yang rapi tanpa elemen navigasi website.
 
 ---
 
-## 🛠️ Teknologi & Library
-* **Backend:** PHP 8.2+ (PDO MySQL)
-* **Frontend:** Bootstrap 5.3, FontAwesome 6
-* **Database:** MySQL / MariaDB
-* **UI/UX:** Responsive Dashboard, Dynamic Select (JavaScript), CSS Print Media.
+## 🛠️ Spesifikasi Teknologi
+*   **Core Engine:** PHP 8.2+ dengan **PDO MySQL** (Aman dari SQL Injection).
+*   **Database:** MariaDB / MySQL.
+*   **Frontend Framework:** Bootstrap 5.3 & Vanilla JavaScript.
+*   **Icons:** FontAwesome 6 & Bootstrap Icons.
+*   **Typography:** Google Fonts (Plus Jakarta Sans).
 
 ---
 
-## 📂 Struktur Folder
+## 📂 Struktur Aplikasi
 ```text
 rekap-it/
-├── assets/          # CSS, JS, dan Gambar
-├── config/          # Konfigurasi Database (PDO)
-├── database/        # Skema SQL (rekap_it_full.sql)
-├── export/          # Script ekspor data (Excel)
-├── models/          # Logika Database (CRUD Aset, Karyawan, dll)
-├── views/           # Tampilan Antarmuka (Dashboard, Inventaris, dll)
-├── index.php        # Router Utama
-└── login.php        # Sistem Autentikasi
+├── assets/          # Resource desain, CSS, JS, dan Gambar
+├── config/          # Pengaturan database dan konfigurasi sistem
+├── database/        # Skema SQL database (rekap_it_full.sql)
+├── export/          # Modul pemrosesan ekspor data Excel
+├── models/          # Logika bisnis dan interaksi database (CRUD)
+├── views/           # Antarmuka pengguna (Dashboard, Inventory, dsb)
+├── index.php        # Router dan titik masuk aplikasi
+└── login.php        # Sistem gerbang keamanan pengguna
 ```
 
 ---
 
-## 📋 Panduan Instalasi Lokal
-
-### 1. Persiapan
-* Pastikan Anda menggunakan server lokal seperti **XAMPP** atau **Laragon** dengan PHP versi 8.2 ke atas.
-
-### 2. Database
-* Buat database baru dengan nama `rekap_it`.
-* Import file database yang tersedia di: `database/rekap_it_full.sql`.
-
-### 3. Konfigurasi
-* Sesuaikan pengaturan database Anda di file `config/database.php`:
-```php
-$db_host = 'localhost';
-$db_user = 'root';
-$db_pass = '';
-$db_name = 'rekap_it';
-```
-
-### 4. Akses Aplikasi
-* Buka browser dan akses: `http://localhost/rekap-it-hafiz` (sesuaikan dengan nama folder Anda).
+## 📋 Panduan Penggunaan
+1.  **Dashboard:** Pantau ringkasan aset dan biaya bulan ini.
+2.  **Manajemen:** Tambahkan Cabang, Divisi, dan Karyawan terlebih dahulu.
+3.  **Aset:** Daftarkan perangkat IT dan tentukan pemegangnya.
+4.  **Maintenance:** Lakukan pemeriksaan rutin (individu atau massal).
+5.  **Perbaikan:** Buat tiket jika ada perangkat yang rusak dan update statusnya hingga selesai.
+6.  **Laporan:** Gunakan filter tanggal/cabang untuk melihat kinerja IT Anda.
 
 ---
 
-## 🔐 Akun Akses Awal
-* **Username:** `admin`
-* **Password:** `password`
+## 🔐 Keamanan Sistem
+*   **RBAC (Role-Based Access Control):** Mendukung berbagai level akses (Super Admin, Teknisi, dll).
+*   **Password Hashing:** Keamanan akun menggunakan enkripsi standar industri.
+*   **Database Security:** Menggunakan PDO Prepared Statements untuk mencegah serangan SQL Injection.
 
 ---
 
-## 🎯 Tujuan Pengembangan
-Sistem ini dibuat untuk efisiensi tim IT dalam menjaga aset perusahaan agar tetap dalam kondisi prima (high availability) dan mendokumentasikan setiap biaya operasional secara akurat.
-
-**Dikembangkan oleh Tim IT - Rekap IT System.**
+**Rekap IT System - Solusi Modern untuk Efisiensi Infrastruktur IT Perusahaan.**
