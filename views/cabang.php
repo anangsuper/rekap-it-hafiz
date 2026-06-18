@@ -1,8 +1,17 @@
 <?php
 require_once 'models/Cabang.php';
 $cabangModel = new Cabang($conn);
-$cabangs = $cabangModel->getAll();
 
+// Proses Hapus
+if (isset($_POST['hapus'])) {
+    $id = $_POST['id'];
+    if ($cabangModel->delete($id)) {
+        header("Location: index.php?page=cabang&status=deleted");
+        exit();
+    }
+}
+
+// Proses Tambah
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
     $data = [
         'nama_cabang' => $_POST['nama_cabang'],
@@ -13,6 +22,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
         exit();
     }
 }
+
+// Proses Update
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
+    $id = $_POST['id'];
+    $data = [
+        'nama_cabang' => $_POST['nama_cabang'],
+        'alamat' => $_POST['alamat']
+    ];
+    if ($cabangModel->update($id, $data)) {
+        header("Location: index.php?page=cabang&status=updated");
+        exit();
+    }
+}
+
+$cabangs = $cabangModel->getAll();
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -21,6 +45,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
         <i class="fas fa-plus me-2"></i> Tambah Cabang
     </button>
 </div>
+
+<?php if (isset($_GET['status'])): ?>
+    <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+        Berhasil memproses data cabang!
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+<?php endif; ?>
 
 <div class="card p-4">
     <div class="table-responsive">
@@ -42,8 +73,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
                     <td><?= $c['alamat'] ?></td>
                     <td><?= date('d/m/Y', strtotime($c['created_at'])) ?></td>
                     <td>
-                        <button class="btn btn-sm btn-light text-primary"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-sm btn-light text-danger"><i class="fas fa-trash"></i></button>
+                        <button class="btn btn-sm btn-light text-primary btn-edit" 
+                                data-id="<?= $c['id'] ?>"
+                                data-nama="<?= $c['nama_cabang'] ?>"
+                                data-alamat="<?= $c['alamat'] ?>"
+                                title="Edit"><i class="fas fa-edit"></i></button>
+                        <form method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus cabang ini?')">
+                            <input type="hidden" name="id" value="<?= $c['id'] ?>">
+                            <button type="submit" name="hapus" class="btn btn-sm btn-light text-danger" title="Hapus">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
                     </td>
                 </tr>
                 <?php endforeach; ?>
@@ -79,3 +119,48 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
         </div>
     </div>
 </div>
+
+<!-- Modal Edit -->
+<div class="modal fade" id="modalEdit" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST">
+                <input type="hidden" name="id" id="edit_id">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Cabang</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nama Cabang</label>
+                        <input type="text" name="nama_cabang" id="edit_nama" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Alamat</label>
+                        <textarea name="alamat" id="edit_alamat" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" name="update" class="btn btn-primary">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.btn-edit').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const id = this.getAttribute('data-id');
+        const nama = this.getAttribute('data-nama');
+        const alamat = this.getAttribute('data-alamat');
+
+        document.getElementById('edit_id').value = id;
+        document.getElementById('edit_nama').value = nama;
+        document.getElementById('edit_alamat').value = alamat;
+
+        new bootstrap.Modal(document.getElementById('modalEdit')).show();
+    });
+});
+</script>

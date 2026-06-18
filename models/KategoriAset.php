@@ -19,6 +19,13 @@ class KategoriAset {
         return $stmt->execute($data);
     }
 
+    public function update($id, $data) {
+        $query = "UPDATE " . $this->table . " SET nama_kategori = :nama_kategori WHERE id = :id";
+        $data['id'] = $id;
+        $stmt = $this->conn->prepare($query);
+        return $stmt->execute($data);
+    }
+
     public function delete($id) {
         $stmt = $this->conn->prepare("DELETE FROM " . $this->table . " WHERE id = ?");
         return $stmt->execute([$id]);

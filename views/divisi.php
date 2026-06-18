@@ -1,8 +1,17 @@
 <?php
 require_once 'models/Divisi.php';
 $divisiModel = new Divisi($conn);
-$divisis = $divisiModel->getAll();
 
+// Proses Hapus
+if (isset($_POST['hapus'])) {
+    $id = $_POST['id'];
+    if ($divisiModel->delete($id)) {
+        header("Location: index.php?page=divisi&status=deleted");
+        exit();
+    }
+}
+
+// Proses Tambah
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
     $data = ['nama_divisi' => $_POST['nama_divisi']];
     if ($divisiModel->create($data)) {
@@ -10,6 +19,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
         exit();
     }
 }
+
+// Proses Update
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
+    $id = $_POST['id'];
+    $data = ['nama_divisi' => $_POST['nama_divisi']];
+    if ($divisiModel->update($id, $data)) {
+        header("Location: index.php?page=divisi&status=updated");
+        exit();
+    }
+}
+
+$divisis = $divisiModel->getAll();
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -18,6 +39,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
         <i class="fas fa-plus me-2"></i> Tambah Divisi
     </button>
 </div>
+
+<?php if (isset($_GET['status'])): ?>
+    <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+        Berhasil memproses data divisi!
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+<?php endif; ?>
 
 <div class="card p-4">
     <div class="table-responsive">
@@ -37,7 +65,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
                     <td><strong><?= $d['nama_divisi'] ?></strong></td>
                     <td><?= date('d/m/Y', strtotime($d['created_at'])) ?></td>
                     <td>
-                        <button class="btn btn-sm btn-light text-danger"><i class="fas fa-trash"></i></button>
+                        <button class="btn btn-sm btn-light text-primary btn-edit" 
+                                data-id="<?= $d['id'] ?>"
+                                data-nama="<?= $d['nama_divisi'] ?>"
+                                title="Edit"><i class="fas fa-edit"></i></button>
+                        <form method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus divisi ini?')">
+                            <input type="hidden" name="id" value="<?= $d['id'] ?>">
+                            <button type="submit" name="hapus" class="btn btn-sm btn-light text-danger" title="Hapus">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
                     </td>
                 </tr>
                 <?php endforeach; ?>
@@ -68,3 +105,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="modalEdit" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST">
+                <input type="hidden" name="id" id="edit_id">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Divisi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nama Divisi</label>
+                        <input type="text" name="nama_divisi" id="edit_nama" class="form-control" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" name="update" class="btn btn-primary">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.btn-edit').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const id = this.getAttribute('data-id');
+        const nama = this.getAttribute('data-nama');
+
+        document.getElementById('edit_id').value = id;
+        document.getElementById('edit_nama').value = nama;
+
+        new bootstrap.Modal(document.getElementById('modalEdit')).show();
+    });
+});
+</script>

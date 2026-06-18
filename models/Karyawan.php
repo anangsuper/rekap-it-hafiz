@@ -32,6 +32,24 @@ class Karyawan {
         return $stmt->fetchColumn() > 0;
     }
 
+    public function getById($id) {
+        $stmt = $this->conn->prepare("SELECT * FROM " . $this->table . " WHERE id = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetch();
+    }
+
+    public function update($id, $data) {
+        $sets = "";
+        foreach ($data as $key => $value) {
+            $sets .= "$key = :$key, ";
+        }
+        $sets = rtrim($sets, ", ");
+        $query = "UPDATE " . $this->table . " SET $sets WHERE id = :id";
+        $data['id'] = $id;
+        $stmt = $this->conn->prepare($query);
+        return $stmt->execute($data);
+    }
+
     public function delete($id) {
         $stmt = $this->conn->prepare("DELETE FROM " . $this->table . " WHERE id = ?");
         return $stmt->execute([$id]);

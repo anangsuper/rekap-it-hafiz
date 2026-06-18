@@ -63,8 +63,7 @@ class Asset {
     }
 
     public function delete($id) {
-        $query = "DELETE FROM " . $this->table . " WHERE id = ?";
-        $stmt = $this->conn->prepare($query);
+        $stmt = $this->conn->prepare("DELETE FROM " . $this->table . " WHERE id = ?");
         return $stmt->execute([$id]);
     }
 

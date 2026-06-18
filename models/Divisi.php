@@ -19,6 +19,13 @@ class Divisi {
         return $stmt->execute($data);
     }
 
+    public function update($id, $data) {
+        $query = "UPDATE " . $this->table . " SET nama_divisi = :nama_divisi WHERE id = :id";
+        $data['id'] = $id;
+        $stmt = $this->conn->prepare($query);
+        return $stmt->execute($data);
+    }
+
     public function delete($id) {
         $stmt = $this->conn->prepare("DELETE FROM " . $this->table . " WHERE id = ?");
         return $stmt->execute([$id]);
