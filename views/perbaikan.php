@@ -18,6 +18,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
         exit();
     }
 }
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
+    $id = $_POST['id'];
+    $data = [
+        'tindakan' => $_POST['tindakan'],
+        'biaya' => $_POST['biaya'],
+        'status' => $_POST['status'],
+        'tanggal_selesai' => ($_POST['status'] == 'Selesai') ? date('Y-m-d') : null
+    ];
+    if ($repairModel->update($id, $data)) {
+        header("Location: index.php?page=perbaikan&status=updated");
+        exit();
+    }
+}
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -59,7 +73,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
                     <td>Rp <?= number_format($r['biaya'], 0, ',', '.') ?></td>
                     <td><?= date('d/m/Y', strtotime($r['created_at'])) ?></td>
                     <td>
-                        <button class="btn btn-sm btn-light text-primary"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-sm btn-light text-primary btn-edit" 
+                                data-id="<?= $r['id'] ?>" 
+                                data-aset="<?= $r['nama_aset'] ?>" 
+                                data-keluhan="<?= $r['keluhan'] ?>"
+                                data-tindakan="<?= $r['tindakan'] ?>"
+                                data-biaya="<?= $r['biaya'] ?>"
+                                data-status="<?= $r['status'] ?>"
+                                data-bs-toggle="modal" 
+                                data-bs-target="#modalUpdate">
+                            <i class="fas fa-edit"></i> Update
+                        </button>
                     </td>
                 </tr>
                 <?php endforeach; ?>
@@ -67,6 +91,65 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
         </table>
     </div>
 </div>
+
+<!-- Modal Update -->
+<div class="modal fade" id="modalUpdate" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST">
+                <input type="hidden" name="id" id="update_id">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Status Perbaikan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Aset</label>
+                        <input type="text" id="update_aset" class="form-control" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Keluhan</label>
+                        <textarea id="update_keluhan" class="form-control" readonly rows="2"></textarea>
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+                        <label class="form-label">Tindakan / Solusi</label>
+                        <textarea name="tindakan" id="update_tindakan" class="form-control" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Biaya Perbaikan (Rp)</label>
+                        <input type="number" name="biaya" id="update_biaya" class="form-control" value="0">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select name="status" id="update_status" class="form-select">
+                            <option value="Proses">Proses (Sedang Dikerjakan)</option>
+                            <option value="Selesai">Selesai (Perangkat Kembali Baik)</option>
+                            <option value="Batal">Batal (Tidak Bisa Diperbaiki)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" name="update" class="btn btn-primary">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.btn-edit').forEach(button => {
+    button.addEventListener('click', function() {
+        document.getElementById('update_id').value = this.getAttribute('data-id');
+        document.getElementById('update_aset').value = this.getAttribute('data-aset');
+        document.getElementById('update_keluhan').value = this.getAttribute('data-keluhan');
+        document.getElementById('update_tindakan').value = this.getAttribute('data-tindakan') || '';
+        document.getElementById('update_biaya').value = this.getAttribute('data-biaya') || 0;
+        document.getElementById('update_status').value = this.getAttribute('data-status');
+    });
+});
+</script>
 
 <div class="modal fade" id="modalTambah" tabindex="-1">
     <div class="modal-dialog">
