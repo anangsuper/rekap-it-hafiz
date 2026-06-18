@@ -11,7 +11,9 @@ $cabangModel = new Cabang($conn);
 $divisiModel = new Divisi($conn);
 $karyawanModel = new Karyawan($conn);
 
-$assets = $assetModel->getAll();
+$id_cabang_filter = isset($_GET['filter_cabang']) ? $_GET['filter_cabang'] : null;
+
+$assets = $assetModel->getAll($id_cabang_filter);
 $kategoris = $kategoriModel->getAll();
 $cabangs = $cabangModel->getAll();
 $divisis = $divisiModel->getAll();
@@ -38,7 +40,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h4 class="fw-bold">Data Inventaris Aset</h4>
+    <div class="d-flex align-items-center">
+        <h4 class="fw-bold me-4 mb-0">Data Inventaris Aset</h4>
+        <form method="GET" action="index.php" class="d-flex align-items-center">
+            <input type="hidden" name="page" value="inventaris">
+            <select name="filter_cabang" class="form-select form-select-sm" style="width: 200px;" onchange="this.form.submit()">
+                <option value="">-- Semua Cabang --</option>
+                <?php foreach ($cabangs as $c): ?>
+                    <option value="<?= $c['id'] ?>" <?= ($id_cabang_filter == $c['id']) ? 'selected' : '' ?>>
+                        <?= $c['nama_cabang'] ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </form>
+    </div>
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambah">
         <i class="fas fa-plus me-2"></i> Tambah Aset
     </button>

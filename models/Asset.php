@@ -7,15 +7,24 @@ class Asset {
         $this->conn = $db;
     }
 
-    public function getAll() {
+    public function getAll($id_cabang = null) {
         $query = "SELECT a.*, k.nama_kategori, c.nama_cabang, d.nama_divisi, kr.nama_karyawan 
                   FROM " . $this->table . " a
                   LEFT JOIN kategori_aset k ON a.id_kategori = k.id
                   LEFT JOIN cabang c ON a.id_cabang = c.id
                   LEFT JOIN divisi d ON a.id_divisi = d.id
-                  LEFT JOIN karyawan kr ON a.id_karyawan = kr.id
-                  ORDER BY a.created_at DESC";
+                  LEFT JOIN karyawan kr ON a.id_karyawan = kr.id";
+        
+        if ($id_cabang) {
+            $query .= " WHERE a.id_cabang = :id_cabang";
+        }
+        
+        $query .= " ORDER BY a.created_at DESC";
+        
         $stmt = $this->conn->prepare($query);
+        if ($id_cabang) {
+            $stmt->bindParam(':id_cabang', $id_cabang);
+        }
         $stmt->execute();
         return $stmt->fetchAll();
     }
