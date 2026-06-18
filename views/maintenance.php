@@ -25,11 +25,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
 }
 ?>
 
+<?php if (isset($_GET['status']) && $_GET['status'] == 'mass_success'): ?>
+    <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+        <i class="fas fa-check-circle me-2"></i> Maintenance massal berhasil diproses untuk seluruh aset terpilih!
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+<?php endif; ?>
+
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h4 class="fw-bold">Riwayat Maintenance</h4>
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambah">
-        <i class="fas fa-plus me-2"></i> Input Maintenance
-    </button>
+    <div>
+        <a href="index.php?page=maintenance_massal" class="btn btn-outline-primary me-2">
+            <i class="fas fa-layer-group me-2"></i> Maintenance Massal
+        </a>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambah">
+            <i class="fas fa-plus me-2"></i> Input Maintenance
+        </button>
+    </div>
 </div>
 
 <div class="card p-4">

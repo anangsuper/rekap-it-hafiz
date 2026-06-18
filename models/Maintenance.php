@@ -36,6 +36,31 @@ class Maintenance {
         return $stmt->execute($data);
     }
 
+    public function createBulk($asset_ids, $commonData) {
+        $query = "INSERT INTO " . $this->table . " (asset_id, tanggal, teknisi, temuan, tindakan, rekomendasi) 
+                  VALUES (?, ?, ?, ?, ?, ?)";
+        $stmt = $this->conn->prepare($query);
+        
+        $this->conn->beginTransaction();
+        try {
+            foreach ($asset_ids as $id) {
+                $stmt->execute([
+                    $id,
+                    $commonData['tanggal'],
+                    $commonData['teknisi'],
+                    $commonData['temuan'],
+                    $commonData['tindakan'],
+                    $commonData['rekomendasi']
+                ]);
+            }
+            $this->conn->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->conn->rollBack();
+            return false;
+        }
+    }
+
     public function addPhoto($id_maintenance, $path, $tipe) {
         $query = "INSERT INTO foto_maintenance (id_maintenance, path_foto, tipe) VALUES (?, ?, ?)";
         $stmt = $this->conn->prepare($query);
