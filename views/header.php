@@ -414,5 +414,17 @@ document.addEventListener('DOMContentLoaded', function() {
     if(toggleBtn) toggleBtn.addEventListener('click', toggleSidebar);
     if(closeBtn) closeBtn.addEventListener('click', toggleSidebar);
     if(overlay) overlay.addEventListener('click', toggleSidebar);
+
+    // Persist Sidebar Scroll Position
+    if (sidebar) {
+        const scrollPos = sessionStorage.getItem('sidebarScrollPos');
+        if (scrollPos) {
+            sidebar.scrollTop = scrollPos;
+        }
+
+        sidebar.addEventListener('scroll', function() {
+            sessionStorage.setItem('sidebarScrollPos', sidebar.scrollTop);
+        });
+    }
 });
 </script>
