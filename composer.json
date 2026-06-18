@@ -2,7 +2,12 @@
     "name": "rekap-it/rekap-it-hafiz",
     "description": "IT Maintenance System",
     "require": {
-        "php": "^8.2"
+        "php": "^8.2",
+        "dompdf/dompdf": "^3.0",
+        "ext-dom": "*",
+        "ext-mbstring": "*",
+        "ext-gd": "*",
+        "ext-libxml": "*"
     },
     "config": {
         "allow-plugins": {
