@@ -93,15 +93,15 @@ try {
 
 <div class="row g-4 animate-fade-in" style="animation-delay: 0.1s;">
     <div class="col-md-12">
-        <div class="card h-100 p-4 border-0 shadow-sm">
+        <div class="card p-4 border-0 shadow-sm mb-4">
             <div class="d-flex align-items-center justify-content-between mb-4">
                 <div class="d-flex align-items-center">
                     <div class="bg-primary bg-opacity-10 p-3 rounded-4 me-3 text-primary">
                         <i class="bi bi-stars fs-4"></i>
                     </div>
                     <div>
-                        <h5 class="fw-800 m-0 text-dark">Welcome back, <?= $_SESSION['nama'] ?>!</h5>
-                        <p class="text-muted small m-0">Manage your IT infrastructure with precision and ease.</p>
+                        <h5 class="fw-800 m-0 text-dark">Selamat Datang, <?= $_SESSION['nama'] ?>!</h5>
+                        <p class="text-muted small m-0">Kelola infrastruktur IT Anda dengan presisi dan kemudahan.</p>
                     </div>
                 </div>
                 <a href="index.php?page=logs" class="btn btn-light btn-sm rounded-pill px-3 border shadow-sm">
@@ -113,25 +113,68 @@ try {
                 <div class="col-md-4">
                     <div class="p-4 rounded-4 bg-light bg-opacity-50 border border-white h-100 transition-hover">
                         <i class="bi bi-plus-circle-fill text-primary fs-3 mb-3 d-block"></i>
-                        <h6 class="fw-700 text-dark">Quick Inventory</h6>
-                        <p class="small text-muted mb-3">Register new hardware assets to the system.</p>
-                        <a href="index.php?page=inventaris" class="btn btn-primary btn-sm w-100 text-white">Add Asset</a>
+                        <h6 class="fw-700 text-dark">Input Inventaris</h6>
+                        <p class="small text-muted mb-3">Daftarkan aset perangkat keras baru ke dalam sistem.</p>
+                        <a href="index.php?page=inventaris" class="btn btn-primary btn-sm w-100 text-white">Tambah Aset</a>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="p-4 rounded-4 bg-light bg-opacity-50 border border-white h-100 transition-hover">
                         <i class="bi bi-tools text-success fs-3 mb-3 d-block"></i>
                         <h6 class="fw-700 text-dark">Maintenance</h6>
-                        <p class="small text-muted mb-3">Log routine checks and system health.</p>
-                        <a href="index.php?page=maintenance" class="btn btn-success btn-sm w-100 text-white" style="border-radius: 12px;">Log Check</a>
+                        <p class="small text-muted mb-3">Catat hasil pengecekan rutin kesehatan sistem.</p>
+                        <a href="index.php?page=maintenance" class="btn btn-success btn-sm w-100 text-white" style="border-radius: 12px;">Catat Cek</a>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="p-4 rounded-4 bg-light bg-opacity-50 border border-white h-100 transition-hover">
                         <i class="bi bi-wrench-adjustable text-warning fs-3 mb-3 d-block"></i>
-                        <h6 class="fw-700 text-dark">Repair Tickets</h6>
-                        <p class="small text-muted mb-3">Track and update active repair cases.</p>
-                        <a href="index.php?page=perbaikan" class="btn btn-warning btn-sm w-100 fw-bold" style="border-radius: 12px;">View Tickets</a>
+                        <h6 class="fw-700 text-dark">Tiket Perbaikan</h6>
+                        <p class="small text-muted mb-3">Pantau dan update status perbaikan aset yang rusak.</p>
+                        <a href="index.php?page=perbaikan" class="btn btn-warning btn-sm w-100 fw-bold" style="border-radius: 12px;">Lihat Tiket</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Start Guide -->
+        <div class="card p-4 border-0 shadow-sm bg-primary bg-opacity-10" style="border-radius: 28px;">
+            <h6 class="fw-800 mb-3"><i class="bi bi-lightbulb-fill text-warning me-2"></i> Panduan Cepat Penggunaan</h6>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="d-flex">
+                        <div class="fw-800 text-primary me-3 fs-3">1</div>
+                        <div>
+                            <div class="fw-bold small">Data Kantor</div>
+                            <div class="text-muted" style="font-size: 0.7rem;">Isi data Cabang, Divisi, dan Karyawan terlebih dahulu.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="d-flex">
+                        <div class="fw-800 text-primary me-3 fs-3">2</div>
+                        <div>
+                            <div class="fw-bold small">Daftar Aset</div>
+                            <div class="text-muted" style="font-size: 0.7rem;">Masukkan semua perangkat IT Anda di menu Inventaris.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="d-flex">
+                        <div class="fw-800 text-primary me-3 fs-3">3</div>
+                        <div>
+                            <div class="fw-bold small">Catat Aktivitas</div>
+                            <div class="text-muted" style="font-size: 0.7rem;">Lakukan Maintenance rutin atau catat Perbaikan jika rusak.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="d-flex">
+                        <div class="fw-800 text-primary me-3 fs-3">4</div>
+                        <div>
+                            <div class="fw-bold small">Pantau Laporan</div>
+                            <div class="text-muted" style="font-size: 0.7rem;">Ekspor data ke Excel untuk kebutuhan administrasi Anda.</div>
+                        </div>
                     </div>
                 </div>
             </div>

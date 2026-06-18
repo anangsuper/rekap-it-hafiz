@@ -243,51 +243,51 @@
 
     <div class="nav flex-column">
         <a href="index.php?page=dashboard" class="nav-link <?= ($page == 'dashboard') ? 'active' : '' ?>">
-            <i class="bi bi-grid-1x2-fill me-2"></i> Dashboard
+            <i class="bi bi-grid-1x2-fill me-2"></i> Dashboard Utama
         </a>
 
-        <div class="nav-section">Organization</div>
+        <div class="nav-section">Data Master & Kantor</div>
         <a href="index.php?page=cabang" class="nav-link <?= ($page == 'cabang') ? 'active' : '' ?>">
-            <i class="bi bi-building me-2"></i> Cabang
+            <i class="bi bi-building me-2"></i> Daftar Cabang
         </a>
         <a href="index.php?page=divisi" class="nav-link <?= ($page == 'divisi') ? 'active' : '' ?>">
-            <i class="bi bi-diagram-3 me-2"></i> Divisi
+            <i class="bi bi-diagram-3 me-2"></i> Bagian / Divisi
         </a>
         <a href="index.php?page=karyawan" class="nav-link <?= ($page == 'karyawan') ? 'active' : '' ?>">
-            <i class="bi bi-people me-2"></i> Karyawan
+            <i class="bi bi-people me-2"></i> Data Karyawan
         </a>
 
-        <div class="nav-section">Inventory</div>
+        <div class="nav-section">Inventaris Aset</div>
         <a href="index.php?page=kategori" class="nav-link <?= ($page == 'kategori') ? 'active' : '' ?>">
-            <i class="bi bi-tags me-2"></i> Kategori
+            <i class="bi bi-tags me-2"></i> Kategori Barang
         </a>
         <a href="index.php?page=inventaris" class="nav-link <?= ($page == 'inventaris') ? 'active' : '' ?>">
-            <i class="bi bi-laptop me-2"></i> Data Aset
+            <i class="bi bi-laptop me-2"></i> Stok & Data Aset
         </a>
         <a href="index.php?page=mutasi" class="nav-link <?= ($page == 'mutasi') ? 'active' : '' ?>">
-            <i class="bi bi-arrow-left-right me-2"></i> Mutasi
+            <i class="bi bi-arrow-left-right me-2"></i> Mutasi (Pindah)
         </a>
 
-        <div class="nav-section">Operations</div>
+        <div class="nav-section">Operasional IT</div>
         <a href="index.php?page=maintenance" class="nav-link <?= ($page == 'maintenance') ? 'active' : '' ?>">
-            <i class="bi bi-tools me-2"></i> Maintenance
+            <i class="bi bi-tools me-2"></i> Perawatan Rutin
         </a>
         <a href="index.php?page=perbaikan" class="nav-link <?= ($page == 'perbaikan') ? 'active' : '' ?>">
-            <i class="bi bi-wrench-adjustable me-2"></i> Perbaikan
+            <i class="bi bi-wrench-adjustable me-2"></i> Perbaikan Aset
         </a>
         <a href="index.php?page=sparepart" class="nav-link <?= ($page == 'sparepart') ? 'active' : '' ?>">
-            <i class="bi bi-box-seam me-2"></i> Sparepart
+            <i class="bi bi-box-seam me-2"></i> Stok Sparepart
         </a>
 
-        <div class="nav-section">Reports & Logs</div>
+        <div class="nav-section">Laporan & Riwayat</div>
         <a href="index.php?page=audit" class="nav-link <?= ($page == 'audit') ? 'active' : '' ?>">
-            <i class="bi bi-shield-check me-2"></i> Audit Aset
+            <i class="bi bi-shield-check me-2"></i> Audit Fisik
         </a>
         <a href="index.php?page=logs" class="nav-link <?= ($page == 'logs') ? 'active' : '' ?>">
             <i class="bi bi-clock-history me-2"></i> Log Aktivitas
         </a>
         <a href="index.php?page=laporan" class="nav-link <?= ($page == 'laporan') ? 'active' : '' ?>">
-            <i class="bi bi-file-earmark-bar-graph me-2"></i> Laporan
+            <i class="bi bi-file-earmark-bar-graph me-2"></i> Laporan Excel
         </a>
 
         <div class="mt-4 mb-4">
