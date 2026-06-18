@@ -5,6 +5,27 @@ class Mutation {
 
     public function __construct($db) {
         $this->conn = $db;
+        $this->ensureTableExists();
+    }
+
+    private function ensureTableExists() {
+        $sql = "CREATE TABLE IF NOT EXISTS " . $this->table . " (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            asset_id INT NOT NULL,
+            user_id INT NOT NULL,
+            id_cabang_lama INT,
+            id_divisi_lama INT,
+            id_karyawan_lama INT,
+            id_cabang_baru INT,
+            id_divisi_baru INT,
+            id_karyawan_baru INT,
+            tanggal_mutasi DATE NOT NULL,
+            keterangan TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (asset_id) REFERENCES assets(id) ON DELETE CASCADE,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
+        $this->conn->exec($sql);
     }
 
     public function getAll() {
