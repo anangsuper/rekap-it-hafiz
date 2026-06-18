@@ -118,10 +118,37 @@ try {
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h5 class="fw-bold m-0">Ringkasan Operasional IT</h5>
         <div>
-            <button class="btn btn-outline-danger btn-sm me-2"><i class="fas fa-file-pdf me-1"></i> Export PDF</button>
-            <button class="btn btn-outline-success btn-sm"><i class="fas fa-file-excel me-1"></i> Export Excel</button>
+            <button onclick="window.print()" class="btn btn-outline-danger btn-sm me-2"><i class="fas fa-file-pdf me-1"></i> Cetak / PDF</button>
+            <a href="export/excel.php?id_cabang=<?= $id_cabang ?>&tgl_mulai=<?= $tgl_mulai ?>&tgl_selesai=<?= $tgl_selesai ?>" class="btn btn-outline-success btn-sm"><i class="fas fa-file-excel me-1"></i> Export Excel</a>
         </div>
     </div>
+
+    <style>
+        @media print {
+            .sidebar, .top-navbar, .btn, .nav-tabs, .card:first-child, .small.text-muted {
+                display: none !important;
+            }
+            .main-content {
+                margin-left: 0 !important;
+                padding: 0 !important;
+            }
+            .card {
+                box-shadow: none !important;
+                border: none !important;
+            }
+            .table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+            }
+            .table th, .table td {
+                border: 1px solid #dee2e6 !important;
+            }
+            .tab-pane {
+                display: block !important;
+                opacity: 1 !important;
+            }
+        }
+    </style>
 
     <ul class="nav nav-tabs mb-4" id="reportTabs" role="tablist">
         <li class="nav-item">
