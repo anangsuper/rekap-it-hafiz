@@ -1,468 +1,95 @@
-# 🖥️ Rekap IT - Maintenance & Asset Management System
+# 🖥️ Rekap IT - Professional Maintenance & Asset Management System
 
-Aplikasi web profesional berbasis **PHP Native (PDO)** untuk membantu tim IT mengelola inventaris aset, menjadwalkan maintenance berkala, memantau perbaikan perangkat, mengelola sparepart, serta menghasilkan laporan operasional secara terpusat.
-
-Sistem dirancang untuk mendukung operasional perusahaan yang memiliki banyak cabang, divisi, dan aset IT dengan kontrol akses berbasis role.
+Aplikasi web manajemen aset dan maintenance IT profesional berbasis **PHP Native (PDO)**. Sistem ini dirancang untuk memantau siklus hidup perangkat IT, mulai dari inventarisasi, mutasi, maintenance berkala, hingga perbaikan kerusakan di berbagai cabang perusahaan secara terpusat.
 
 ---
 
-# 🚀 Fitur Utama
+## 🚀 Fitur Utama yang Telah Diimplementasikan
 
-### 📊 Dashboard Modern
+### 📊 Dashboard Monitoring
+* Statistik real-time total aset, kondisi perangkat (Baik/Rusak), dan biaya perbaikan.
+* Ringkasan aktivitas operasional IT dalam satu layar.
 
-* Statistik total aset
-* Total aset aktif
-* Maintenance bulan berjalan
-* Perbaikan aktif
-* Garansi akan habis
-* Grafik maintenance dan kerusakan
-* Monitoring aktivitas teknisi
+### 🏢 Manajemen Organisasi (Master Data)
+* **Manajemen Cabang:** Pengelolaan data lokasi cabang perusahaan.
+* **Manajemen Divisi:** Pengelolaan struktur departemen.
+* **Manajemen Karyawan:** Database pemegang aset dengan validasi NIP unik (opsional).
 
-### 🖥️ Manajemen Inventaris Aset
+### 🖥️ Inventaris Aset Terperinci
+* Pencatatan spesifikasi teknis lengkap (SN, Merk, Model, Kategori).
+* Relasi otomatis antara aset dengan Cabang, Divisi, dan Pemegang (Karyawan).
+* **Smart Filter:** Filter data aset berdasarkan cabang untuk mempermudah pencarian.
+* **Dynamic Input:** Form tambah aset cerdas yang menyaring daftar karyawan berdasarkan cabang yang dipilih.
 
-* Data aset lengkap
-* Kode aset otomatis
-* Nomor seri (Serial Number)
-* Kode inventaris
-* Spesifikasi perangkat
-* Foto aset
-* Status aset
-* Lokasi penempatan
-* Vendor dan garansi
+### 🔧 Modul Maintenance (Rutin & Massal)
+* **Maintenance Individu:** Pencatatan temuan, tindakan, dan rekomendasi teknisi untuk satu perangkat.
+* **Maintenance Massal (Bulk):** Fitur unggulan untuk memproses maintenance banyak komputer sekaligus dalam satu cabang menggunakan sistem *Checklist*. Sangat efisien untuk kegiatan rutin bulanan.
 
-### 🏢 Manajemen Organisasi
+### 🚨 Manajemen Perbaikan (Repair Ticketing)
+* Sistem tiket perbaikan untuk memantau perangkat yang sedang rusak.
+* **Update Aksi:** Teknisi dapat menginput tindakan solusi, biaya perbaikan, dan mengubah status (Proses/Selesai/Batal).
+* Histori perbaikan yang lengkap untuk setiap aset.
 
-* Data cabang
-* Data divisi
-* Data karyawan
-* Pemegang aset
-* Jabatan pengguna aset
-
-### 🔄 Mutasi Aset
-
-* Perpindahan aset antar pengguna
-* Perpindahan aset antar divisi
-* Riwayat mutasi aset
-* Tracking pemegang aset
-
-### 📅 Jadwal Maintenance Massal
-
-* Maintenance berkala
-* Maintenance bulanan
-* Maintenance triwulan
-* Maintenance semesteran
-* Maintenance tahunan
-* Penugasan teknisi
-
-### 🔧 Maintenance Rutin
-
-* Pencatatan hasil maintenance
-* Temuan pemeriksaan
-* Tindakan maintenance
-* Rekomendasi teknisi
-* Upload foto sebelum dan sesudah
-
-### 🚨 Perbaikan Individual & Massal
-
-* Tiket perbaikan
-* Monitoring status
-* Estimasi biaya
-* Riwayat perbaikan
-* Tracking kerusakan perangkat
-
-### 📦 Manajemen Sparepart
-
-* Data sparepart
-* Stok sparepart
-* Penggunaan sparepart
-* Histori penggunaan
-
-### 🔍 Audit Aset
-
-* Pemeriksaan inventaris
-* Verifikasi lokasi aset
-* Verifikasi pemegang aset
-* Verifikasi kondisi perangkat
-
-### 📄 Laporan
-
-* Laporan aset
-* Laporan maintenance
-* Laporan perbaikan
-* Laporan sparepart
-* Laporan audit
-* Export PDF
-* Export Excel
-
-### 🔐 Role Management
-
-* Super Admin
-* Admin IT
-* Teknisi
-* Pimpinan Cabang
-* Viewer / Auditor
-
-### 📜 Activity Log (Audit Trail)
-
-* Login sistem
-* Tambah data
-* Edit data
-* Hapus data
-* Aktivitas pengguna
-
-### 📱 QR Code Aset
-
-* Generate QR Code
-* Scan QR Code
-* Akses detail aset secara cepat
+### 📄 Modul Laporan & Export
+* Laporan operasional IT yang dapat difilter berdasarkan **Rentang Tanggal** dan **Cabang**.
+* **Export Excel:** Mengunduh data Aset, Maintenance, dan Perbaikan dalam format tabel Excel.
+* **Cetak PDF:** Fitur cetak yang dioptimalkan untuk menghasilkan dokumen PDF yang rapi langsung dari browser.
 
 ---
 
-# 👥 Role & Hak Akses
-
-Sistem menggunakan Role Based Access Control (RBAC).
-
-## Super Admin
-
-Hak akses penuh:
-
-* Kelola pengguna
-* Kelola role
-* Kelola aset
-* Kelola maintenance
-* Kelola perbaikan
-* Kelola sparepart
-* Kelola laporan
-* Kelola audit
-
-## Admin IT
-
-* Kelola aset
-* Kelola maintenance
-* Kelola perbaikan
-* Kelola sparepart
-* Melihat seluruh laporan
-
-## Teknisi
-
-* Melihat jadwal maintenance
-* Input maintenance
-* Input perbaikan
-* Upload foto dokumentasi
-
-## Pimpinan Cabang
-
-* Melihat aset cabang
-* Melihat laporan cabang
-* Monitoring maintenance cabang
-
-## Viewer / Auditor
-
-* Hanya melihat data
-* Hanya melihat laporan
-* Tidak dapat mengubah data
-
-> Role tidak dipilih saat login. Sistem otomatis menentukan hak akses berdasarkan data pengguna yang tersimpan di database.
+## 🛠️ Teknologi & Library
+* **Backend:** PHP 8.2+ (PDO MySQL)
+* **Frontend:** Bootstrap 5.3, FontAwesome 6
+* **Database:** MySQL / MariaDB
+* **UI/UX:** Responsive Dashboard, Dynamic Select (JavaScript), CSS Print Media.
 
 ---
 
-# 📊 Modul Utama
-
-1. Dashboard
-2. Data Cabang
-3. Data Divisi
-4. Data Karyawan
-5. Data Kategori Aset
-6. Data Aset
-7. Mutasi Aset
-8. Jadwal Maintenance
-9. Maintenance
-10. Perbaikan Individual
-11. Perbaikan Massal
-12. Sparepart
-13. Audit Aset
-14. Laporan
-15. Pengguna
-16. Hak Akses
-17. Activity Log
-
----
-
-# 🗄️ Struktur Database
-
-Database menggunakan MySQL dengan nama:
-
-```sql
-rekap_it
-```
-
-## Master Data
-
-* pengguna
-* cabang
-* divisi
-* karyawan
-* kategori_aset
-* sparepart
-
-## Manajemen Aset
-
-* aset
-* mutasi_aset
-* audit_aset
-
-## Maintenance
-
-* jadwal_maintenance
-* detail_jadwal_maintenance
-* maintenance
-* foto_maintenance
-
-## Perbaikan
-
-* perbaikan_massal
-* detail_perbaikan_massal
-* penggunaan_sparepart
-
-## Sistem
-
-* activity_logs
-* notifications
-
----
-
-# 🖥️ Data Aset yang Dikelola
-
-Setiap aset memiliki informasi:
-
-* Kode Aset
-* Nomor Seri (Serial Number)
-* Kode Inventaris
-* Nama Aset
-* Kategori
-* Merk
-* Model
-* Processor
-* RAM
-* Storage
-* Sistem Operasi
-* IP Address
-* MAC Address
-* Vendor
-* Tanggal Pembelian
-* Masa Garansi
-* Cabang
-* Divisi
-* Pemegang Aset
-* Lokasi Penempatan
-* Status Aset
-* Foto Aset
-* Riwayat Maintenance
-* Riwayat Perbaikan
-
----
-
-# 🛠️ Teknologi yang Digunakan
-
-### Backend
-
-* PHP 8.2+
-* PDO MySQL
-
-### Database
-
-* MySQL 8+
-* MariaDB 10+
-
-### Frontend
-
-* HTML5
-* CSS3
-* JavaScript ES6
-
-### Library
-
-* Bootstrap 5.3
-* FontAwesome 6
-* SweetAlert2
-* DataTables
-* Chart.js
-* UI Avatars
-
-### Export
-
-* DomPDF
-* PhpSpreadsheet
-
-### Deployment
-
-* Railway
-* VPS Linux
-* Shared Hosting
-
----
-
-# 📂 Struktur Folder
-
+## 📂 Struktur Folder
 ```text
 rekap-it/
-├── assets/
-│   ├── css/
-│   ├── js/
-│   ├── img/
-│   └── qrcode/
-│
-├── config/
-│   ├── database.php
-│   └── auth.php
-│
-├── controllers/
-│
-├── models/
-│
-├── views/
-│   ├── dashboard.php
-│   ├── aset.php
-│   ├── maintenance.php
-│   ├── perbaikan.php
-│   ├── audit.php
-│   ├── laporan.php
-│   ├── pengguna.php
-│   ├── header.php
-│   └── footer.php
-│
-├── uploads/
-│   ├── aset/
-│   ├── maintenance/
-│   └── perbaikan/
-│
-├── database/
-│   └── rekap_it.sql
-│
-├── login.php
-├── logout.php
-├── index.php
-├── composer.json
-├── railway.toml
-└── README.md
+├── assets/          # CSS, JS, dan Gambar
+├── config/          # Konfigurasi Database (PDO)
+├── database/        # Skema SQL (rekap_it_full.sql)
+├── export/          # Script ekspor data (Excel)
+├── models/          # Logika Database (CRUD Aset, Karyawan, dll)
+├── views/           # Tampilan Antarmuka (Dashboard, Inventaris, dll)
+├── index.php        # Router Utama
+└── login.php        # Sistem Autentikasi
 ```
 
 ---
 
-# 📋 Instalasi Lokal
+## 📋 Panduan Instalasi Lokal
 
-## 1. Clone Repository
+### 1. Persiapan
+* Pastikan Anda menggunakan server lokal seperti **XAMPP** atau **Laragon** dengan PHP versi 8.2 ke atas.
 
-```bash
-git clone https://github.com/anangsuper/rekap-it-hafiz.git
-```
+### 2. Database
+* Buat database baru dengan nama `rekap_it`.
+* Import file database yang tersedia di: `database/rekap_it_full.sql`.
 
-## 2. Buat Database
-
-```sql
-CREATE DATABASE rekap_it;
-```
-
-## 3. Import Database
-
-Import file:
-
-```text
-database/rekap_it.sql
-```
-
-ke database MySQL.
-
-## 4. Konfigurasi Database
-
-Buka file:
-
+### 3. Konfigurasi
+* Sesuaikan pengaturan database Anda di file `config/database.php`:
 ```php
-config/database.php
+$db_host = 'localhost';
+$db_user = 'root';
+$db_pass = '';
+$db_name = 'rekap_it';
 ```
 
-Sesuaikan:
-
-```php
-DB_HOST=localhost
-DB_PORT=3306
-DB_DATABASE=rekap_it
-DB_USERNAME=root
-DB_PASSWORD=
-```
-
-## 5. Jalankan Aplikasi
-
-```text
-http://localhost/rekap-it
-```
+### 4. Akses Aplikasi
+* Buka browser dan akses: `http://localhost/rekap-it-hafiz` (sesuaikan dengan nama folder Anda).
 
 ---
 
-# ☁️ Deployment Railway
-
-Aplikasi telah mendukung deployment Railway.
-
-## Environment Variables
-
-```env
-DB_HOST=
-DB_PORT=
-DB_DATABASE=
-DB_USERNAME=
-DB_PASSWORD=
-```
-
-atau
-
-```env
-MYSQL_URL=
-```
-
-## Build System
-
-Menggunakan:
-
-```text
-Nixpacks
-```
-
-dan PHP 8.2+
+## 🔐 Akun Akses Awal
+* **Username:** `admin`
+* **Password:** `password`
 
 ---
 
-# 🔐 Akun Awal
+## 🎯 Tujuan Pengembangan
+Sistem ini dibuat untuk efisiensi tim IT dalam menjaga aset perusahaan agar tetap dalam kondisi prima (high availability) dan mendokumentasikan setiap biaya operasional secara akurat.
 
-## Super Admin
-
-```text
-Username : admin
-Password : password
-```
-
-> Segera ubah password setelah instalasi pertama.
-
----
-
-# 🎯 Tujuan Sistem
-
-Sistem ini dibuat untuk membantu tim IT dalam:
-
-* Mengelola inventaris aset secara terpusat
-* Mengetahui lokasi dan pemegang aset
-* Menjadwalkan maintenance berkala
-* Memantau kerusakan perangkat
-* Mengontrol penggunaan sparepart
-* Mendokumentasikan aktivitas teknisi
-* Mempermudah audit aset
-* Menyediakan laporan operasional yang akurat
-
----
-
-# 📄 Lisensi
-
-Aplikasi ini dikembangkan untuk kebutuhan operasional manajemen aset dan maintenance perangkat IT perusahaan.
-
----
-
-**Dikembangkan oleh Tim IT untuk efisiensi pengelolaan aset, maintenance, dan operasional infrastruktur teknologi informasi.**
+**Dikembangkan oleh Tim IT - Rekap IT System.**

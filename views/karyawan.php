@@ -33,94 +33,126 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
 }
 ?>
 
+<div class="d-flex justify-content-between align-items-center mb-4 animate-fade-in">
+    <div class="d-flex align-items-center">
+        <div class="bg-primary bg-opacity-10 p-2 rounded-3 me-3 text-primary">
+            <i class="bi bi-people fs-4"></i>
+        </div>
+        <div>
+            <h4 class="fw-800 m-0">Employee Directory</h4>
+            <p class="text-muted small m-0">Manage asset assignees and organization structure</p>
+        </div>
+    </div>
+    <button class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#modalTambah">
+        <i class="bi bi-person-plus me-2"></i> Add Employee
+    </button>
+</div>
+
 <?php if ($error_msg): ?>
-    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
-        <i class="fas fa-exclamation-triangle me-2"></i> <?= $error_msg ?>
+    <div class="alert alert-danger alert-dismissible border-0 shadow-sm fade show mb-4 rounded-4" role="alert">
+        <i class="bi bi-exclamation-octagon-fill me-2"></i> <?= $error_msg ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 <?php endif; ?>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h4 class="fw-bold">Manajemen Karyawan</h4>
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambah">
-        <i class="fas fa-plus me-2"></i> Tambah Karyawan
-    </button>
-</div>
-
-<div class="card p-4">
-    <div class="table-responsive">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>NIP</th>
-                    <th>Nama Karyawan</th>
-                    <th>Cabang</th>
-                    <th>Divisi</th>
-                    <th>Jabatan</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($karyawans as $k): ?>
-                <tr>
-                    <td><?= $k['nip'] ?></td>
-                    <td><strong><?= $k['nama_karyawan'] ?></strong></td>
-                    <td><?= $k['nama_cabang'] ?></td>
-                    <td><?= $k['nama_divisi'] ?></td>
-                    <td><?= $k['jabatan'] ?></td>
-                    <td>
-                        <button class="btn btn-sm btn-light text-danger"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+<div class="card border-0 shadow-sm animate-fade-in" style="animation-delay: 0.1s;">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">Employee Info</th>
+                        <th>NIP</th>
+                        <th>Location</th>
+                        <th>Position</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if(empty($karyawans)): ?>
+                        <tr><td colspan="5" class="text-center py-5 text-muted">No employees registered yet.</td></tr>
+                    <?php endif; ?>
+                    <?php foreach ($karyawans as $k): ?>
+                    <tr>
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center">
+                                <img src="https://ui-avatars.com/api/?name=<?= $k['nama_karyawan'] ?>&background=random&size=40" class="rounded-circle me-3">
+                                <div class="fw-bold"><?= $k['nama_karyawan'] ?></div>
+                            </div>
+                        </td>
+                        <td>
+                            <code class="text-primary fw-bold"><?= $k['nip'] ?: '-' ?></code>
+                        </td>
+                        <td>
+                            <div class="small fw-bold"><?= $k['nama_cabang'] ?></div>
+                            <div class="small text-muted" style="font-size: 0.7rem;"><?= $k['nama_divisi'] ?></div>
+                        </td>
+                        <td>
+                            <span class="small fw-500"><?= $k['jabatan'] ?: 'Staff' ?></span>
+                        </td>
+                        <td class="text-end pe-4">
+                            <button class="btn btn-light btn-sm rounded-circle"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-light btn-sm rounded-circle text-danger ms-1"><i class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
+<!-- Modal Tambah -->
 <div class="modal fade" id="modalTambah" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 28px;">
             <form method="POST">
-                <div class="modal-header">
-                    <h5 class="modal-title">Tambah Karyawan Baru</h5>
+                <div class="modal-header border-0 p-4 pb-0">
+                    <h5 class="fw-800 m-0"><i class="bi bi-person-plus-fill text-primary me-2"></i> Register New Employee</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body p-4">
                     <div class="mb-3">
-                        <label class="form-label">Nama Karyawan</label>
-                        <input type="text" name="nama_karyawan" class="form-control" required>
+                        <label class="form-label small fw-bold">Full Name</label>
+                        <input type="text" name="nama_karyawan" class="form-control shadow-sm" placeholder="e.g. John Doe" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">NIP</label>
-                        <input type="text" name="nip" class="form-control">
+                        <label class="form-label small fw-bold">NIP (Employee ID)</label>
+                        <input type="text" name="nip" class="form-control shadow-sm" placeholder="Leave blank if not available">
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Cabang</label>
-                        <select name="id_cabang" class="form-select">
-                            <?php foreach ($cabangs as $c): ?>
-                                <option value="<?= $c['id'] ?>"><?= $c['nama_cabang'] ?></option>
-                            <?php endforeach; ?>
-                        </select>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="form-label small fw-bold">Branch</label>
+                            <select name="id_cabang" class="form-select shadow-sm" required>
+                                <?php foreach ($cabangs as $c): ?>
+                                    <option value="<?= $c['id'] ?>"><?= $c['nama_cabang'] ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold">Division</label>
+                            <select name="id_divisi" class="form-select shadow-sm" required>
+                                <?php foreach ($divisis as $d): ?>
+                                    <option value="<?= $d['id'] ?>"><?= $d['nama_divisi'] ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Divisi</label>
-                        <select name="id_divisi" class="form-select">
-                            <?php foreach ($divisis as $d): ?>
-                                <option value="<?= $d['id'] ?>"><?= $d['nama_divisi'] ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Jabatan</label>
-                        <input type="text" name="jabatan" class="form-control">
+                    <div class="mb-0">
+                        <label class="form-label small fw-bold">Job Title / Position</label>
+                        <input type="text" name="jabatan" class="form-control shadow-sm" placeholder="e.g. IT Support">
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" name="tambah" class="btn btn-primary">Simpan</button>
+                <div class="modal-footer border-0 p-4">
+                    <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal" style="border-radius: 12px;">Cancel</button>
+                    <button type="submit" name="tambah" class="btn btn-primary px-4">Save Employee</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<style>
+    .fw-800 { font-weight: 800; }
+    .fw-500 { font-weight: 500; }
+</style>
