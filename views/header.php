@@ -41,15 +41,65 @@
             top: 0;
             background: var(--sidebar-bg);
             color: #fff;
-            z-index: 1001;
+            z-index: 1050;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             overflow-y: auto;
             border-right: 1px solid rgba(255, 255, 255, 0.05);
         }
 
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.5);
+            z-index: 1040;
+            display: none;
+            backdrop-filter: blur(4px);
+        }
+
+        @media (max-width: 991.98px) {
+            .sidebar {
+                left: calc(var(--sidebar-width) * -1);
+            }
+            .sidebar.show {
+                left: 0;
+            }
+            .sidebar.show + .sidebar-overlay {
+                display: block;
+            }
+            .main-content {
+                margin-left: 0 !important;
+                padding: 15px !important;
+            }
+            .top-navbar {
+                padding: 12px 20px !important;
+                border-radius: 15px !important;
+                margin-bottom: 20px !important;
+            }
+        }
+
         .sidebar-header {
             padding: 40px 30px;
             text-align: left;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .btn-close-sidebar {
+            display: none;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+        }
+
+        @media (max-width: 991.98px) {
+            .btn-close-sidebar {
+                display: block;
+            }
         }
 
         .sidebar-header h4 {
@@ -146,6 +196,29 @@
             z-index: 1000;
         }
 
+        .btn-toggle-sidebar {
+            display: none;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-right: 15px;
+        }
+
+        @media (max-width: 991.98px) {
+            .btn-toggle-sidebar {
+                display: flex;
+            }
+            .top-navbar h5 {
+                font-size: 1rem;
+            }
+        }
+
         /* Global Component Styles */
         .card {
             border: 1px solid rgba(0, 0, 0, 0.03);
@@ -228,9 +301,12 @@
 </head>
 
 <body>
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
     <div class="sidebar-header">
         <h4><i class="fas fa-microchip me-2"></i> REKAP IT</h4>
+        <button class="btn-close-sidebar" id="btn-close-sidebar">
+            <i class="bi bi-x-lg"></i>
+        </button>
     </div>
 
     <div class="user-profile">
@@ -297,10 +373,16 @@
         </div>
     </div>
 </div>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
 
 <div class="main-content">
     <div class="top-navbar">
-        <h5 class="m-0 fw-bold animate-fade-in"><?= ucwords(str_replace('_', ' ', $page)) ?> Overview</h5>
+        <div class="d-flex align-items-center">
+            <button class="btn-toggle-sidebar" id="btn-toggle-sidebar">
+                <i class="bi bi-list"></i>
+            </button>
+            <h5 class="m-0 fw-bold animate-fade-in d-none d-sm-block"><?= ucwords(str_replace('_', ' ', $page)) ?> Overview</h5>
+        </div>
         <div class="d-flex align-items-center animate-fade-in">
             <div class="text-end me-4 d-none d-md-block">
                 <div class="small fw-bold">Kamis, 18 Juni 2026</div>
@@ -314,3 +396,20 @@
             <i class="bi bi-search text-muted fs-5 ms-2 cursor-pointer"></i>
         </div>
     </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    const toggleBtn = document.getElementById('btn-toggle-sidebar');
+    const closeBtn = document.getElementById('btn-close-sidebar');
+
+    function toggleSidebar() {
+        sidebar.classList.toggle('show');
+    }
+
+    if(toggleBtn) toggleBtn.addEventListener('click', toggleSidebar);
+    if(closeBtn) closeBtn.addEventListener('click', toggleSidebar);
+    if(overlay) overlay.addEventListener('click', toggleSidebar);
+});
+</script>
