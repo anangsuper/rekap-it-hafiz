@@ -149,7 +149,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Cabang</label>
-                            <select name="id_cabang" class="form-select">
+                            <select name="id_cabang" id="select_cabang" class="form-select" required>
+                                <option value="">-- Pilih Cabang --</option>
                                 <?php foreach ($cabangs as $c): ?>
                                     <option value="<?= $c['id'] ?>"><?= $c['nama_cabang'] ?></option>
                                 <?php endforeach; ?>
@@ -158,6 +159,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
                         <div class="col-md-6">
                             <label class="form-label">Divisi</label>
                             <select name="id_divisi" class="form-select">
+                                <option value="">-- Pilih Divisi --</option>
                                 <?php foreach ($divisis as $d): ?>
                                     <option value="<?= $d['id'] ?>"><?= $d['nama_divisi'] ?></option>
                                 <?php endforeach; ?>
@@ -165,10 +167,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Pemegang</label>
-                            <select name="id_karyawan" class="form-select">
+                            <select name="id_karyawan" id="select_karyawan" class="form-select">
                                 <option value="">-- Tanpa Pemegang --</option>
                                 <?php foreach ($karyawans as $kr): ?>
-                                    <option value="<?= $kr['id'] ?>"><?= $kr['nama_karyawan'] ?></option>
+                                    <option value="<?= $kr['id'] ?>" data-cabang="<?= $kr['id_cabang'] ?>"><?= $kr['nama_karyawan'] ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -190,3 +192,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
         </div>
     </div>
 </div>
+
+<script>
+document.getElementById('select_cabang').addEventListener('change', function() {
+    const selectedCabangId = this.value;
+    const selectKaryawan = document.getElementById('select_karyawan');
+    const options = selectKaryawan.querySelectorAll('option');
+
+    options.forEach(option => {
+        const cabangId = option.getAttribute('data-cabang');
+        
+        // Selalu tampilkan pilihan "Tanpa Pemegang" (yang tidak punya data-cabang)
+        if (!cabangId) {
+            option.style.display = 'block';
+        } else {
+            // Tampilkan hanya jika cabang_id cocok dengan pilihan
+            if (cabangId === selectedCabangId) {
+                option.style.display = 'block';
+            } else {
+                option.style.display = 'none';
+            }
+        }
+    });
+
+    // Reset pilihan karyawan ke default ("Tanpa Pemegang") saat cabang berubah
+    selectKaryawan.value = "";
+});
+</script>
