@@ -25,7 +25,7 @@ try {
                 <div class="position-absolute top-0 end-0 p-3 opacity-10" style="font-size: 5rem; transform: translate(20%, -20%);">
                     <i class="bi bi-box-seam"></i>
                 </div>
-                <div class="text-white-50 small fw-bold mb-1">TOTAL ASSETS</div>
+                <div class="text-white small fw-bold mb-1 opacity-75">TOTAL ASSETS</div>
                 <h2 class="text-white fw-800 mb-0"><?= $totalAssets ?></h2>
                 <div class="mt-3">
                     <span class="badge bg-white bg-opacity-20 text-white rounded-pill small">
@@ -43,7 +43,7 @@ try {
                 <div class="position-absolute top-0 end-0 p-3 opacity-10" style="font-size: 5rem; transform: translate(20%, -20%);">
                     <i class="bi bi-check2-circle"></i>
                 </div>
-                <div class="text-white-50 small fw-bold mb-1">MAINTENANCE</div>
+                <div class="text-white small fw-bold mb-1 opacity-75">MAINTENANCE</div>
                 <h2 class="text-white fw-800 mb-0"><?= $totalMaintenance ?></h2>
                 <div class="mt-3">
                     <span class="badge bg-white bg-opacity-20 text-white rounded-pill small">
@@ -61,7 +61,7 @@ try {
                 <div class="position-absolute top-0 end-0 p-3 opacity-10" style="font-size: 5rem; transform: translate(20%, -20%);">
                     <i class="bi bi-exclamation-triangle"></i>
                 </div>
-                <div class="text-white-50 small fw-bold mb-1">ACTIVE REPAIRS</div>
+                <div class="text-white small fw-bold mb-1 opacity-75">ACTIVE REPAIRS</div>
                 <h2 class="text-white fw-800 mb-0"><?= $totalRepairs ?></h2>
                 <div class="mt-3">
                     <span class="badge bg-white bg-opacity-20 text-white rounded-pill small">
@@ -79,7 +79,7 @@ try {
                 <div class="position-absolute top-0 end-0 p-3 opacity-10" style="font-size: 5rem; transform: translate(20%, -20%);">
                     <i class="bi bi-wallet2"></i>
                 </div>
-                <div class="text-white-50 small fw-bold mb-1">REPAIR COSTS</div>
+                <div class="text-white small fw-bold mb-1 opacity-75">REPAIR COSTS</div>
                 <h2 class="text-white fw-800 mb-0 text-nowrap" style="font-size: 1.5rem;">Rp <?= number_format($totalCost, 0, ',', '.') ?></h2>
                 <div class="mt-3">
                     <span class="badge bg-white bg-opacity-20 text-white rounded-pill small">
@@ -100,12 +100,12 @@ try {
                         <i class="bi bi-stars fs-4"></i>
                     </div>
                     <div>
-                        <h5 class="fw-800 m-0">Welcome back, <?= $_SESSION['nama'] ?>!</h5>
+                        <h5 class="fw-800 m-0 text-dark">Welcome back, <?= $_SESSION['nama'] ?>!</h5>
                         <p class="text-muted small m-0">Manage your IT infrastructure with precision and ease.</p>
                     </div>
                 </div>
                 <a href="index.php?page=logs" class="btn btn-light btn-sm rounded-pill px-3 border shadow-sm">
-                    <i class="bi bi-clock-history me-1"></i> Log Aktivitas
+                    <i class="bi bi-clock-history me-1 text-primary"></i> Log Aktivitas
                 </a>
             </div>
             
@@ -113,15 +113,15 @@ try {
                 <div class="col-md-4">
                     <div class="p-4 rounded-4 bg-light bg-opacity-50 border border-white h-100 transition-hover">
                         <i class="bi bi-plus-circle-fill text-primary fs-3 mb-3 d-block"></i>
-                        <h6 class="fw-700">Quick Inventory</h6>
+                        <h6 class="fw-700 text-dark">Quick Inventory</h6>
                         <p class="small text-muted mb-3">Register new hardware assets to the system.</p>
-                        <a href="index.php?page=inventaris" class="btn btn-primary btn-sm w-100">Add Asset</a>
+                        <a href="index.php?page=inventaris" class="btn btn-primary btn-sm w-100 text-white">Add Asset</a>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="p-4 rounded-4 bg-light bg-opacity-50 border border-white h-100 transition-hover">
                         <i class="bi bi-tools text-success fs-3 mb-3 d-block"></i>
-                        <h6 class="fw-700">Maintenance</h6>
+                        <h6 class="fw-700 text-dark">Maintenance</h6>
                         <p class="small text-muted mb-3">Log routine checks and system health.</p>
                         <a href="index.php?page=maintenance" class="btn btn-success btn-sm w-100 text-white" style="border-radius: 12px;">Log Check</a>
                     </div>
@@ -129,9 +129,9 @@ try {
                 <div class="col-md-4">
                     <div class="p-4 rounded-4 bg-light bg-opacity-50 border border-white h-100 transition-hover">
                         <i class="bi bi-wrench-adjustable text-warning fs-3 mb-3 d-block"></i>
-                        <h6 class="fw-700">Repair Tickets</h6>
+                        <h6 class="fw-700 text-dark">Repair Tickets</h6>
                         <p class="small text-muted mb-3">Track and update active repair cases.</p>
-                        <a href="index.php?page=perbaikan" class="btn btn-warning btn-sm w-100 text-white" style="border-radius: 12px;">View Tickets</a>
+                        <a href="index.php?page=perbaikan" class="btn btn-warning btn-sm w-100 fw-bold" style="border-radius: 12px;">View Tickets</a>
                     </div>
                 </div>
             </div>
