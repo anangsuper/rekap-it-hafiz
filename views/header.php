@@ -283,6 +283,9 @@
         <a href="index.php?page=audit" class="nav-link <?= ($page == 'audit') ? 'active' : '' ?>">
             <i class="bi bi-shield-check me-2"></i> Audit Aset
         </a>
+        <a href="index.php?page=logs" class="nav-link <?= ($page == 'logs') ? 'active' : '' ?>">
+            <i class="bi bi-clock-history me-2"></i> Log Aktivitas
+        </a>
         <a href="index.php?page=laporan" class="nav-link <?= ($page == 'laporan') ? 'active' : '' ?>">
             <i class="bi bi-file-earmark-bar-graph me-2"></i> Laporan
         </a>

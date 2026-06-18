@@ -92,16 +92,21 @@ try {
 </div>
 
 <div class="row g-4 animate-fade-in" style="animation-delay: 0.1s;">
-    <div class="col-md-8">
+    <div class="col-md-12">
         <div class="card h-100 p-4 border-0 shadow-sm">
-            <div class="d-flex align-items-center mb-4">
-                <div class="bg-primary bg-opacity-10 p-3 rounded-4 me-3 text-primary">
-                    <i class="bi bi-stars fs-4"></i>
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div class="d-flex align-items-center">
+                    <div class="bg-primary bg-opacity-10 p-3 rounded-4 me-3 text-primary">
+                        <i class="bi bi-stars fs-4"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-800 m-0">Welcome back, <?= $_SESSION['nama'] ?>!</h5>
+                        <p class="text-muted small m-0">Manage your IT infrastructure with precision and ease.</p>
+                    </div>
                 </div>
-                <div>
-                    <h5 class="fw-800 m-0">Welcome back, <?= $_SESSION['nama'] ?>!</h5>
-                    <p class="text-muted small m-0">Manage your IT infrastructure with precision and ease.</p>
-                </div>
+                <a href="index.php?page=logs" class="btn btn-light btn-sm rounded-pill px-3 border shadow-sm">
+                    <i class="bi bi-clock-history me-1"></i> Log Aktivitas
+                </a>
             </div>
             
             <div class="row g-3">
@@ -132,46 +137,6 @@ try {
             </div>
         </div>
     </div>
-
-    <div class="col-md-4">
-        <div class="card h-100 p-4 border-0 shadow-sm bg-dark text-white">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="fw-800 m-0"><i class="bi bi-clock-history me-2 text-primary"></i> Recent Activity</h5>
-                <span class="badge bg-primary bg-opacity-20 text-primary small">Live</span>
-            </div>
-            <div class="activity-feed">
-                <?php
-                require_once 'models/ActivityLog.php';
-                $logModel = new ActivityLog($conn);
-                $recentLogs = $logModel->getRecent(5);
-                foreach ($recentLogs as $log):
-                    $icon = 'bi-record-circle';
-                    $color = 'text-primary';
-                    if(strpos(strtolower($log['action']), 'tambah') !== false) { $icon = 'bi-plus-circle'; $color = 'text-success'; }
-                    if(strpos(strtolower($log['action']), 'hapus') !== false) { $icon = 'bi-trash'; $color = 'text-danger'; }
-                    if(strpos(strtolower($log['action']), 'login') !== false) { $icon = 'bi-person-check'; $color = 'text-info'; }
-                ?>
-                    <div class="d-flex mb-4 position-relative">
-                        <div class="me-3 z-index-1">
-                            <div class="bg-secondary bg-opacity-20 rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
-                                <i class="bi <?= $icon ?> <?= $color ?> small"></i>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="small fw-bold text-white"><?= $log['action'] ?></div>
-                            <div class="small text-white-50 mt-1"><?= $log['description'] ?></div>
-                            <div class="text-muted mt-1" style="font-size: 0.65rem;">
-                                <i class="bi bi-calendar3 me-1"></i> <?= date('d M, H:i', strtotime($log['created_at'])) ?> • <span class="text-primary"><?= $log['nama'] ?></span>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-            <div class="mt-auto pt-3">
-                <button class="btn btn-outline-light btn-sm w-100 py-2 border-opacity-25" style="border-radius: 12px;">View All Logs</button>
-            </div>
-        </div>
-    </div>
 </div>
 
 <style>
@@ -179,13 +144,4 @@ try {
     .fw-700 { font-weight: 700; }
     .transition-hover { transition: all 0.3s ease; border: 1px solid transparent !important; }
     .transition-hover:hover { background-color: #fff !important; border-color: var(--primary-light) !important; transform: translateY(-5px); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.05); }
-    .activity-feed::before {
-        content: '';
-        position: absolute;
-        left: 17px;
-        top: 40px;
-        bottom: 80px;
-        width: 1px;
-        background: rgba(255, 255, 255, 0.1);
-    }
 </style>
