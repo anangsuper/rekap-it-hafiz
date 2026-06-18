@@ -11,5 +11,4 @@ Thumbs.db
 
 # PHP temporary
 *.log
-composer.lock
 vendor/
