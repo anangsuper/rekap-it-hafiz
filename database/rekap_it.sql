@@ -124,7 +124,23 @@ CREATE TABLE IF NOT EXISTS asset_mutations (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 11. Sparepart
+-- 11. Audits
+CREATE TABLE IF NOT EXISTS audits (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    asset_id INT NOT NULL,
+    user_id INT NOT NULL,
+    tanggal_audit DATE NOT NULL,
+    kondisi_dilaporkan ENUM('Baik', 'Rusak Ringan', 'Rusak Berat'),
+    kondisi_fisik ENUM('Baik', 'Rusak Ringan', 'Rusak Berat') NOT NULL,
+    lokasi_fisik VARCHAR(100),
+    catatan TEXT,
+    status_verifikasi ENUM('Sesuai', 'Tidak Sesuai') DEFAULT 'Sesuai',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (asset_id) REFERENCES assets(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 12. Sparepart
 CREATE TABLE IF NOT EXISTS sparepart (
     id INT AUTO_INCREMENT PRIMARY KEY,
     kode_sparepart VARCHAR(50) UNIQUE,
