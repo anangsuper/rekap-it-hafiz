@@ -7,12 +7,24 @@ class Maintenance {
         $this->conn = $db;
     }
 
-    public function getAll() {
+    public function getAll($id_cabang = null, $tgl_mulai = null, $tgl_selesai = null) {
         $query = "SELECT m.*, a.nama_aset, a.kode_aset 
                   FROM " . $this->table . " m
                   JOIN assets a ON m.asset_id = a.id
-                  ORDER BY m.tanggal DESC";
+                  WHERE 1=1";
+        
+        if ($id_cabang) $query .= " AND a.id_cabang = :id_cabang";
+        if ($tgl_mulai && $tgl_selesai) $query .= " AND m.tanggal BETWEEN :tgl_mulai AND :tgl_selesai";
+        
+        $query .= " ORDER BY m.tanggal DESC";
         $stmt = $this->conn->prepare($query);
+        
+        if ($id_cabang) $stmt->bindParam(':id_cabang', $id_cabang);
+        if ($tgl_mulai && $tgl_selesai) {
+            $stmt->bindParam(':tgl_mulai', $tgl_mulai);
+            $stmt->bindParam(':tgl_selesai', $tgl_selesai);
+        }
+        
         $stmt->execute();
         return $stmt->fetchAll();
     }

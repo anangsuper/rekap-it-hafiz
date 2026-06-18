@@ -7,12 +7,26 @@ class Repair {
         $this->conn = $db;
     }
 
-    public function getAll() {
+    public function getAll($id_cabang = null, $tgl_mulai = null, $tgl_selesai = null) {
         $query = "SELECT r.*, a.nama_aset, a.kode_aset 
                   FROM " . $this->table . " r
                   JOIN assets a ON r.asset_id = a.id
-                  ORDER BY r.created_at DESC";
+                  WHERE 1=1";
+        
+        if ($id_cabang) $query .= " AND a.id_cabang = :id_cabang";
+        if ($tgl_mulai && $tgl_selesai) $query .= " AND r.created_at BETWEEN :tgl_mulai AND :tgl_selesai";
+        
+        $query .= " ORDER BY r.created_at DESC";
         $stmt = $this->conn->prepare($query);
+        
+        if ($id_cabang) $stmt->bindParam(':id_cabang', $id_cabang);
+        if ($tgl_mulai && $tgl_selesai) {
+            $tgl_mulai_full = $tgl_mulai . " 00:00:00";
+            $tgl_selesai_full = $tgl_selesai . " 23:59:59";
+            $stmt->bindParam(':tgl_mulai', $tgl_mulai_full);
+            $stmt->bindParam(':tgl_selesai', $tgl_selesai_full);
+        }
+        
         $stmt->execute();
         return $stmt->fetchAll();
     }
