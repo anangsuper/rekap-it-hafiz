@@ -24,7 +24,8 @@ if (isset($_POST['hapus'])) {
     }
 }
 
-$id_cabang_filter = isset($_GET['filter_cabang']) ? $_GET['filter_cabang'] : null;
+// Batasi akses cabang untuk teknisi
+$id_cabang_filter = ($_SESSION['role'] === 'teknisi') ? $_SESSION['id_cabang'] : (isset($_GET['filter_cabang']) ? $_GET['filter_cabang'] : null);
 
 $assets = $assetModel->getAll($id_cabang_filter);
 $kategoris = $kategoriModel->getAll();

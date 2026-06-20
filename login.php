@@ -24,6 +24,7 @@ if (isset($_POST['login'])) {
             $_SESSION['username'] = $user['username'];
             $_SESSION['nama']     = $user['nama'];
             $_SESSION['role']     = $user['role'];
+            $_SESSION['id_cabang'] = $user['id_cabang']; // Simpan id_cabang
 
             // Log Login
             require_once 'models/ActivityLog.php';
