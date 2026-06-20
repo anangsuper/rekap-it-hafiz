@@ -39,7 +39,9 @@ $cabangs = $cabangModel->getAll();
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h4 class="fw-bold">Manajemen Pengguna</h4>
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambah">Tambah Pengguna</button>
+    <?php if (hasRole('admin')): ?>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambah">Tambah Pengguna</button>
+    <?php endif; ?>
 </div>
 
 <div class="card border-0 shadow-sm">
