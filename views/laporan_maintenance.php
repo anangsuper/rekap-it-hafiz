@@ -156,6 +156,17 @@ $months = [
             </div>
         </div>
         <div class="col-md-3">
+            <div class="card border-0 shadow-sm bg-secondary text-white p-3">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <div class="small opacity-75">Total Komputer/Laptop</div>
+                        <h3 class="fw-bold mb-0"><?= $stats['total_komputer'] ?></h3>
+                    </div>
+                    <i class="fas fa-desktop fa-2x opacity-50"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
             <div class="card border-0 shadow-sm bg-info text-white p-3">
                 <div class="d-flex justify-content-between">
                     <div>
@@ -174,17 +185,6 @@ $months = [
                         <h3 class="fw-bold mb-0"><?= $stats['persentase'] ?>%</h3>
                     </div>
                     <i class="fas fa-check-circle fa-2x opacity-50"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm bg-warning text-dark p-3">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <div class="small opacity-75">Total Temuan</div>
-                        <h3 class="fw-bold mb-0"><?= $stats['total_temuan'] ?></h3>
-                    </div>
-                    <i class="fas fa-exclamation-triangle fa-2x opacity-50"></i>
                 </div>
             </div>
         </div>
