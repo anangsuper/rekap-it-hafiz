@@ -1,8 +1,8 @@
 <?php
 ob_start();
 session_start();
-require_once 'config/database.php';
-require_once 'helpers/auth.php'; // Path relatif agar kompatibel
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/helpers/auth.php'; // Menggunakan __DIR__ untuk path absolut yang portabel
 
 if (!isset($_SESSION['user_id'])) {
     $currentPage = basename($_SERVER['PHP_SELF']);
