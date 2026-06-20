@@ -7,13 +7,23 @@ class Karyawan {
         $this->conn = $db;
     }
 
-    public function getAll() {
+    public function getAll($id_cabang = null) {
         $query = "SELECT k.*, c.nama_cabang, d.nama_divisi 
                   FROM " . $this->table . " k
                   LEFT JOIN cabang c ON k.id_cabang = c.id
-                  LEFT JOIN divisi d ON k.id_divisi = d.id
-                  ORDER BY k.nama_karyawan ASC";
+                  LEFT JOIN divisi d ON k.id_divisi = d.id";
+        
+        if ($id_cabang) {
+            $query .= " WHERE k.id_cabang = :id_cabang";
+        }
+        
+        $query .= " ORDER BY k.nama_karyawan ASC";
+        
         $stmt = $this->conn->prepare($query);
+        if ($id_cabang) {
+            $stmt->bindParam(':id_cabang', $id_cabang);
+        }
+        
         $stmt->execute();
         return $stmt->fetchAll();
     }

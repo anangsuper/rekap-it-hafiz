@@ -9,18 +9,16 @@ $cabangModel = new Cabang($conn);
 $divisiModel = new Divisi($conn);
 $logModel = new ActivityLog($conn);
 
+$id_cabang = isset($_GET['cabang_id']) ? $_GET['cabang_id'] : null;
+
 // Proses Hapus
 if (isset($_POST['hapus'])) {
     $id = $_POST['id'];
-    $currentKaryawan = null;
-    // Find name for log
-    foreach($karyawanModel->getAll() as $item) {
-        if($item['id'] == $id) { $currentKaryawan = $item; break; }
-    }
+    $currentKaryawan = $karyawanModel->getById($id);
     
     if ($karyawanModel->delete($id)) {
         if($currentKaryawan) $logModel->add($_SESSION['user_id'], 'Hapus Karyawan', "Menghapus karyawan: " . $currentKaryawan['nama_karyawan']);
-        header("Location: index.php?page=karyawan&status=deleted");
+        header("Location: index.php?page=karyawan" . ($id_cabang ? "&cabang_id=$id_cabang" : "") . "&status=deleted");
         exit();
     }
 }
@@ -42,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
     } else {
         if ($karyawanModel->create($data)) {
             $logModel->add($_SESSION['user_id'], 'Tambah Karyawan', "Menambahkan karyawan baru: " . $data['nama_karyawan']);
-            header("Location: index.php?page=karyawan&status=success");
+            header("Location: index.php?page=karyawan" . ($id_cabang ? "&cabang_id=$id_cabang" : "") . "&status=success");
             exit();
         }
     }
@@ -62,12 +60,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
 
     if ($karyawanModel->update($id, $data)) {
         $logModel->add($_SESSION['user_id'], 'Update Karyawan', "Memperbarui data karyawan: " . $data['nama_karyawan']);
-        header("Location: index.php?page=karyawan&status=updated");
+        header("Location: index.php?page=karyawan" . ($id_cabang ? "&cabang_id=$id_cabang" : "") . "&status=updated");
         exit();
     }
 }
 
-$karyawans = $karyawanModel->getAll();
+$karyawans = $karyawanModel->getAll($id_cabang);
 $cabangs = $cabangModel->getAll();
 $divisis = $divisiModel->getAll();
 ?>
@@ -78,14 +76,26 @@ $divisis = $divisiModel->getAll();
             <i class="bi bi-people fs-4"></i>
         </div>
         <div>
-            <h4 class="fw-800 m-0">Employee Directory</h4>
-            <p class="text-muted small m-0">Manage asset assignees and organization structure</p>
+            <h4 class="fw-800 m-0">Direktori Karyawan</h4>
+            <p class="text-muted small m-0">Kelola daftar karyawan dan struktur organisasi</p>
         </div>
     </div>
     <button class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#modalTambah">
-        <i class="bi bi-person-plus me-2"></i> Add Employee
+        <i class="bi bi-person-plus me-2"></i> Tambah Karyawan
     </button>
 </div>
+
+<!-- Tabs Cabang -->
+<ul class="nav nav-pills mb-4">
+    <li class="nav-item">
+        <a class="nav-link <?= !$id_cabang ? 'active' : '' ?>" href="index.php?page=karyawan">Semua Cabang</a>
+    </li>
+    <?php foreach ($cabangs as $c): ?>
+    <li class="nav-item">
+        <a class="nav-link <?= $id_cabang == $c['id'] ? 'active' : '' ?>" href="index.php?page=karyawan&cabang_id=<?= $c['id'] ?>"><?= $c['nama_cabang'] ?></a>
+    </li>
+    <?php endforeach; ?>
+</ul>
 
 <?php if (isset($_GET['status'])): ?>
     <?php if ($_GET['status'] == 'success'): ?>
@@ -119,16 +129,16 @@ $divisis = $divisiModel->getAll();
             <table class="table table-hover mb-0">
                 <thead>
                     <tr>
-                        <th class="ps-4">Employee Info</th>
+                        <th class="ps-4">Informasi Karyawan</th>
                         <th>NIP</th>
-                        <th>Location</th>
-                        <th>Position</th>
-                        <th class="text-end pe-4">Actions</th>
+                        <th>Lokasi</th>
+                        <th>Jabatan</th>
+                        <th class="text-end pe-4">Tindakan</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if(empty($karyawans)): ?>
-                        <tr><td colspan="5" class="text-center py-5 text-muted">No employees registered yet.</td></tr>
+                        <tr><td colspan="5" class="text-center py-5 text-muted">Belum ada karyawan terdaftar.</td></tr>
                     <?php endif; ?>
                     <?php foreach ($karyawans as $k): ?>
                     <tr>
@@ -179,21 +189,21 @@ $divisis = $divisiModel->getAll();
         <div class="modal-content border-0 shadow-lg" style="border-radius: 28px;">
             <form method="POST">
                 <div class="modal-header border-0 p-4 pb-0">
-                    <h5 class="fw-800 m-0"><i class="bi bi-person-plus-fill text-primary me-2"></i> Register New Employee</h5>
+                    <h5 class="fw-800 m-0"><i class="bi bi-person-plus-fill text-primary me-2"></i> Tambah Karyawan Baru</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
                     <div class="mb-3">
-                        <label class="form-label small fw-bold">Full Name</label>
-                        <input type="text" name="nama_karyawan" class="form-control shadow-sm" placeholder="e.g. John Doe" required>
+                        <label class="form-label small fw-bold">Nama Lengkap</label>
+                        <input type="text" name="nama_karyawan" class="form-control shadow-sm" placeholder="Contoh: Budi Santoso" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label small fw-bold">NIP (Employee ID)</label>
-                        <input type="text" name="nip" class="form-control shadow-sm" placeholder="Leave blank if not available">
+                        <label class="form-label small fw-bold">NIP</label>
+                        <input type="text" name="nip" class="form-control shadow-sm" placeholder="Kosongkan jika tidak ada">
                     </div>
                     <div class="row g-3 mb-3">
                         <div class="col-6">
-                            <label class="form-label small fw-bold">Branch</label>
+                            <label class="form-label small fw-bold">Cabang</label>
                             <select name="id_cabang" class="form-select shadow-sm" required>
                                 <?php foreach ($cabangs as $c): ?>
                                     <option value="<?= $c['id'] ?>"><?= $c['nama_cabang'] ?></option>
@@ -201,7 +211,7 @@ $divisis = $divisiModel->getAll();
                             </select>
                         </div>
                         <div class="col-6">
-                            <label class="form-label small fw-bold">Division</label>
+                            <label class="form-label small fw-bold">Divisi</label>
                             <select name="id_divisi" class="form-select shadow-sm" required>
                                 <?php foreach ($divisis as $d): ?>
                                     <option value="<?= $d['id'] ?>"><?= $d['nama_divisi'] ?></option>
@@ -210,13 +220,13 @@ $divisis = $divisiModel->getAll();
                         </div>
                     </div>
                     <div class="mb-0">
-                        <label class="form-label small fw-bold">Job Title / Position</label>
-                        <input type="text" name="jabatan" class="form-control shadow-sm" placeholder="e.g. IT Support">
+                        <label class="form-label small fw-bold">Jabatan</label>
+                        <input type="text" name="jabatan" class="form-control shadow-sm" placeholder="Contoh: IT Support">
                     </div>
                 </div>
                 <div class="modal-footer border-0 p-4">
-                    <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal" style="border-radius: 12px;">Cancel</button>
-                    <button type="submit" name="tambah" class="btn btn-primary px-4">Save Employee</button>
+                    <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal" style="border-radius: 12px;">Batal</button>
+                    <button type="submit" name="tambah" class="btn btn-primary px-4">Simpan Karyawan</button>
                 </div>
             </form>
         </div>
@@ -230,21 +240,21 @@ $divisis = $divisiModel->getAll();
             <form method="POST">
                 <input type="hidden" name="id" id="edit_id">
                 <div class="modal-header border-0 p-4 pb-0">
-                    <h5 class="fw-800 m-0"><i class="bi bi-pencil-square text-warning me-2"></i> Update Employee Info</h5>
+                    <h5 class="fw-800 m-0"><i class="bi bi-pencil-square text-warning me-2"></i> Perbarui Info Karyawan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
                     <div class="mb-3">
-                        <label class="form-label small fw-bold">Full Name</label>
+                        <label class="form-label small fw-bold">Nama Lengkap</label>
                         <input type="text" name="nama_karyawan" id="edit_nama" class="form-control shadow-sm" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label small fw-bold">NIP (Employee ID)</label>
+                        <label class="form-label small fw-bold">NIP</label>
                         <input type="text" name="nip" id="edit_nip" class="form-control shadow-sm">
                     </div>
                     <div class="row g-3 mb-3">
                         <div class="col-6">
-                            <label class="form-label small fw-bold">Branch</label>
+                            <label class="form-label small fw-bold">Cabang</label>
                             <select name="id_cabang" id="edit_cabang" class="form-select shadow-sm" required>
                                 <?php foreach ($cabangs as $c): ?>
                                     <option value="<?= $c['id'] ?>"><?= $c['nama_cabang'] ?></option>
@@ -252,7 +262,7 @@ $divisis = $divisiModel->getAll();
                             </select>
                         </div>
                         <div class="col-6">
-                            <label class="form-label small fw-bold">Division</label>
+                            <label class="form-label small fw-bold">Divisi</label>
                             <select name="id_divisi" id="edit_divisi" class="form-select shadow-sm" required>
                                 <?php foreach ($divisis as $d): ?>
                                     <option value="<?= $d['id'] ?>"><?= $d['nama_divisi'] ?></option>
@@ -261,13 +271,13 @@ $divisis = $divisiModel->getAll();
                         </div>
                     </div>
                     <div class="mb-0">
-                        <label class="form-label small fw-bold">Job Title / Position</label>
+                        <label class="form-label small fw-bold">Jabatan</label>
                         <input type="text" name="jabatan" id="edit_jabatan" class="form-control shadow-sm">
                     </div>
                 </div>
                 <div class="modal-footer border-0 p-4">
-                    <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal" style="border-radius: 12px;">Cancel</button>
-                    <button type="submit" name="update" class="btn btn-warning px-4">Update Employee</button>
+                    <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal" style="border-radius: 12px;">Batal</button>
+                    <button type="submit" name="update" class="btn btn-warning px-4">Perbarui Karyawan</button>
                 </div>
             </form>
         </div>
