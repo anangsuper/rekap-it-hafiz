@@ -231,6 +231,14 @@ if (!function_exists('get_branch_badge_style')) {
                         <li><a class="dropdown-item" href="index.php?page=laporan">Export Excel</a></li>
                     </ul>
                 </li>
+
+                <?php if (hasRole('admin')): ?>
+                <li class="nav-item">
+                    <a href="index.php?page=pengguna" class="nav-link <?= ($page == 'pengguna') ? 'active' : '' ?>">
+                        <i class="bi bi-shield-lock me-1"></i> Admin
+                    </a>
+                </li>
+                <?php endif; ?>
             </ul>
 
             <div class="navbar-nav align-items-center">
