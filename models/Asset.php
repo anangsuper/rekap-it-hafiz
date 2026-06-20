@@ -7,6 +7,25 @@ class Asset {
         $this->conn = $db;
     }
 
+    public function getAssetsAvailableForMaintenance($month, $year) {
+        $query = "SELECT a.*, k.nama_kategori, c.nama_cabang, d.nama_divisi, kr.nama_karyawan 
+                  FROM " . $this->table . " a
+                  LEFT JOIN kategori_aset k ON a.id_kategori = k.id
+                  LEFT JOIN cabang c ON a.id_cabang = c.id
+                  LEFT JOIN divisi d ON a.id_divisi = d.id
+                  LEFT JOIN karyawan kr ON a.id_karyawan = kr.id
+                  WHERE a.id NOT IN (
+                      SELECT asset_id 
+                      FROM maintenance 
+                      WHERE MONTH(tanggal) = :month AND YEAR(tanggal) = :year
+                  )
+                  ORDER BY a.created_at DESC";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute(['month' => $month, 'year' => $year]);
+        return $stmt->fetchAll();
+    }
+
     public function getAll($id_cabang = null) {
         $query = "SELECT a.*, k.nama_kategori, c.nama_cabang, d.nama_divisi, kr.nama_karyawan 
                   FROM " . $this->table . " a

@@ -5,8 +5,10 @@ require_once 'models/Asset.php';
 $maintenanceModel = new Maintenance($conn);
 $assetModel = new Asset($conn);
 
+// Ambil semua aset untuk list utama (tetap perlu untuk history, atau mungkin ini juga harus difilter? User bilang "tidak ada di list lagi", jadi untuk tabel maintenance history mungkin tetap perlu menampilkan semua, tapi untuk select asset_id di form tambah harus difilter. Saya asumsikan untuk form tambah saja).
 $maintenances = $maintenanceModel->getAll();
 $assets = $assetModel->getAll();
+$assetsAvailable = $assetModel->getAssetsAvailableForMaintenance(date('m'), date('Y'));
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
     $data = [
@@ -108,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
                     <div class="mb-3">
                         <label class="form-label small fw-bold">Select Asset</label>
                         <select name="asset_id" class="form-select shadow-sm" required>
-                            <?php foreach ($assets as $a): ?>
+                            <?php foreach ($assetsAvailable as $a): ?>
                                 <option value="<?= $a['id'] ?>"><?= $a['kode_aset'] ?> - <?= $a['nama_aset'] ?></option>
                             <?php endforeach; ?>
                         </select>
