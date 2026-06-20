@@ -15,6 +15,16 @@ if (!isset($_SESSION['user_id'])) {
 $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
 $file = __DIR__ . '/views/' . $page . '.php';
 
+// Restricted pages for teknisi
+$restrictedPages = [
+    'audit', 'cabang', 'divisi', 'inventaris', 'karyawan', 'kategori', 'laporan', 'logs', 'mutasi', 'pengguna'
+];
+
+if (hasRole('teknisi') && in_array($page, $restrictedPages)) {
+    header('Location: index.php?page=dashboard');
+    exit();
+}
+
 include __DIR__ . '/views/header.php';
 
 if (file_exists($file)) {

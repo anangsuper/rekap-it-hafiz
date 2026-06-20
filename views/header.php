@@ -187,6 +187,7 @@ if (!function_exists('get_branch_badge_style')) {
                     </a>
                 </li>
 
+                <?php if (hasRole('admin')): ?>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle <?= in_array($page, ['cabang', 'divisi', 'karyawan']) ? 'active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown">
                         <i class="bi bi-building me-1"></i> Master
@@ -208,6 +209,7 @@ if (!function_exists('get_branch_badge_style')) {
                         <li><a class="dropdown-item" href="index.php?page=mutasi">Mutasi</a></li>
                     </ul>
                 </li>
+                <?php endif; ?>
 
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle <?= in_array($page, ['maintenance', 'laporan_maintenance', 'perbaikan', 'sparepart']) ? 'active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown">
@@ -221,6 +223,7 @@ if (!function_exists('get_branch_badge_style')) {
                     </ul>
                 </li>
 
+                <?php if (hasRole('admin')): ?>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle <?= in_array($page, ['audit', 'logs', 'laporan']) ? 'active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown">
                         <i class="bi bi-file-earmark-bar-graph me-1"></i> Laporan
@@ -232,7 +235,6 @@ if (!function_exists('get_branch_badge_style')) {
                     </ul>
                 </li>
 
-                <?php if (hasRole('admin')): ?>
                 <li class="nav-item">
                     <a href="index.php?page=pengguna" class="nav-link <?= ($page == 'pengguna') ? 'active' : '' ?>">
                         <i class="bi bi-shield-lock me-1"></i> Admin
