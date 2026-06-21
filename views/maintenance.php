@@ -9,7 +9,7 @@ $cabangModel = new Cabang($conn);
 
 $sub = $_GET['sub'] ?? 'history';
 
-// Handle form submissions based on sub-page
+// Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['tambah']) && $sub === 'history') {
         $data = [
@@ -25,20 +25,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header("Location: index.php?page=maintenance&status=success");
             exit();
         }
-    } elseif (isset($_POST['proses_massal']) && $sub === 'massal') {
-        $selected_assets = $_POST['asset_ids'] ?? [];
-        if (!empty($selected_assets)) {
-            $commonData = [
-                'tanggal' => $_POST['tanggal'],
-                'teknisi' => $_POST['teknisi'],
-                'temuan' => $_POST['temuan'],
-                'tindakan' => $_POST['tindakan'],
-                'rekomendasi' => $_POST['rekomendasi']
-            ];
-            if ($maintenanceModel->createBulk($selected_assets, $commonData)) {
-                header("Location: index.php?page=maintenance&sub=history&status=mass_success");
-                exit();
+    } elseif (isset($_POST['proses_massal_final']) && $sub === 'massal') {
+        // Final Processing
+        $asset_ids = $_POST['asset_ids'];
+        $conn->beginTransaction();
+        try {
+            foreach ($asset_ids as $id) {
+                $data = [
+                    'asset_id' => $id,
+                    'tanggal' => $_POST['tanggal'][$id],
+                    'teknisi' => $_POST['teknisi'][$id],
+                    'temuan' => $_POST['temuan'][$id],
+                    'tindakan' => $_POST['tindakan'][$id],
+                    'rekomendasi' => $_POST['rekomendasi'][$id],
+                    'id_detail_jadwal' => null
+                ];
+                $maintenanceModel->create($data);
             }
+            $conn->commit();
+            header("Location: index.php?page=maintenance&sub=history&status=mass_success");
+            exit();
+        } catch (Exception $e) {
+            $conn->rollBack();
+            $error = "Gagal memproses maintenance massal.";
         }
     }
 }
@@ -121,29 +130,33 @@ $assets = $id_cabang ? $assetModel->getAll($id_cabang) : [];
 </div>
 <?php else: ?>
 <!-- Massal Content -->
-<div class="card p-4 mb-4">
-    <form method="GET" action="index.php" class="row g-3">
-        <input type="hidden" name="page" value="maintenance">
-        <input type="hidden" name="sub" value="massal">
-        <div class="col-md-6">
-            <label class="form-label fw-bold">Pilih Cabang untuk Maintenance</label>
-            <div class="input-group">
-                <select name="id_cabang" class="form-select" onchange="this.form.submit()">
-                    <option value="">-- Pilih Cabang --</option>
-                    <?php foreach ($cabangs as $c): ?>
-                        <option value="<?= $c['id'] ?>" <?= ($id_cabang == $c['id']) ? 'selected' : '' ?>><?= $c['nama_cabang'] ?></option>
-                    <?php endforeach; ?>
-                </select>
-                <button type="submit" class="btn btn-primary">Muat Aset</button>
-            </div>
-        </div>
-    </form>
-</div>
+<?php 
+$stage = $_POST['stage'] ?? 'select';
+$selected_ids = $_POST['asset_ids'] ?? [];
+?>
 
-<?php if ($id_cabang): ?>
 <form method="POST">
-    <div class="row">
-        <div class="col-md-8">
+    <?php if ($stage === 'select'): ?>
+        <div class="card p-4 mb-4">
+            <form method="GET" action="index.php" class="row g-3">
+                <input type="hidden" name="page" value="maintenance">
+                <input type="hidden" name="sub" value="massal">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Pilih Cabang untuk Maintenance</label>
+                    <div class="input-group">
+                        <select name="id_cabang" class="form-select" onchange="this.form.submit()">
+                            <option value="">-- Pilih Cabang --</option>
+                            <?php foreach ($cabangs as $c): ?>
+                                <option value="<?= $c['id'] ?>" <?= ($id_cabang == $c['id']) ? 'selected' : '' ?>><?= $c['nama_cabang'] ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <button type="submit" class="btn btn-primary">Muat Aset</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <?php if ($id_cabang): ?>
             <div class="card p-4">
                 <h5 class="fw-bold mb-3">Daftar Komputer / Aset</h5>
                 <div class="table-responsive">
@@ -153,84 +166,59 @@ $assets = $id_cabang ? $assetModel->getAll($id_cabang) : [];
                                 <th width="40"><input type="checkbox" id="checkAll" class="form-check-input"></th>
                                 <th>Kode Aset</th>
                                 <th>Nama Aset</th>
-                                <th>Kondisi</th>
-                                <th>Pemegang</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php if (empty($assets)): ?>
-                                <tr><td colspan="5" class="text-center">Tidak ada aset di cabang ini.</td></tr>
-                            <?php else: ?>
-                                <?php foreach ($assets as $a): ?>
-                                <tr>
-                                    <td><input type="checkbox" name="asset_ids[]" value="<?= $a['id'] ?>" class="form-check-input asset-checkbox"></td>
-                                    <td><span class="badge bg-light text-dark"><?= $a['kode_aset'] ?></span></td>
-                                    <td><strong><?= $a['nama_aset'] ?></strong></td>
-                                    <td><?= $a['kondisi'] ?></td>
-                                    <td><?= $a['nama_karyawan'] ?? '-' ?></td>
-                                </tr>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
+                            <?php foreach ($assets as $a): ?>
+                            <tr>
+                                <td><input type="checkbox" name="asset_ids[]" value="<?= $a['id'] ?>" class="form-check-input asset-checkbox"></td>
+                                <td><?= $a['kode_aset'] ?></td>
+                                <td><?= $a['nama_aset'] ?></td>
+                            </tr>
+                            <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
+                <button type="submit" name="stage" value="review" class="btn btn-primary" id="btnNext" disabled>Lanjut ke Edit Detail</button>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card p-4 sticky-top" style="top: 100px; z-index: 1;">
-                <h5 class="fw-bold mb-3">Detail Maintenance</h5>
-                <div class="mb-3">
-                    <label class="form-label">Tanggal</label>
-                    <input type="date" name="tanggal" class="form-control" value="<?= date('Y-m-d') ?>" required>
+        <?php endif; ?>
+    <?php elseif ($stage === 'review'): ?>
+        <input type="hidden" name="stage" value="review">
+        <h5 class="fw-bold mb-4">Edit Detail Maintenance Aset Terpilih</h5>
+        <?php foreach ($selected_ids as $id): 
+            $a = $assetModel->getById($id); ?>
+            <div class="card p-4 mb-3 border-0 shadow-sm">
+                <h6 class="fw-bold text-primary mb-3"><?= $a['nama_aset'] ?> (<?= $a['kode_aset'] ?>)</h6>
+                <input type="hidden" name="asset_ids[]" value="<?= $id ?>">
+                <div class="row g-3">
+                    <div class="col-md-2"><input type="date" name="tanggal[<?= $id ?>]" class="form-control" value="<?= date('Y-m-d') ?>" required></div>
+                    <div class="col-md-2"><input type="text" name="teknisi[<?= $id ?>]" class="form-control" placeholder="Teknisi" required></div>
+                    <div class="col-md-3"><input type="text" name="temuan[<?= $id ?>]" class="form-control" placeholder="Temuan"></div>
+                    <div class="col-md-3"><input type="text" name="tindakan[<?= $id ?>]" class="form-control" placeholder="Tindakan"></div>
+                    <div class="col-md-2"><input type="text" name="rekomendasi[<?= $id ?>]" class="form-control" placeholder="Rekomendasi"></div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Teknisi</label>
-                    <input type="text" name="teknisi" class="form-control" placeholder="Nama Teknisi" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Temuan</label>
-                    <textarea name="temuan" class="form-control" rows="2" placeholder="Sama untuk semua aset"></textarea>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Tindakan</label>
-                    <textarea name="tindakan" class="form-control" rows="2" placeholder="Sama untuk semua aset"></textarea>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Rekomendasi</label>
-                    <textarea name="rekomendasi" class="form-control" rows="2"></textarea>
-                </div>
-                <hr>
-                <div id="selection-count" class="mb-3 small fw-bold text-primary">0 Aset Terpilih</div>
-                <button type="submit" name="proses_massal" class="btn btn-success w-100 py-2 fw-bold" id="btnSubmit" disabled>
-                    <i class="bi bi-save me-2"></i> PROSES MAINTENANCE
-                </button>
             </div>
-        </div>
-    </div>
+        <?php endforeach; ?>
+        <button type="submit" name="proses_massal_final" class="btn btn-success btn-lg px-5">Simpan Semua</button>
+    <?php endif; ?>
 </form>
 
 <script>
     const checkAll = document.getElementById('checkAll');
     const checkboxes = document.querySelectorAll('.asset-checkbox');
-    const countLabel = document.getElementById('selection-count');
-    const btnSubmit = document.getElementById('btnSubmit');
-
-    function updateCount() {
-        const checkedCount = document.querySelectorAll('.asset-checkbox:checked').length;
-        countLabel.innerText = checkedCount + " Aset Terpilih";
-        btnSubmit.disabled = checkedCount === 0;
-    }
+    const btnNext = document.getElementById('btnNext');
 
     if (checkAll) {
         checkAll.addEventListener('change', function() {
             checkboxes.forEach(cb => cb.checked = this.checked);
-            updateCount();
+            btnNext.disabled = !this.checked;
         });
     }
 
     checkboxes.forEach(cb => {
-        cb.addEventListener('change', updateCount);
+        cb.addEventListener('change', function() {
+            btnNext.disabled = document.querySelectorAll('.asset-checkbox:checked').length === 0;
+        });
     });
 </script>
-<?php endif; ?>
 <?php endif; ?>
