@@ -212,7 +212,8 @@ $selected_ids = $_POST['asset_ids'] ?? [];
                 <div class="col-md-2"><select id="all_status" class="form-select"><option value="Baik">Baik</option><option value="Perlu Perbaikan">Perlu Perbaikan</option><option value="Rusak">Rusak</option></select></div>
                 <div class="col-md-2"><input type="text" id="all_temuan" class="form-control" placeholder="Temuan"></div>
                 <div class="col-md-2"><input type="text" id="all_tindakan" class="form-control" placeholder="Tindakan"></div>
-                <div class="col-md-2"><button type="button" class="btn btn-sm btn-outline-primary w-100" onclick="applyToAll()">Terapkan</button></div>
+                <div class="col-md-2"><input type="text" id="all_rekomendasi" class="form-control" placeholder="Rekomendasi"></div>
+                <div class="col-md-12"><button type="button" class="btn btn-sm btn-outline-primary w-100" onclick="applyToAll()">Terapkan ke Semua</button></div>
             </div>
         </div>
 
@@ -233,6 +234,7 @@ $selected_ids = $_POST['asset_ids'] ?? [];
                     </div>
                     <div class="col-md-3"><input type="text" name="temuan[<?= $id ?>]" class="form-control row-temuan" placeholder="Temuan"></div>
                     <div class="col-md-3"><input type="text" name="tindakan[<?= $id ?>]" class="form-control row-tindakan" placeholder="Tindakan"></div>
+                    <div class="col-md-2"><input type="text" name="rekomendasi[<?= $id ?>]" class="form-control row-rekomendasi" placeholder="Rekomendasi"></div>
                 </div>
             </div>
         <?php endforeach; ?>
@@ -240,7 +242,7 @@ $selected_ids = $_POST['asset_ids'] ?? [];
 
         <script>
             function applyToAll() {
-                const fields = ['tanggal', 'teknisi', 'status', 'temuan', 'tindakan'];
+                const fields = ['tanggal', 'teknisi', 'status', 'temuan', 'tindakan', 'rekomendasi'];
                 fields.forEach(field => {
                     const allVal = document.getElementById('all_' + field).value;
                     if (allVal) {
