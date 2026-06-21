@@ -145,7 +145,7 @@ $assets = $assetModel->getAll();
                                     <option value="<?= $a['id'] ?>" 
                                             data-kondisi="<?= $a['kondisi'] ?>"
                                             data-lokasi="<?= $a['nama_cabang'] ?> - <?= $a['nama_divisi'] ?>">
-                                        <?= $a['kode_aset'] ?> - <?= $a['nama_aset'] ?>
+                                        [<?= $a['kode_aset'] ?>] <?= $a['nama_aset'] ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
