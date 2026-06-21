@@ -49,7 +49,7 @@ try {
     <div class="col-md-3">
         <div class="lux-card" style="background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);">
             <div class="card-body p-4 position-relative text-white">
-                <div class="position-absolute top-0 end-0 p-3 opacity-20" style="font-size: 5rem; transform: translate(20%, -20%);">
+                <div class="position-absolute top-0 end-0 p-3 opacity-20" style="font-size: 5rem; transform: translate(20%, -20%); pointer-events: none; z-index: 0;">
                     <i class="bi bi-box-seam"></i>
                 </div>
                 <div class="small fw-bold mb-1 opacity-80">TOTAL ASSETS</div>
@@ -67,7 +67,7 @@ try {
     <div class="col-md-3">
         <div class="lux-card" style="background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);">
             <div class="card-body p-4 position-relative text-white">
-                <div class="position-absolute top-0 end-0 p-3 opacity-20" style="font-size: 5rem; transform: translate(20%, -20%);">
+                <div class="position-absolute top-0 end-0 p-3 opacity-20" style="font-size: 5rem; transform: translate(20%, -20%); pointer-events: none; z-index: 0;">
                     <i class="bi bi-check2-circle"></i>
                 </div>
                 <div class="small fw-bold mb-1 opacity-80">MAINTENANCE</div>
@@ -85,7 +85,7 @@ try {
     <div class="col-md-3">
         <div class="lux-card" style="background: linear-gradient(135deg, #f59e0b 0%, #ec4899 100%);">
             <div class="card-body p-4 position-relative text-white">
-                <div class="position-absolute top-0 end-0 p-3 opacity-20" style="font-size: 5rem; transform: translate(20%, -20%);">
+                <div class="position-absolute top-0 end-0 p-3 opacity-20" style="font-size: 5rem; transform: translate(20%, -20%); pointer-events: none; z-index: 0;">
                     <i class="bi bi-exclamation-triangle"></i>
                 </div>
                 <div class="small fw-bold mb-1 opacity-80">ACTIVE REPAIRS</div>
@@ -103,7 +103,7 @@ try {
     <div class="col-md-3">
         <div class="lux-card" style="background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);">
             <div class="card-body p-4 position-relative text-white">
-                <div class="position-absolute top-0 end-0 p-3 opacity-20" style="font-size: 5rem; transform: translate(20%, -20%);">
+                <div class="position-absolute top-0 end-0 p-3 opacity-20" style="font-size: 5rem; transform: translate(20%, -20%); pointer-events: none; z-index: 0;">
                     <i class="bi bi-wallet2"></i>
                 </div>
                 <div class="small fw-bold mb-1 opacity-80">REPAIR COSTS</div>
