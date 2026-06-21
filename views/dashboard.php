@@ -33,6 +33,7 @@ try {
         box-shadow: var(--shadow-3d);
         position: relative;
         overflow: hidden;
+        z-index: 1; /* Explicitly low z-index */
     }
     .lux-card:hover {
         transform: translateY(-10px) scale(1.02);
