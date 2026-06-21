@@ -185,6 +185,4 @@ class Maintenance {
         $stmt->execute();
         return $stmt->fetchAll();
     }
-
-
-?>
+}
