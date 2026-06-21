@@ -271,23 +271,5 @@ $selected_ids = $_POST['asset_ids'] ?? [];
         });
     });
 </script>
-
-<script>
-    const checkAll = document.getElementById('checkAll');
-    const checkboxes = document.querySelectorAll('.asset-checkbox');
-    const btnNext = document.getElementById('btnNext');
-
-    if (checkAll) {
-        checkAll.addEventListener('change', function() {
-            checkboxes.forEach(cb => cb.checked = this.checked);
-            btnNext.disabled = !this.checked;
-        });
-    }
-
-    checkboxes.forEach(cb => {
-        cb.addEventListener('change', function() {
-            btnNext.disabled = document.querySelectorAll('.asset-checkbox:checked').length === 0;
-        });
-    });
-</script>
 <?php endif; ?>
+
