@@ -286,10 +286,43 @@ if (!function_exists('get_branch_badge_style')) {
                 <div class="small fw-bold" id="realtime-clock">Loading time...</div>
                 <div class="text-muted" style="font-size: 0.7rem;">Status: <span class="text-success fw-bold">Online</span></div>
             </div>
+<?php
+require_once 'models/Maintenance.php';
+$mModel = new Maintenance($conn);
+$notifications = $mModel->getUpcomingNotifications(7);
+$notifCount = count($notifications);
+?>
+<!DOCTYPE html>
+...
             <div class="vr opacity-25"></div>
-            <button class="btn btn-light btn-sm rounded-circle"><i class="bi bi-bell"></i></button>
+            <div class="dropdown">
+                <button class="btn btn-light btn-sm rounded-circle position-relative" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-bell"></i>
+                    <?php if ($notifCount > 0): ?>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            <?= $notifCount ?>
+                        </span>
+                    <?php endif; ?>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow" style="width: 300px;">
+                    <li class="px-3 py-2 border-bottom fw-bold">Notifikasi Maintenance (7 Hari Kedepan)</li>
+                    <?php if ($notifCount === 0): ?>
+                        <li class="px-3 py-2 text-muted small">Tidak ada maintenance</li>
+                    <?php else: ?>
+                        <?php foreach ($notifications as $n): ?>
+                            <li>
+                                <a class="dropdown-item py-2" href="index.php?page=maintenance">
+                                    <div class="small fw-bold text-truncate"><?= $n['kode_aset'] ?> - <?= $n['nama_aset'] ?></div>
+                                    <div class="small text-muted">Tanggal: <?= date('d M Y', strtotime($n['tanggal'])) ?></div>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </ul>
+            </div>
         </div>
     </div>
+...
 
     <div class="content-body">
         <div class="animate-fade-in">

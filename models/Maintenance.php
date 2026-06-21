@@ -172,16 +172,19 @@ class Maintenance {
         return $stmt->fetchAll();
     }
 
-    public function getYearlyStats($id_cabang, $tahun) {
-        $query = "SELECT MONTH(tanggal) as bulan, COUNT(*) as jumlah 
-                  FROM maintenance m
+    public function getUpcomingNotifications($days = 7) {
+        // Find maintenance tasks scheduled within the next $days days
+        $query = "SELECT m.*, a.nama_aset, a.kode_aset 
+                  FROM " . $this->table . " m
                   JOIN assets a ON m.asset_id = a.id
-                  WHERE a.id_cabang = :id_cabang AND YEAR(tanggal) = :tahun
-                  GROUP BY MONTH(tanggal)";
+                  WHERE m.tanggal BETWEEN CURRENT_DATE AND DATE_ADD(CURRENT_DATE, INTERVAL :days DAY)
+                  ORDER BY m.tanggal ASC";
+        
         $stmt = $this->conn->prepare($query);
-        $stmt->execute(['id_cabang' => $id_cabang, 'tahun' => $tahun]);
+        $stmt->bindParam(':days', $days, PDO::PARAM_INT);
+        $stmt->execute();
         return $stmt->fetchAll();
     }
-}
+
 
 ?>
