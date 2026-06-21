@@ -55,7 +55,7 @@ if (!function_exists('get_branch_badge_style')) {
             padding: 12px 0;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            z-index: 1030; /* Ensure this is below modals and their backdrops */
+            z-index: 3000; /* Increased to ensure it's above dashboard content */
         }
 
         .modal {
