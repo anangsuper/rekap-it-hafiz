@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     } elseif (isset($_POST['proses_massal_final']) && $sub === 'massal') {
         // Final Processing
-        $asset_ids = $_POST['asset_ids'];
+        $asset_ids = $_POST['asset_ids'] ?? [];
         $conn->beginTransaction();
         try {
             foreach ($asset_ids as $id) {
@@ -39,7 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     'temuan' => $_POST['temuan'][$id],
                     'tindakan' => $_POST['tindakan'][$id],
                     'rekomendasi' => $_POST['rekomendasi'][$id],
-                    'status' => $_POST['status'][$id] // Added
+                    'status' => $_POST['status'][$id],
+                    'id_detail_jadwal' => null
                 ];
                 $maintenanceModel->create($data);
             }
@@ -48,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit();
         } catch (Exception $e) {
             $conn->rollBack();
-            $error = "Gagal memproses maintenance massal.";
+            $error = "Gagal memproses maintenance massal: " . $e->getMessage();
         }
     }
 }
