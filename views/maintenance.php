@@ -201,6 +201,9 @@ $selected_ids = $_POST['asset_ids'] ?? [];
         </div>
     <?php elseif ($stage === 'review'): ?>
         <input type="hidden" name="stage" value="review">
+        <?php foreach ($selected_ids as $id): ?>
+            <input type="hidden" name="asset_ids[]" value="<?= $id ?>">
+        <?php endforeach; ?>
         <h5 class="fw-bold mb-4">Edit Detail Maintenance Aset Terpilih</h5>
         
         <!-- Apply to All -->
