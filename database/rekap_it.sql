@@ -79,7 +79,10 @@ CREATE TABLE IF NOT EXISTS maintenance (
     asset_id INT NOT NULL,
     tanggal DATE NOT NULL,
     teknisi VARCHAR(100),
-    keterangan TEXT,
+    temuan TEXT,
+    tindakan TEXT,
+    rekomendasi TEXT,
+    status ENUM('Baik', 'Perlu Perbaikan', 'Rusak') DEFAULT 'Baik',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (asset_id) REFERENCES assets(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
