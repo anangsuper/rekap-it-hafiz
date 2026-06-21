@@ -28,7 +28,7 @@ try {
                 <div class="text-white small fw-bold mb-1 opacity-75">TOTAL ASSETS</div>
                 <h2 class="text-white fw-800 mb-0"><?= $totalAssets ?></h2>
                 <div class="mt-3">
-                    <span class="badge bg-white bg-opacity-20 text-white rounded-pill small">
+                    <span class="badge bg-white bg-opacity-90 text-dark rounded-pill small">
                         <i class="bi bi-arrow-up-right me-1"></i> Active devices
                     </span>
                 </div>
@@ -46,7 +46,7 @@ try {
                 <div class="text-white small fw-bold mb-1 opacity-75">MAINTENANCE</div>
                 <h2 class="text-white fw-800 mb-0"><?= $totalMaintenance ?></h2>
                 <div class="mt-3">
-                    <span class="badge bg-white bg-opacity-20 text-white rounded-pill small">
+                    <span class="badge bg-white bg-opacity-90 text-dark rounded-pill small">
                         <i class="bi bi-calendar-event me-1"></i> This month
                     </span>
                 </div>
@@ -64,7 +64,7 @@ try {
                 <div class="text-white small fw-bold mb-1 opacity-75">ACTIVE REPAIRS</div>
                 <h2 class="text-white fw-800 mb-0"><?= $totalRepairs ?></h2>
                 <div class="mt-3">
-                    <span class="badge bg-white bg-opacity-20 text-white rounded-pill small">
+                    <span class="badge bg-white bg-opacity-90 text-dark rounded-pill small">
                         <i class="bi bi-clock-history me-1"></i> In progress
                     </span>
                 </div>
@@ -82,7 +82,7 @@ try {
                 <div class="text-white small fw-bold mb-1 opacity-75">REPAIR COSTS</div>
                 <h2 class="text-white fw-800 mb-0 text-nowrap" style="font-size: 1.5rem;">Rp <?= number_format($totalCost, 0, ',', '.') ?></h2>
                 <div class="mt-3">
-                    <span class="badge bg-white bg-opacity-20 text-white rounded-pill small">
+                    <span class="badge bg-white bg-opacity-90 text-dark rounded-pill small">
                         <i class="bi bi-graph-up me-1"></i> Current period
                     </span>
                 </div>
