@@ -17,16 +17,43 @@ try {
 }
 ?>
 
+<style>
+    :root {
+        --glass-bg: rgba(255, 255, 255, 0.7);
+        --glass-border: rgba(255, 255, 255, 0.3);
+        --shadow-3d: 0 10px 30px -10px rgba(0,0,0,0.2), 0 5px 15px -5px rgba(0,0,0,0.1);
+        --shadow-hover: 0 20px 40px -10px rgba(0,0,0,0.3);
+    }
+    .lux-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(15px);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: var(--shadow-3d);
+        position: relative;
+        overflow: hidden;
+    }
+    .lux-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: var(--shadow-hover);
+    }
+    .fw-800 { font-weight: 800; }
+    .fw-700 { font-weight: 700; }
+    .transition-hover { transition: all 0.3s ease; border: 1px solid transparent !important; }
+    .transition-hover:hover { background-color: #fff !important; border-color: var(--primary-light) !important; transform: translateY(-5px); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.05); }
+</style>
+
 <div class="row g-4 mb-5 animate-fade-in">
     <!-- Stat Card 1 -->
     <div class="col-md-3">
-        <div class="card border-0 overflow-hidden" style="background: linear-gradient(135deg, #6366f1 0%, #4361ee 100%);">
-            <div class="card-body p-4 position-relative">
-                <div class="position-absolute top-0 end-0 p-3 opacity-10" style="font-size: 5rem; transform: translate(20%, -20%);">
+        <div class="lux-card" style="background: linear-gradient(135deg, #6366f1 0%, #4361ee 100%);">
+            <div class="card-body p-4 position-relative text-white">
+                <div class="position-absolute top-0 end-0 p-3 opacity-20" style="font-size: 5rem; transform: translate(20%, -20%);">
                     <i class="bi bi-box-seam"></i>
                 </div>
-                <div class="text-white small fw-bold mb-1 opacity-75">TOTAL ASSETS</div>
-                <h2 class="text-white fw-800 mb-0"><?= $totalAssets ?></h2>
+                <div class="small fw-bold mb-1 opacity-80">TOTAL ASSETS</div>
+                <h2 class="fw-800 mb-0"><?= $totalAssets ?></h2>
                 <div class="mt-3">
                     <span class="badge bg-white bg-opacity-90 text-dark rounded-pill small">
                         <i class="bi bi-arrow-up-right me-1"></i> Active devices
@@ -38,13 +65,13 @@ try {
 
     <!-- Stat Card 2 -->
     <div class="col-md-3">
-        <div class="card border-0 overflow-hidden" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
-            <div class="card-body p-4 position-relative">
-                <div class="position-absolute top-0 end-0 p-3 opacity-10" style="font-size: 5rem; transform: translate(20%, -20%);">
+        <div class="lux-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+            <div class="card-body p-4 position-relative text-white">
+                <div class="position-absolute top-0 end-0 p-3 opacity-20" style="font-size: 5rem; transform: translate(20%, -20%);">
                     <i class="bi bi-check2-circle"></i>
                 </div>
-                <div class="text-white small fw-bold mb-1 opacity-75">MAINTENANCE</div>
-                <h2 class="text-white fw-800 mb-0"><?= $totalMaintenance ?></h2>
+                <div class="small fw-bold mb-1 opacity-80">MAINTENANCE</div>
+                <h2 class="fw-800 mb-0"><?= $totalMaintenance ?></h2>
                 <div class="mt-3">
                     <span class="badge bg-white bg-opacity-90 text-dark rounded-pill small">
                         <i class="bi bi-calendar-event me-1"></i> This month
@@ -56,13 +83,13 @@ try {
 
     <!-- Stat Card 3 -->
     <div class="col-md-3">
-        <div class="card border-0 overflow-hidden" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
-            <div class="card-body p-4 position-relative">
-                <div class="position-absolute top-0 end-0 p-3 opacity-10" style="font-size: 5rem; transform: translate(20%, -20%);">
+        <div class="lux-card" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+            <div class="card-body p-4 position-relative text-white">
+                <div class="position-absolute top-0 end-0 p-3 opacity-20" style="font-size: 5rem; transform: translate(20%, -20%);">
                     <i class="bi bi-exclamation-triangle"></i>
                 </div>
-                <div class="text-white small fw-bold mb-1 opacity-75">ACTIVE REPAIRS</div>
-                <h2 class="text-white fw-800 mb-0"><?= $totalRepairs ?></h2>
+                <div class="small fw-bold mb-1 opacity-80">ACTIVE REPAIRS</div>
+                <h2 class="fw-800 mb-0"><?= $totalRepairs ?></h2>
                 <div class="mt-3">
                     <span class="badge bg-white bg-opacity-90 text-dark rounded-pill small">
                         <i class="bi bi-clock-history me-1"></i> In progress
@@ -74,13 +101,13 @@ try {
 
     <!-- Stat Card 4 -->
     <div class="col-md-3">
-        <div class="card border-0 overflow-hidden" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
-            <div class="card-body p-4 position-relative">
-                <div class="position-absolute top-0 end-0 p-3 opacity-10" style="font-size: 5rem; transform: translate(20%, -20%);">
+        <div class="lux-card" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+            <div class="card-body p-4 position-relative text-white">
+                <div class="position-absolute top-0 end-0 p-3 opacity-20" style="font-size: 5rem; transform: translate(20%, -20%);">
                     <i class="bi bi-wallet2"></i>
                 </div>
-                <div class="text-white small fw-bold mb-1 opacity-75">REPAIR COSTS</div>
-                <h2 class="text-white fw-800 mb-0 text-nowrap" style="font-size: 1.5rem;">Rp <?= number_format($totalCost, 0, ',', '.') ?></h2>
+                <div class="small fw-bold mb-1 opacity-80">REPAIR COSTS</div>
+                <h2 class="fw-800 mb-0 text-nowrap" style="font-size: 1.5rem;">Rp <?= number_format($totalCost, 0, ',', '.') ?></h2>
                 <div class="mt-3">
                     <span class="badge bg-white bg-opacity-90 text-dark rounded-pill small">
                         <i class="bi bi-graph-up me-1"></i> Current period
