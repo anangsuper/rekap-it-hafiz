@@ -30,15 +30,15 @@ class Maintenance {
     }
 
     public function create($data) {
-        $query = "INSERT INTO " . $this->table . " (asset_id, tanggal, teknisi, temuan, tindakan, rekomendasi, id_detail_jadwal) 
-                  VALUES (:asset_id, :tanggal, :teknisi, :temuan, :tindakan, :rekomendasi, :id_detail_jadwal)";
+        $query = "INSERT INTO " . $this->table . " (asset_id, tanggal, teknisi, temuan, tindakan, rekomendasi, status, id_detail_jadwal) 
+                  VALUES (:asset_id, :tanggal, :teknisi, :temuan, :tindakan, :rekomendasi, :status, :id_detail_jadwal)";
         $stmt = $this->conn->prepare($query);
         return $stmt->execute($data);
     }
 
     public function createBulk($asset_ids, $commonData) {
-        $query = "INSERT INTO " . $this->table . " (asset_id, tanggal, teknisi, temuan, tindakan, rekomendasi) 
-                  VALUES (?, ?, ?, ?, ?, ?)";
+        $query = "INSERT INTO " . $this->table . " (asset_id, tanggal, teknisi, temuan, tindakan, rekomendasi, status) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->conn->prepare($query);
         
         $this->conn->beginTransaction();
@@ -50,7 +50,8 @@ class Maintenance {
                     $commonData['teknisi'],
                     $commonData['temuan'],
                     $commonData['tindakan'],
-                    $commonData['rekomendasi']
+                    $commonData['rekomendasi'],
+                    $commonData['status']
                 ]);
             }
             $this->conn->commit();
