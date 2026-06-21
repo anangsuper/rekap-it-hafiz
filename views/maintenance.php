@@ -210,8 +210,9 @@ $selected_ids = $_POST['asset_ids'] ?? [];
                 <div class="col-md-2"><input type="date" id="all_tanggal" class="form-control" value="<?= date('Y-m-d') ?>"></div>
                 <div class="col-md-2"><input type="text" id="all_teknisi" class="form-control" placeholder="Nama Teknisi"></div>
                 <div class="col-md-2"><select id="all_status" class="form-select"><option value="Baik">Baik</option><option value="Perlu Perbaikan">Perlu Perbaikan</option><option value="Rusak">Rusak</option></select></div>
-                <div class="col-md-3"><input type="text" id="all_temuan" class="form-control" placeholder="Temuan"></div>
-                <div class="col-md-3"><button type="button" class="btn btn-sm btn-outline-primary w-100" onclick="applyToAll()">Terapkan</button></div>
+                <div class="col-md-2"><input type="text" id="all_temuan" class="form-control" placeholder="Temuan"></div>
+                <div class="col-md-2"><input type="text" id="all_tindakan" class="form-control" placeholder="Tindakan"></div>
+                <div class="col-md-2"><button type="button" class="btn btn-sm btn-outline-primary w-100" onclick="applyToAll()">Terapkan</button></div>
             </div>
         </div>
 
