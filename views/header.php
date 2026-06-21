@@ -274,7 +274,7 @@ if (!function_exists('get_branch_badge_style')) {
         </div>
         <div class="d-none d-md-flex align-items-center gap-3">
             <div class="text-end">
-                <div class="small fw-bold">Kamis, 18 Juni 2026</div>
+                <div class="small fw-bold" id="realtime-clock">Loading time...</div>
                 <div class="text-muted" style="font-size: 0.7rem;">Status: <span class="text-success fw-bold">Online</span></div>
             </div>
             <div class="vr opacity-25"></div>
@@ -284,3 +284,12 @@ if (!function_exists('get_branch_badge_style')) {
 
     <div class="content-body">
         <div class="animate-fade-in">
+<script>
+    function updateClock() {
+        const now = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+        document.getElementById('realtime-clock').textContent = now.toLocaleDateString('id-ID', options);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+</script>
