@@ -294,44 +294,61 @@ $notifCount = count($notifications);
 ?>
 <!DOCTYPE html>
 ...
-            <div class="vr opacity-25"></div>
             <div class="dropdown">
-                <button class="btn btn-light btn-sm rounded-circle position-relative" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-bell"></i>
+                <button class="btn btn-light btn-sm rounded-circle position-relative p-2 border-0 shadow-sm" data-bs-toggle="dropdown" aria-expanded="false" id="notifDropdown">
+                    <i class="bi bi-bell fs-5 text-dark"></i>
                     <?php if ($notifCount > 0): ?>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-white" style="font-size: 0.6rem;">
                             <?= $notifCount ?>
                         </span>
                     <?php endif; ?>
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end shadow" style="width: 300px; z-index: 2000;">
-                    <li class="px-3 py-2 border-bottom fw-bold text-white">Notifikasi Maintenance (7 Hari Kedepan)</li>
-                    <?php if ($notifCount === 0): ?>
-                        <li class="px-3 py-2 text-muted small">Tidak ada maintenance</li>
-                    <?php else: ?>
-                        <?php foreach ($notifications as $n): ?>
-                            <li>
-                                <a class="dropdown-item py-2 text-white" href="index.php?page=maintenance">
-                                    <div class="small fw-bold text-truncate"><?= $n['kode_aset'] ?> - <?= $n['nama_aset'] ?></div>
-                                    <div class="small text-light">Tanggal: <?= date('d M Y', strtotime($n['tanggal'])) ?></div>
-                                </a>
-                            </li>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                    </ul>
+                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-3 animate-slide-down" style="width: 320px; border-radius: 20px; overflow: hidden; z-index: 9999;">
+                    <li class="px-4 py-3 border-bottom bg-light">
+                        <h6 class="m-0 fw-bold text-dark">Notifikasi Maintenance</h6>
+                        <small class="text-muted"><?= $notifCount ?> jadwal dalam 7 hari kedepan</small>
+                    </li>
+                    <div style="max-height: 300px; overflow-y: auto;">
+                        <?php if ($notifCount === 0): ?>
+                            <li class="px-4 py-3 text-muted small">Tidak ada jadwal maintenance</li>
+                        <?php else: ?>
+                            <?php foreach ($notifications as $n): ?>
+                                <li class="border-bottom">
+                                    <a class="dropdown-item px-4 py-3 text-dark transition-hover" href="index.php?page=maintenance">
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-primary bg-opacity-10 p-2 rounded-circle me-3">
+                                                <i class="bi bi-tools text-primary"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="fw-bold small text-truncate"><?= $n['kode_aset'] ?> - <?= $n['nama_aset'] ?></div>
+                                                <small class="text-muted"><?= date('d M Y', strtotime($n['tanggal'])) ?></small>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </div>
-                    </div>
-                    </div>
-                    </nav>
+                    <li class="px-4 py-2 border-top bg-light text-center">
+                        <a href="index.php?page=maintenance" class="text-primary text-decoration-none small fw-bold">Lihat Semua</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
 
-                    <script>
-                    // Prevent dropdown from closing when clicking inside
-                    document.querySelectorAll('.dropdown-menu').forEach(function(menu) {
-                    menu.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    });
-                    });
-                    </script>
+<style>
+    .animate-slide-down {
+        animation: slideDown 0.3s ease-out forwards;
+    }
+    @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .transition-hover { transition: all 0.2s ease; }
+    .transition-hover:hover { background-color: #f8fafc; }
+</style>
 
 
     <div class="content-body">
