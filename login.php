@@ -359,56 +359,66 @@ if (isset($_POST['login'])) {
     <div class="blob blob-3"></div>
 </div>
 
-<div class="login-card">
-    <div class="brand-wrapper">
-        <div class="brand-icon">
-            <i class="fa-solid fa-laptop-code"></i>
+<div class="d-flex align-items-center justify-content-center w-100 h-100 flex-wrap gap-5">
+    
+    <!-- 3D Model Area -->
+    <div class="d-none d-lg-block" style="width: 460px;">
+        <div class="sketchfab-embed-wrapper lux-card" style="border-radius: 28px; overflow: hidden; height: 400px;"> 
+            <iframe title="retro_computer_-_pc_low_poly_3d_model" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/d93b923c8e284281891203bf4362e83c/embed" style="width: 100%; height: 100%;"> </iframe> 
         </div>
-        <h1 class="brand-name">Rekap IT</h1>
-        <p class="brand-tagline">Sistem Manajemen Aset & Maintenance</p>
     </div>
 
-    <?php if ($error): ?>
-        <div class="alert-custom">
-            <i class="bi bi-exclamation-triangle-fill"></i>
-            <div><?= htmlspecialchars($error) ?></div>
-        </div>
-    <?php endif; ?>
-
-    <form method="POST" autocomplete="off">
-        <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <div class="input-group-custom">
-                <span class="input-group-icon">
-                    <i class="bi bi-person"></i>
-                </span>
-                <input type="text" name="username" class="input-control-custom" id="username" placeholder="Masukkan username" required autofocus>
+    <div class="login-card">
+        <div class="brand-wrapper">
+            <div class="brand-icon">
+                <i class="fa-solid fa-laptop-code"></i>
             </div>
+            <h1 class="brand-name">Rekap IT</h1>
+            <p class="brand-tagline">Sistem Manajemen Aset & Maintenance</p>
         </div>
 
-        <div class="mb-4">
-            <label for="password" class="form-label">Password</label>
-            <div class="input-group-custom">
-                <span class="input-group-icon">
-                    <i class="bi bi-shield-lock"></i>
-                </span>
-                <input type="password" name="password" class="input-control-custom" id="password" placeholder="Masukkan password" required>
-                <button type="button" class="password-toggle" id="togglePassword">
-                    <i class="bi bi-eye" id="toggleIcon"></i>
-                </button>
+        <?php if ($error): ?>
+            <div class="alert-custom">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <div><?= htmlspecialchars($error) ?></div>
             </div>
+        <?php endif; ?>
+
+        <form method="POST" autocomplete="off">
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <div class="input-group-custom">
+                    <span class="input-group-icon">
+                        <i class="bi bi-person"></i>
+                    </span>
+                    <input type="text" name="username" class="input-control-custom" id="username" placeholder="Masukkan username" required autofocus>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="password" class="form-label">Password</label>
+                <div class="input-group-custom">
+                    <span class="input-group-icon">
+                        <i class="bi bi-shield-lock"></i>
+                    </span>
+                    <input type="password" name="password" class="input-control-custom" id="password" placeholder="Masukkan password" required>
+                    <button type="button" class="password-toggle" id="togglePassword">
+                        <i class="bi bi-eye" id="toggleIcon"></i>
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" name="login" class="btn btn-login w-100">
+                Masuk ke Sistem <i class="bi bi-arrow-right-short ms-1" style="font-size: 1.15rem; vertical-align: middle;"></i>
+            </button>
+        </form>
+
+        <div class="hint-box">
+            <div class="hint-title">Informasi Akses Default</div>
+            <p class="hint-text">
+                Username: <code>admin</code> &bull; Password: <code>password</code>
+            </p>
         </div>
-
-        <button type="submit" name="login" class="btn btn-login w-100">
-            Masuk ke Sistem <i class="bi bi-arrow-right-short ms-1" style="font-size: 1.15rem; vertical-align: middle;"></i>
-        </button>
-    </form>
-
-    <div class="hint-box">
-        <div class="hint-title">Informasi Akses Default</div>
-        <p class="hint-text">
-            Username: <code>admin</code> &bull; Password: <code>password</code>
-        </p>
     </div>
 </div>
 
