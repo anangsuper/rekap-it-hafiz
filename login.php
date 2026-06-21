@@ -532,7 +532,7 @@ if (isset($_POST['login'])) {
         let loadedModel;
 
         loader.load(
-            'retro_computer_-_pc_low_poly_3d_model.glb',
+            'smol_ame_in_an_upcycled_terrarium_hololiveen.glb',
             function (gltf) {
                 loadedModel = gltf.scene;
 
