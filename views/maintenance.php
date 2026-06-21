@@ -137,7 +137,9 @@ $selected_ids = $_POST['asset_ids'] ?? [];
 
 <form method="POST">
     <?php if ($stage === 'select'): ?>
-        <div class="card p-4 mb-4">
+        <form method="GET" action="index.php" class="card p-4 mb-4">
+            <input type="hidden" name="page" value="maintenance">
+            <input type="hidden" name="sub" value="massal">
             <div class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label fw-bold">Pilih Cabang untuk Maintenance</label>
@@ -152,33 +154,36 @@ $selected_ids = $_POST['asset_ids'] ?? [];
                     </div>
                 </div>
             </div>
-        </div>
+        </form>
 
         <?php if ($id_cabang): ?>
-            <div class="card p-4">
-                <h5 class="fw-bold mb-3">Daftar Komputer / Aset</h5>
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th width="40"><input type="checkbox" id="checkAll" class="form-check-input"></th>
-                                <th>Kode Aset</th>
-                                <th>Nama Aset</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($assets as $a): ?>
-                            <tr>
-                                <td><input type="checkbox" name="asset_ids[]" value="<?= $a['id'] ?>" class="form-check-input asset-checkbox"></td>
-                                <td><?= $a['kode_aset'] ?></td>
-                                <td><?= $a['nama_aset'] ?></td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+            <form method="POST">
+                <input type="hidden" name="stage" value="select">
+                <div class="card p-4">
+                    <h5 class="fw-bold mb-3">Daftar Komputer / Aset</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th width="40"><input type="checkbox" id="checkAll" class="form-check-input"></th>
+                                    <th>Kode Aset</th>
+                                    <th>Nama Aset</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($assets as $a): ?>
+                                <tr>
+                                    <td><input type="checkbox" name="asset_ids[]" value="<?= $a['id'] ?>" class="form-check-input asset-checkbox"></td>
+                                    <td><?= $a['kode_aset'] ?></td>
+                                    <td><?= $a['nama_aset'] ?></td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <button type="submit" name="stage" value="review" class="btn btn-primary" id="btnNext" disabled>Lanjut ke Edit Detail</button>
                 </div>
-                <button type="submit" name="stage" value="review" class="btn btn-primary" id="btnNext" disabled>Lanjut ke Edit Detail</button>
-            </div>
+            </form>
         <?php endif; ?>
     <?php elseif ($stage === 'review'): ?>
         <input type="hidden" name="stage" value="review">
