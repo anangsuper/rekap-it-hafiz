@@ -1,14 +1,8 @@
 <?php
-if (!function_exists('get_branch_badge_style')) {
-    function get_branch_badge_style($id_cabang) {
-        if (!$id_cabang) {
-            return 'background-color: rgba(108, 117, 125, 0.1) !important; color: #6c757d !important; border: 1px solid rgba(108, 117, 125, 0.2);';
-        }
-        // Golden ratio color distribution (137.5 degrees) for beautifully distinct colors
-        $hue = ($id_cabang * 137.5) % 360;
-        return "background-color: hsla($hue, 70%, 95%, 1) !important; color: hsla($hue, 75%, 28%, 1) !important; border: 1px solid hsla($hue, 70%, 85%, 0.5) !important;";
-    }
-}
+require_once 'models/Maintenance.php';
+$mModel = new Maintenance($conn);
+$notifications = $mModel->getUpcomingNotifications(7);
+$notifCount = count($notifications);
 ?>
 <!DOCTYPE html>
 <html lang="id">
