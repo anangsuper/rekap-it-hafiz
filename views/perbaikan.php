@@ -1,11 +1,11 @@
 <?php
-require_once 'models/Repair.php';
+require_once 'controllers/RepairController.php';
 require_once 'models/Asset.php';
 
-$repairModel = new Repair($conn);
+$repairController = new RepairController($conn);
 $assetModel = new Asset($conn);
 
-$repairs = $repairModel->getAll();
+$repairs = $repairController->index();
 $assets = $assetModel->getAll();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
         'asset_id' => $_POST['asset_id'],
         'keluhan' => $_POST['keluhan']
     ];
-    if ($repairModel->create($data)) {
+    if ($repairController->store($data)) {
         header("Location: index.php?page=perbaikan&status=success");
         exit();
     }
@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
         'status' => $_POST['status'],
         'tanggal_selesai' => ($_POST['status'] == 'Selesai') ? date('Y-m-d') : null
     ];
-    if ($repairModel->update($id, $data)) {
+    if ($repairController->update($id, $data)) {
         header("Location: index.php?page=perbaikan&status=updated");
         exit();
     }
