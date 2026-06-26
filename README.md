@@ -10,6 +10,7 @@ Rekap IT adalah aplikasi manajemen infrastruktur IT berbasis web yang dibangun u
 Sistem terpusat untuk mendata aset IT perusahaan dengan fitur:
 - **CRUD Aset:** Mengelola data detail (Kode, Serial Number, Lokasi/Cabang, Divisi, Pemegang).
 - **Kategorisasi:** Klasifikasi aset untuk memudahkan filtering dan pelaporan.
+- **Pewarnaan Dinamis (Dynamic Styling):** Penandaan visual otomatis (*dynamic badge*) berdasarkan cabang aset untuk mempermudah identifikasi lokasi fisik secara cepat.
 
 ### 2. Manajemen Pemeliharaan (Maintenance)
 - **Log Maintenance:** Pencatatan rutinitas pemeriksaan kondisi aset.
@@ -64,6 +65,7 @@ Sistem terpusat untuk mendata aset IT perusahaan dengan fitur:
 ## 📂 Struktur Direktori
 - `/config` : Konfigurasi koneksi database.
 - `/controllers` : Logic pemrosesan data (MVC pattern).
+- `/helpers` : Fungsi utilitas pendukung (Autentikasi, Paginasi, dan UI Styling Dinamis).
 - `/models` : Interaksi dengan tabel database.
 - `/views` : File tampilan antarmuka (UI).
 - `/database` : Skema database.
