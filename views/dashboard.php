@@ -12,8 +12,19 @@ try {
 
     $stmtCost = $conn->query("SELECT SUM(biaya) as total FROM repairs WHERE status = 'Selesai' AND MONTH(created_at) = MONTH(CURRENT_DATE())");
     $totalCost = $stmtCost->fetch()['total'] ?? 0;
+
+    // Tambahan: Aktivitas Terbaru
+    $stmtLogs = $conn->query("SELECT al.*, u.nama as user_nama FROM activity_logs al LEFT JOIN users u ON al.user_id = u.id ORDER BY al.created_at DESC LIMIT 5");
+    $recentLogs = $stmtLogs->fetchAll();
+
+    // Tambahan: Distribusi Aset per Cabang
+    $stmtBranch = $conn->query("SELECT c.nama_cabang, COUNT(a.id) as total FROM cabang c LEFT JOIN assets a ON c.id = a.id_cabang GROUP BY c.id");
+    $branchDistribution = $stmtBranch->fetchAll();
+
 } catch (PDOException $e) {
     $totalAssets = $totalMaintenance = $totalRepairs = $totalCost = 0;
+    $recentLogs = [];
+    $branchDistribution = [];
 }
 ?>
 
@@ -120,7 +131,8 @@ try {
 </div>
 
 <div class="row g-4 animate-fade-in" style="animation-delay: 0.1s;">
-    <div class="col-md-12">
+    <!-- Welcome Card -->
+    <div class="col-md-8">
         <div class="card p-4 border-0 shadow-sm mb-4">
             <div class="d-flex align-items-center justify-content-between mb-4">
                 <div class="d-flex align-items-center">
@@ -142,7 +154,7 @@ try {
                     <div class="p-4 rounded-4 bg-light bg-opacity-50 border border-white h-100 transition-hover">
                         <i class="bi bi-plus-circle-fill text-primary fs-3 mb-3 d-block"></i>
                         <h6 class="fw-700 text-dark">Input Inventaris</h6>
-                        <p class="small text-muted mb-3">Daftarkan aset perangkat keras baru ke dalam sistem.</p>
+                        <p class="small text-muted mb-3">Daftarkan aset baru.</p>
                         <a href="index.php?page=inventaris" class="btn btn-primary btn-sm w-100 text-white">Tambah Aset</a>
                     </div>
                 </div>
@@ -150,7 +162,7 @@ try {
                     <div class="p-4 rounded-4 bg-light bg-opacity-50 border border-white h-100 transition-hover">
                         <i class="bi bi-tools text-success fs-3 mb-3 d-block"></i>
                         <h6 class="fw-700 text-dark">Maintenance</h6>
-                        <p class="small text-muted mb-3">Catat hasil pengecekan rutin kesehatan sistem.</p>
+                        <p class="small text-muted mb-3">Catat hasil pengecekan.</p>
                         <a href="index.php?page=maintenance" class="btn btn-success btn-sm w-100 text-white" style="border-radius: 12px;">Catat Cek</a>
                     </div>
                 </div>
@@ -158,62 +170,48 @@ try {
                     <div class="p-4 rounded-4 bg-light bg-opacity-50 border border-white h-100 transition-hover">
                         <i class="bi bi-wrench-adjustable text-warning fs-3 mb-3 d-block"></i>
                         <h6 class="fw-700 text-dark">Tiket Perbaikan</h6>
-                        <p class="small text-muted mb-3">Pantau dan update status perbaikan aset yang rusak.</p>
+                        <p class="small text-muted mb-3">Pantau status perbaikan.</p>
                         <a href="index.php?page=perbaikan" class="btn btn-warning btn-sm w-100 fw-bold" style="border-radius: 12px;">Lihat Tiket</a>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Quick Start Guide -->
-        <div class="card p-4 border-0 shadow-sm bg-primary bg-opacity-10" style="border-radius: 28px;">
-            <h6 class="fw-800 mb-3"><i class="bi bi-lightbulb-fill text-warning me-2"></i> Panduan Cepat Penggunaan</h6>
-            <div class="row g-3">
-                <div class="col-md-3">
-                    <div class="d-flex">
-                        <div class="fw-800 text-primary me-3 fs-3">1</div>
-                        <div>
-                            <div class="fw-bold small">Data Kantor</div>
-                            <div class="text-muted" style="font-size: 0.7rem;">Isi data Cabang, Divisi, dan Karyawan terlebih dahulu.</div>
+    <!-- Aktivitas Terbaru -->
+    <div class="col-md-4">
+        <div class="card p-4 border-0 shadow-sm mb-4 h-100">
+            <h6 class="fw-800 mb-3 text-dark">Aktivitas Terkini</h6>
+            <div class="list-group list-group-flush">
+                <?php foreach ($recentLogs as $log): ?>
+                    <div class="list-group-item px-0 border-0">
+                        <div class="small fw-bold text-dark"><?= $log['action'] ?></div>
+                        <div class="text-muted" style="font-size: 0.75rem;">
+                            <?= $log['user_nama'] ?> - <?= date('d M, H:i', strtotime($log['created_at'])) ?>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="d-flex">
-                        <div class="fw-800 text-primary me-3 fs-3">2</div>
-                        <div>
-                            <div class="fw-bold small">Daftar Aset</div>
-                            <div class="text-muted" style="font-size: 0.7rem;">Masukkan semua perangkat IT Anda di menu Inventaris.</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="d-flex">
-                        <div class="fw-800 text-primary me-3 fs-3">3</div>
-                        <div>
-                            <div class="fw-bold small">Catat Aktivitas</div>
-                            <div class="text-muted" style="font-size: 0.7rem;">Lakukan Maintenance rutin atau catat Perbaikan jika rusak.</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="d-flex">
-                        <div class="fw-800 text-primary me-3 fs-3">4</div>
-                        <div>
-                            <div class="fw-bold small">Pantau Laporan</div>
-                            <div class="text-muted" style="font-size: 0.7rem;">Ekspor data ke Excel untuk kebutuhan administrasi Anda.</div>
-                        </div>
-                    </div>
-                </div>
+                <?php endforeach; ?>
             </div>
         </div>
-
     </div>
 </div>
 
-<style>
-    .fw-800 { font-weight: 800; }
-    .fw-700 { font-weight: 700; }
-    .transition-hover { transition: all 0.3s ease; border: 1px solid transparent !important; }
-    .transition-hover:hover { background-color: #fff !important; border-color: var(--primary-light) !important; transform: translateY(-5px); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.05); }
-</style>
+<!-- Distribusi Aset per Cabang -->
+<div class="row g-4 mb-5 animate-fade-in">
+    <div class="col-md-12">
+        <div class="card p-4 border-0 shadow-sm">
+            <h6 class="fw-800 mb-4 text-dark">Distribusi Aset per Cabang</h6>
+            <?php foreach ($branchDistribution as $branch): ?>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="small fw-bold text-muted"><?= $branch['nama_cabang'] ?></span>
+                        <span class="small fw-bold text-dark"><?= $branch['total'] ?> Aset</span>
+                    </div>
+                    <div class="progress" style="height: 8px; border-radius: 4px;">
+                        <div class="progress-bar bg-primary" role="progressbar" style="width: <?= ($totalAssets > 0) ? ($branch['total'] / $totalAssets * 100) : 0 ?>%" aria-valuenow="<?= $branch['total'] ?>" aria-valuemin="0" aria-valuemax="<?= $totalAssets ?>"></div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</div>
