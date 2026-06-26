@@ -22,15 +22,16 @@ class RepairController {
         return $result;
     }
     public function update($id, $data) {
-        // Fetch repair to get asset_id before updating
         $repairDetails = $this->model->getById($id);
         
         $result = $this->model->update($id, $data); 
         
         if ($result && $data['status'] === 'Selesai' && $repairDetails) {
-            // Update asset condition to 'Baik'
+            error_log("DEBUG: Sinkronisasi kondisi aset ID: " . $repairDetails['asset_id'] . " ke Baik (ID Perbaikan: $id)");
+            
             require_once __DIR__ . '/../models/Asset.php';
             $assetModel = new Asset($this->db);
+            // Force update condition to 'Baik'
             $assetModel->update($repairDetails['asset_id'], ['kondisi' => 'Baik'], $_SESSION['user_id']);
         }
         
