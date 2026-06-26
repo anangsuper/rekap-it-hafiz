@@ -19,11 +19,12 @@ function hasRole($allowedRoles) {
 /**
  * Membatasi akses ke halaman tertentu jika peran tidak sesuai.
  * @param array|string $allowedRoles
+ * @param string|null $redirectPage Halaman untuk redirect jika akses ditolak (default: dashboard)
  */
-function checkAccess($allowedRoles) {
+function checkAccess($allowedRoles, $redirectPage = 'dashboard') {
     if (!hasRole($allowedRoles)) {
-        // Redirect ke dashboard atau halaman error jika tidak punya akses
-        header('Location: index.php?page=dashboard&error=unauthorized');
+        // Log unauthorized access attempt if needed
+        header('Location: index.php?page=' . $redirectPage . '&error=unauthorized');
         exit();
     }
 }

@@ -22,9 +22,8 @@ $restrictedPages = [
     'audit', 'cabang', 'divisi', 'inventaris', 'karyawan', 'kategori', 'laporan', 'logs', 'mutasi', 'pengguna'
 ];
 
-if (hasRole('teknisi') && in_array($page, $restrictedPages)) {
-    header('Location: index.php?page=dashboard');
-    exit();
+if (in_array($page, $restrictedPages)) {
+    checkAccess('admin');
 }
 
 include __DIR__ . '/views/header.php';
