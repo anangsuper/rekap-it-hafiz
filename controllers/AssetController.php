@@ -2,16 +2,21 @@
 
 require_once __DIR__ . "/../models/Asset.php";
 require_once __DIR__ . "/../models/ActivityLog.php";
+require_once __DIR__ . "/../models/AssetHistory.php";
 
 class AssetController
 {
     private $assetModel;
     private $logModel;
+    private $historyModel;
+    private $db;
 
     public function __construct($db)
     {
+        $this->db = $db;
         $this->assetModel = new Asset($db);
         $this->logModel = new ActivityLog($db);
+        $this->historyModel = new AssetHistory($db);
     }
 
     public function index()
@@ -21,6 +26,7 @@ class AssetController
 
     public function store($data, $files)
     {
+        checkAccess(['admin']);
         try {
             $foto = '';
 
@@ -59,6 +65,7 @@ class AssetController
 
     public function update($id, $data, $files)
     {
+        checkAccess(['admin']);
         $existing = $this->assetModel->getById($id);
         $foto = $existing['foto'];
 
@@ -75,7 +82,7 @@ class AssetController
         }
 
         $data['foto'] = $foto;
-        $result = $this->assetModel->update($id, $data);
+        $result = $this->assetModel->update($id, $data, $_SESSION['user_id']);
         
         if ($result) {
             $this->logModel->add($_SESSION['user_id'], 'UPDATE_ASET', "Memperbarui data aset: " . $data['kode']);
@@ -86,6 +93,7 @@ class AssetController
 
     public function destroy($id)
     {
+        checkAccess(['admin']);
         $asset = $this->assetModel->getById($id);
         $result = $this->assetModel->delete($id);
         

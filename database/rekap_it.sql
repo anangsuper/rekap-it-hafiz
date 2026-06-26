@@ -60,6 +60,7 @@ CREATE TABLE IF NOT EXISTS assets (
     id_kategori INT,
     merk VARCHAR(50),
     model VARCHAR(100),
+    tanggal_kadaluarsa_garansi DATE NULL,
     id_cabang INT,
     id_divisi INT,
     id_karyawan INT,
@@ -71,6 +72,19 @@ CREATE TABLE IF NOT EXISTS assets (
     FOREIGN KEY (id_cabang) REFERENCES cabang(id) ON DELETE SET NULL,
     FOREIGN KEY (id_divisi) REFERENCES divisi(id) ON DELETE SET NULL,
     FOREIGN KEY (id_karyawan) REFERENCES karyawan(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 6.5 Asset History
+CREATE TABLE IF NOT EXISTS asset_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    asset_id INT NOT NULL,
+    user_id INT NOT NULL,
+    field_changed VARCHAR(100) NOT NULL,
+    old_value TEXT,
+    new_value TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (asset_id) REFERENCES assets(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 7. Maintenance

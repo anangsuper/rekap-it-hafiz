@@ -1,7 +1,10 @@
 <?php
+define('ROLE_ADMIN', 'admin');
+define('ROLE_TEKNISI', 'teknisi');
+
 /**
  * Mengecek apakah user memiliki peran yang diizinkan.
- * @param array|string $allowedRoles Peran yang diizinkan (misal: 'admin' atau ['admin', 'teknisi'])
+ * @param array|string $allowedRoles Peran yang diizinkan (misal: ROLE_ADMIN atau [ROLE_ADMIN, ROLE_TEKNISI])
  * @return bool
  */
 function hasRole($allowedRoles) {

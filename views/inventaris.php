@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
         'id_karyawan' => $_POST['id_karyawan'],
         'kondisi' => $_POST['kondisi']
     ];
-    if ($assetModel->update($id, $data)) {
+    if ($assetModel->update($id, $data, $_SESSION['user_id'])) {
         $logModel->add($_SESSION['user_id'], 'Update Aset', "Memperbarui aset: " . $data['nama_aset'] . " (" . $data['kode_aset'] . ")");
         header("Location: index.php?page=inventaris&status=updated");
         exit();

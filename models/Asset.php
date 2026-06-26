@@ -69,10 +69,25 @@ class Asset {
         return $stmt->execute($data);
     }
 
-    public function update($id, $data) {
+    public function update($id, $data, $user_id = null) {
+        $old_asset = $this->getById($id);
+        
         $sets = "";
         foreach ($data as $key => $value) {
             $sets .= "$key = :$key, ";
+            
+            // Log history if changed
+            if ($user_id && isset($old_asset[$key]) && $old_asset[$key] != $value) {
+                require_once 'AssetHistory.php';
+                $history = new AssetHistory($this->conn);
+                $history->create([
+                    'asset_id' => $id,
+                    'user_id' => $user_id,
+                    'field_changed' => $key,
+                    'old_value' => $old_asset[$key],
+                    'new_value' => $value
+                ]);
+            }
         }
         $sets = rtrim($sets, ", ");
         $query = "UPDATE " . $this->table . " SET $sets WHERE id = :id";
