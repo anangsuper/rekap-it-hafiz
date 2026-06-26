@@ -177,7 +177,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
                         <input type="text" id="searchInput" class="form-control shadow-sm mb-2" placeholder="Cari berdasarkan kode atau nama aset..." onkeyup="filterAssets()">
                         <select name="asset_id" id="assetSelect" class="form-select shadow-sm" required>
                             <?php foreach ($assets as $a): ?>
-                                <option value="<?= $a['id'] ?>"><?= $a['kode_aset'] ?> - <?= $a['nama_aset'] ?></option>
+                                <option value="<?= $a['id'] ?>">
+                                    <?= $a['kode_aset'] ?> - <?= $a['nama_aset'] ?> 
+                                    (Cabang: <?= $a['nama_cabang'] ?>, Kondisi: <?= $a['kondisi'] ?>)
+                                </option>
                             <?php endforeach; ?>
                         </select>
                     </div>
