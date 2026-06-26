@@ -128,7 +128,7 @@ try {
                         <i class="bi bi-stars fs-4"></i>
                     </div>
                     <div>
-                        <h5 class="fw-800 m-0 text-dark">Selamat Datang, <?= $_SESSION['nama'] ?>!</h5>
+                        <h5 class="fw-800 m-0 text-dark">Selamat Datang, <?= isset($_SESSION['nama']) ? htmlspecialchars($_SESSION['nama']) : 'Pengguna' ?>!</h5>
                         <p class="text-muted small m-0">Kelola infrastruktur IT Anda dengan presisi dan kemudahan.</p>
                     </div>
                 </div>
