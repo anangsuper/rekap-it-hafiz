@@ -17,129 +17,100 @@ $notifCount = count($notifications);
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
     <style>
-        @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap");
+        @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
         :root {
-            --primary-color: #4361ee;
-            --primary-light: rgba(67, 97, 238, 0.1);
-            --secondary-color: #3f37c9;
-            /* Vibrant gradient background */
-            --bg-body: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-            --navbar-bg: #0f172a;
-            --navbar-text: #94a3b8;
-            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-            --card-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            --glass-bg: rgba(255, 255, 255, 0.85);
+            /* Premium Futuristic Palette */
+            --bg-body: #050b18;
+            --navbar-bg: rgba(10, 16, 32, 0.7);
+            --glass-bg: rgba(15, 23, 42, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            
+            --primary-color: #38bdf8; /* Cyan */
+            --accent-color: #8b5cf6;  /* Deep Purple */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            
+            --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            --glass-blur: blur(12px);
         }
 
         body {
-            font-family: "Plus Jakarta Sans", sans-serif;
-            background: var(--bg-body);
+            font-family: "Inter", sans-serif;
+            background-color: var(--bg-body);
+            background-image: radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.05) 0%, transparent 40%),
+                              radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 40%);
             background-attachment: fixed;
             min-height: 100vh;
-            color: #1e293b;
-            letter-spacing: -0.01em;
+            color: var(--text-main);
             padding-top: 90px;
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
-        /* Navbar Modern */
-        .navbar-custom {
-            background: var(--navbar-bg);
-            padding: 12px 0;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            z-index: 3000; /* Increased to ensure it's above dashboard content */
         }
 
-        .modal {
-            z-index: 1060 !important;
-        }
-        .modal-backdrop {
-            z-index: 1050 !important;
+        /* Navbar Glassmorphism */
+        .navbar-custom {
+            background: var(--navbar-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 12px 0;
         }
 
         .navbar-brand h4 {
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            margin: 0;
-            font-size: 1.4rem;
-            background: linear-gradient(to right, #fff, #94a3b8);
+            color: white;
+            font-weight: 700;
+            background: linear-gradient(to right, #38bdf8, #8b5cf6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .nav-link {
-            color: var(--navbar-text) !important;
-            font-weight: 500;
-            font-size: 0.9rem;
-            padding: 10px 15px !important;
-            border-radius: 10px;
-            transition: 0.2s;
+            color: var(--text-muted) !important;
+            transition: 0.3s;
         }
 
         .nav-link:hover, .nav-link.active {
-            color: #fff !important;
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .nav-link.active {
-            background: var(--primary-color) !important;
-            box-shadow: 0 8px 15px -5px rgba(67, 97, 238, 0.4);
+            color: var(--primary-color) !important;
+            text-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
         }
 
         .dropdown-menu {
-            background: var(--navbar-bg);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 14px;
-            padding: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
         }
 
         .dropdown-item {
-            color: var(--navbar-text);
-            border-radius: 8px;
-            padding: 10px 15px;
-            font-size: 0.875rem;
-            transition: 0.2s;
+            color: var(--text-main);
         }
 
-        .dropdown-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: #fff;
-        }
-
-        /* Main Content */
-        .main-content {
-            padding: 30px 15px;
-            min-height: calc(100vh - 85px);
-        }
-
+        /* Glass Cards */
         .page-header {
             background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 20px 30px;
-            margin-bottom: 30px;
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
             border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.4);
             box-shadow: var(--card-shadow);
         }
 
-        /* Global UI Elements */
         .card {
-            border: 1px solid rgba(0, 0, 0, 0.03);
-            border-radius: 24px;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
             box-shadow: var(--card-shadow);
-            background: #fff;
+            color: var(--text-main);
         }
 
+        .table {
+            color: var(--text-main);
+        }
+        
         .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-            padding: 10px 24px;
-            border-radius: 14px;
-            font-weight: 600;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
         }
 
         /* Animations - Simplified without transforms on large wrappers */
