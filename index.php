@@ -4,6 +4,7 @@ session_start();
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/helpers/auth.php';
 require_once __DIR__ . '/helpers/pagination.php'; // Include pagination helper
+require_once __DIR__ . '/helpers/ui.php'; // Include UI helper
 
 if (!isset($_SESSION['user_id'])) {
     $currentPage = basename($_SERVER['PHP_SELF']);
