@@ -93,7 +93,13 @@ class Asset {
         $query = "UPDATE " . $this->table . " SET $sets WHERE id = :id";
         $data['id'] = $id;
         $stmt = $this->conn->prepare($query);
-        return $stmt->execute($data);
+        
+        try {
+            return $stmt->execute($data);
+        } catch (PDOException $e) {
+            error_log("ERROR: Asset::update failed for ID $id. Error: " . $e->getMessage());
+            return false;
+        }
     }
 
     public function delete($id) {

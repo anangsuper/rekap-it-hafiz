@@ -23,11 +23,12 @@ class RepairController {
     }
     public function update($id, $data) {
         $repairDetails = $this->model->getById($id);
+        error_log("DEBUG: RepairController::update status: '" . $data['status'] . "', repairDetails found: " . ($repairDetails ? 'yes' : 'no'));
         
         $result = $this->model->update($id, $data); 
         
         if ($result && $data['status'] === 'Selesai' && $repairDetails) {
-            error_log("DEBUG: Sinkronisasi kondisi aset ID: " . $repairDetails['asset_id'] . " ke Baik (ID Perbaikan: $id)");
+            error_log("DEBUG: Syncing condition for Asset ID: " . $repairDetails['asset_id']);
             
             require_once __DIR__ . '/../models/Asset.php';
             $assetModel = new Asset($this->db);
