@@ -5,8 +5,10 @@ require_once __DIR__ . '/../models/ActivityLog.php';
 class RepairController {
     private $model;
     private $logModel;
+    private $db; // Add this property
 
     public function __construct($db) { 
+        $this->db = $db; // Store the db connection
         $this->model = new Repair($db); 
         $this->logModel = new ActivityLog($db);
     }
