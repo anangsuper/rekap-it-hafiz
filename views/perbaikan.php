@@ -6,7 +6,8 @@ $repairController = new RepairController($conn);
 $assetModel = new Asset($conn);
 
 $repairs = $repairController->index();
-$assets = $assetModel->getAll();
+$id_cabang_filter = ($_SESSION['role'] === 'teknisi') ? $_SESSION['id_cabang'] : null;
+$assets = $assetModel->getAll($id_cabang_filter);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
     $data = [
@@ -179,7 +180,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
                             <?php foreach ($assets as $a): ?>
                                 <option value="<?= $a['id'] ?>">
                                     <?= $a['kode_aset'] ?> - <?= $a['nama_aset'] ?> 
-                                    (Cabang: <?= $a['nama_cabang'] ?>, Kondisi: <?= $a['kondisi'] ?>)
+                                    | Cabang: <?= $a['nama_cabang'] ?> 
+                                    | Kondisi: [<?= strtoupper($a['kondisi']) ?>]
                                 </option>
                             <?php endforeach; ?>
                         </select>
