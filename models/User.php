@@ -30,5 +30,22 @@ class User {
         $stmt = $this->conn->prepare("DELETE FROM " . $this->table . " WHERE id = ?");
         return $stmt->execute([$id]);
     }
+
+    public function update($id, $data) {
+        if (!empty($data['password'])) {
+            $query = "UPDATE " . $this->table . " 
+                      SET nama = :nama, username = :username, password = :password, role = :role, id_cabang = :id_cabang 
+                      WHERE id = :id";
+            $data['password'] = password_hash($data['password'], PASSWORD_BCRYPT);
+        } else {
+            $query = "UPDATE " . $this->table . " 
+                      SET nama = :nama, username = :username, role = :role, id_cabang = :id_cabang 
+                      WHERE id = :id";
+            unset($data['password']);
+        }
+        $data['id'] = $id;
+        $stmt = $this->conn->prepare($query);
+        return $stmt->execute($data);
+    }
 }
 ?>
