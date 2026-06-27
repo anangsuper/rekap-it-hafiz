@@ -98,6 +98,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
     <div class="d-flex align-items-center">
         <form method="GET" action="index.php" class="me-3">
             <input type="hidden" name="page" value="inventaris">
+            <?php if ($filter_kondisi): ?>
+                <input type="hidden" name="filter_kondisi" value="<?= htmlspecialchars($filter_kondisi) ?>">
+            <?php endif; ?>
             <div class="input-group input-group-sm shadow-sm" style="width: 250px;">
                 <span class="input-group-text bg-white border-end-0"><i class="bi bi-filter text-primary"></i></span>
                 <select name="filter_cabang" class="form-select border-start-0" onchange="this.form.submit()">
@@ -233,7 +236,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
                 </tbody>
             </table>
         </div>
-        <?= getPaginationControls($pageNumber, $totalPages, 'index.php?page=inventaris'.($id_cabang_filter ? '&filter_cabang='.$id_cabang_filter : '')) ?>
+        <?php 
+        $paginationUrl = 'index.php?page=inventaris';
+        if ($id_cabang_filter) {
+            $paginationUrl .= '&filter_cabang=' . urlencode($id_cabang_filter);
+        }
+        if ($filter_kondisi) {
+            $paginationUrl .= '&filter_kondisi=' . urlencode($filter_kondisi);
+        }
+        ?>
+        <?= getPaginationControls($pageNumber, $totalPages, $paginationUrl) ?>
     </div>
 </div>
 
