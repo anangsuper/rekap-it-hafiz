@@ -27,11 +27,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
     // ... rest of form handling
-
+    } elseif (isset($_POST['proses_massal_final']) && $sub === 'massal') {
         // Final Processing
         $asset_ids = $_POST['asset_ids'] ?? [];
         $conn->beginTransaction();
         try {
+            // Re-instantiate model here to ensure it's available
             require_once 'models/Maintenance.php';
             $maintModel = new Maintenance($conn);
             foreach ($asset_ids as $id) {
