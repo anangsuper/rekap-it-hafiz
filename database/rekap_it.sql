@@ -46,7 +46,9 @@ CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     role ENUM('admin', 'teknisi') DEFAULT 'teknisi',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id_cabang INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_cabang) REFERENCES cabang(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 6. Assets
@@ -58,6 +60,7 @@ CREATE TABLE IF NOT EXISTS assets (
     id_kategori INT,
     merk VARCHAR(50),
     model VARCHAR(100),
+    tanggal_kadaluarsa_garansi DATE NULL,
     id_cabang INT,
     id_divisi INT,
     id_karyawan INT,
@@ -71,13 +74,29 @@ CREATE TABLE IF NOT EXISTS assets (
     FOREIGN KEY (id_karyawan) REFERENCES karyawan(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- 6.5 Asset History
+CREATE TABLE IF NOT EXISTS asset_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    asset_id INT NOT NULL,
+    user_id INT NOT NULL,
+    field_changed VARCHAR(100) NOT NULL,
+    old_value TEXT,
+    new_value TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (asset_id) REFERENCES assets(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- 7. Maintenance
 CREATE TABLE IF NOT EXISTS maintenance (
     id INT AUTO_INCREMENT PRIMARY KEY,
     asset_id INT NOT NULL,
     tanggal DATE NOT NULL,
     teknisi VARCHAR(100),
-    keterangan TEXT,
+    temuan TEXT,
+    tindakan TEXT,
+    rekomendasi TEXT,
+    status ENUM('Baik', 'Perlu Perbaikan', 'Rusak') DEFAULT 'Baik',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (asset_id) REFERENCES assets(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

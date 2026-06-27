@@ -1,19 +1,23 @@
 <?php
-require_once 'models/Repair.php';
+require_once 'controllers/RepairController.php';
 require_once 'models/Asset.php';
+require_once 'models/Cabang.php';
 
-$repairModel = new Repair($conn);
+$repairController = new RepairController($conn);
 $assetModel = new Asset($conn);
+$cabangModel = new Cabang($conn);
 
-$repairs = $repairModel->getAll();
+$repairs = $repairController->index();
+$cabangs = $cabangModel->getAll();
 $assets = $assetModel->getAll();
+// ... (rest of PHP code remains)
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
     $data = [
         'asset_id' => $_POST['asset_id'],
         'keluhan' => $_POST['keluhan']
     ];
-    if ($repairModel->create($data)) {
+    if ($repairController->store($data)) {
         header("Location: index.php?page=perbaikan&status=success");
         exit();
     }
@@ -27,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
         'status' => $_POST['status'],
         'tanggal_selesai' => ($_POST['status'] == 'Selesai') ? date('Y-m-d') : null
     ];
-    if ($repairModel->update($id, $data)) {
+    if ($repairController->update($id, $data)) {
         header("Location: index.php?page=perbaikan&status=updated");
         exit();
     }
@@ -173,11 +177,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
                 </div>
                 <div class="modal-body p-4">
                     <div class="mb-3">
+                        <label class="form-label small fw-bold">Pilih Cabang Aset</label>
+                        <select id="branchSelect" class="form-select shadow-sm mb-2" onchange="filterAssetsByBranch()">
+                            <option value="">Semua Cabang</option>
+                            <?php foreach ($cabangs as $c): ?>
+                                <option value="<?= $c['nama_cabang'] ?>"><?= $c['nama_cabang'] ?></option>
+                            <?php endforeach; ?>
+                        </select>
                         <label class="form-label small fw-bold">Pilih Aset Bermasalah</label>
-                        <input type="text" id="searchInput" class="form-control shadow-sm mb-2" placeholder="Cari berdasarkan kode atau nama aset..." onkeyup="filterAssets()">
                         <select name="asset_id" id="assetSelect" class="form-select shadow-sm" required>
                             <?php foreach ($assets as $a): ?>
-                                <option value="<?= $a['id'] ?>"><?= $a['kode_aset'] ?> - <?= $a['nama_aset'] ?></option>
+                                <?php
+                                    $condColor = 'success';
+                                    if ($a['kondisi'] == 'Rusak Ringan') $condColor = 'warning';
+                                    if ($a['kondisi'] == 'Rusak Berat') $condColor = 'danger';
+                                ?>
+                                <option value="<?= $a['id'] ?>" data-branch="<?= $a['nama_cabang'] ?>">
+                                    <?= $a['kode_aset'] ?> - <?= $a['nama_aset'] ?> 
+                                    | Pemilik: <?= $a['nama_karyawan'] ?? 'Unassigned' ?> 
+                                    | Kondisi: [<?= strtoupper($a['kondisi']) ?>]
+                                </option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -194,17 +213,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
         </div>
     </div>
 </div>
-
 <script>
-function filterAssets() {
-    var input, filter, select, options, i, txtValue;
-    input = document.getElementById("searchInput");
-    filter = input.value.toUpperCase();
-    select = document.getElementById("assetSelect");
-    options = select.getElementsByTagName("option");
-    for (i = 0; i < options.length; i++) {
-        txtValue = options[i].textContent || options[i].innerText;
-        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+function filterAssetsByBranch() {
+    var branch = document.getElementById("branchSelect").value;
+    var select = document.getElementById("assetSelect");
+    var options = select.getElementsByTagName("option");
+    for (var i = 0; i < options.length; i++) {
+        var assetBranch = options[i].getAttribute("data-branch");
+        if (branch === "" || assetBranch === branch) {
             options[i].style.display = "";
         } else {
             options[i].style.display = "none";

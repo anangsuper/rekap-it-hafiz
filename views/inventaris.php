@@ -24,9 +24,18 @@ if (isset($_POST['hapus'])) {
     }
 }
 
-$id_cabang_filter = isset($_GET['filter_cabang']) ? $_GET['filter_cabang'] : null;
+// Batasi akses cabang untuk teknisi
+$id_cabang_filter = ($_SESSION['role'] === 'teknisi') ? $_SESSION['id_cabang'] : (isset($_GET['filter_cabang']) ? $_GET['filter_cabang'] : null);
 
-$assets = $assetModel->getAll($id_cabang_filter);
+// Pagination logic
+$limit = 10;
+$pageNumber = isset($_GET['p']) ? (int)$_GET['p'] : 1;
+$offset = ($pageNumber - 1) * $limit;
+
+$totalAssets = $assetModel->countAll($id_cabang_filter);
+$totalPages = ceil($totalAssets / $limit);
+
+$assets = $assetModel->getPaginated($limit, $offset, $id_cabang_filter);
 $kategoris = $kategoriModel->getAll();
 $cabangs = $cabangModel->getAll();
 $divisis = $divisiModel->getAll();
@@ -67,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
         'id_karyawan' => $_POST['id_karyawan'],
         'kondisi' => $_POST['kondisi']
     ];
-    if ($assetModel->update($id, $data)) {
+    if ($assetModel->update($id, $data, $_SESSION['user_id'])) {
         $logModel->add($_SESSION['user_id'], 'Update Aset', "Memperbarui aset: " . $data['nama_aset'] . " (" . $data['kode_aset'] . ")");
         header("Location: index.php?page=inventaris&status=updated");
         exit();
@@ -214,6 +223,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
                 </tbody>
             </table>
         </div>
+        <?= getPaginationControls($pageNumber, $totalPages, 'index.php?page=inventaris'.($id_cabang_filter ? '&filter_cabang='.$id_cabang_filter : '')) ?>
     </div>
 </div>
 

@@ -69,16 +69,37 @@ class Asset {
         return $stmt->execute($data);
     }
 
-    public function update($id, $data) {
+    public function update($id, $data, $user_id = null) {
+        $old_asset = $this->getById($id);
+        
         $sets = "";
         foreach ($data as $key => $value) {
             $sets .= "$key = :$key, ";
+            
+            // Log history if changed
+            if ($user_id && isset($old_asset[$key]) && $old_asset[$key] != $value) {
+                require_once 'AssetHistory.php';
+                $history = new AssetHistory($this->conn);
+                $history->create([
+                    'asset_id' => $id,
+                    'user_id' => $user_id,
+                    'field_changed' => $key,
+                    'old_value' => $old_asset[$key],
+                    'new_value' => $value
+                ]);
+            }
         }
         $sets = rtrim($sets, ", ");
         $query = "UPDATE " . $this->table . " SET $sets WHERE id = :id";
         $data['id'] = $id;
         $stmt = $this->conn->prepare($query);
-        return $stmt->execute($data);
+        
+        try {
+            return $stmt->execute($data);
+        } catch (PDOException $e) {
+            error_log("ERROR: Asset::update failed for ID $id. Error: " . $e->getMessage());
+            return false;
+        }
     }
 
     public function delete($id) {
@@ -93,6 +114,43 @@ class Asset {
         $stats['rusak_ringan'] = $this->conn->query("SELECT COUNT(*) FROM assets WHERE kondisi = 'Rusak Ringan'")->fetchColumn();
         $stats['rusak_berat'] = $this->conn->query("SELECT COUNT(*) FROM assets WHERE kondisi = 'Rusak Berat'")->fetchColumn();
         return $stats;
+    }
+
+    public function countAll($id_cabang = null) {
+        $query = "SELECT COUNT(*) FROM " . $this->table;
+        if ($id_cabang) {
+            $query .= " WHERE id_cabang = :id_cabang";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute(['id_cabang' => $id_cabang]);
+        } else {
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+        }
+        return $stmt->fetchColumn();
+    }
+
+    public function getPaginated($limit, $offset, $id_cabang = null) {
+        $query = "SELECT a.*, k.nama_kategori, c.nama_cabang, d.nama_divisi, kr.nama_karyawan 
+                  FROM " . $this->table . " a
+                  LEFT JOIN kategori_aset k ON a.id_kategori = k.id
+                  LEFT JOIN cabang c ON a.id_cabang = c.id
+                  LEFT JOIN divisi d ON a.id_divisi = d.id
+                  LEFT JOIN karyawan kr ON a.id_karyawan = kr.id";
+        
+        if ($id_cabang) {
+            $query .= " WHERE a.id_cabang = :id_cabang";
+        }
+        
+        $query .= " ORDER BY a.created_at DESC LIMIT :limit OFFSET :offset";
+        
+        $stmt = $this->conn->prepare($query);
+        if ($id_cabang) {
+            $stmt->bindValue(':id_cabang', $id_cabang, PDO::PARAM_INT);
+        }
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
 }
 ?>

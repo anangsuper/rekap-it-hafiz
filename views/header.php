@@ -1,14 +1,8 @@
 <?php
-if (!function_exists('get_branch_badge_style')) {
-    function get_branch_badge_style($id_cabang) {
-        if (!$id_cabang) {
-            return 'background-color: rgba(108, 117, 125, 0.1) !important; color: #6c757d !important; border: 1px solid rgba(108, 117, 125, 0.2);';
-        }
-        // Golden ratio color distribution (137.5 degrees) for beautifully distinct colors
-        $hue = ($id_cabang * 137.5) % 360;
-        return "background-color: hsla($hue, 70%, 95%, 1) !important; color: hsla($hue, 75%, 28%, 1) !important; border: 1px solid hsla($hue, 70%, 85%, 0.5) !important;";
-    }
-}
+require_once 'models/Maintenance.php';
+$mModel = new Maintenance($conn);
+$notifications = $mModel->getUpcomingNotifications(7);
+$notifCount = count($notifications);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -26,32 +20,70 @@ if (!function_exists('get_branch_badge_style')) {
         @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap");
 
         :root {
-            --primary-color: #4361ee;
-            --primary-light: rgba(67, 97, 238, 0.1);
-            --secondary-color: #3f37c9;
-            --bg-body: #f8fafc;
-            --navbar-bg: #0f172a;
+            --primary-color: #6366f1; /* Indigo */
+            --primary-hover: #4f46e5;
+            --primary-light: rgba(99, 102, 241, 0.08);
+            --secondary-color: #a855f7; /* Purple */
+            --secondary-hover: #9333ea;
+            
+            /* Ambient premium mesh background */
+            --bg-body: radial-gradient(at 0% 0%, rgba(224, 231, 255, 0.6) 0px, transparent 50%),
+                       radial-gradient(at 50% 0%, rgba(243, 232, 255, 0.6) 0px, transparent 50%),
+                       radial-gradient(at 100% 0%, rgba(229, 231, 235, 0.4) 0px, transparent 50%),
+                       #f8fafc;
+            
+            --navbar-bg: rgba(15, 23, 42, 0.95);
             --navbar-text: #94a3b8;
-            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
-            --glass-bg: rgba(255, 255, 255, 0.85);
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.02), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+            --card-shadow-hover: 0 20px 35px -8px rgba(99, 102, 241, 0.08), 0 10px 15px -3px rgba(0, 0, 0, 0.03);
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Smooth scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
         }
 
         body {
             font-family: "Plus Jakarta Sans", sans-serif;
-            background-color: var(--bg-body);
+            background: var(--bg-body);
+            background-attachment: fixed;
+            min-height: 100vh;
             color: #1e293b;
-            letter-spacing: -0.01em;
-            padding-top: 85px;
+            letter-spacing: -0.015em;
+            padding-top: 110px;
             overflow-x: hidden;
+            line-height: 1.6;
         }
 
-        /* Navbar Modern */
+        /* Floating Pill Glass Navbar */
         .navbar-custom {
             background: var(--navbar-bg);
-            padding: 12px 0;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            z-index: 1030; /* Ensure this is below modals and their backdrops */
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 10px 0;
+            box-shadow: 0 12px 30px -10px rgba(15, 23, 42, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            margin: 15px auto;
+            width: calc(100% - 32px);
+            max-width: 1280px;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1030;
         }
 
         .modal {
@@ -59,92 +91,280 @@ if (!function_exists('get_branch_badge_style')) {
         }
         .modal-backdrop {
             z-index: 1050 !important;
+            backdrop-filter: blur(4px);
+            background-color: rgba(15, 23, 42, 0.4);
         }
 
         .navbar-brand h4 {
             font-weight: 800;
-            letter-spacing: -0.5px;
+            letter-spacing: -0.8px;
             margin: 0;
-            font-size: 1.4rem;
-            background: linear-gradient(to right, #fff, #94a3b8);
+            font-size: 1.35rem;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .nav-link {
             color: var(--navbar-text) !important;
-            font-weight: 500;
-            font-size: 0.9rem;
-            padding: 10px 15px !important;
-            border-radius: 10px;
-            transition: 0.2s;
+            font-weight: 600;
+            font-size: 0.85rem;
+            padding: 8px 14px !important;
+            border-radius: 12px;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .nav-link:hover, .nav-link.active {
+        .nav-link:hover {
             color: #fff !important;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.06);
         }
 
         .nav-link.active {
-            background: var(--primary-color) !important;
-            box-shadow: 0 8px 15px -5px rgba(67, 97, 238, 0.4);
+            color: #fff !important;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%) !important;
+            box-shadow: 0 4px 15px -3px rgba(99, 102, 241, 0.4);
         }
 
         .dropdown-menu {
-            background: var(--navbar-bg);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 14px;
-            padding: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            background: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 8px;
+            box-shadow: 0 15px 35px -5px rgba(0,0,0,0.3);
+            animation: dropdownAppear 0.2s ease;
+        }
+
+        @keyframes dropdownAppear {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .dropdown-item {
             color: var(--navbar-text);
-            border-radius: 8px;
-            padding: 10px 15px;
-            font-size: 0.875rem;
-            transition: 0.2s;
+            border-radius: 10px;
+            padding: 8px 14px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
         }
 
         .dropdown-item:hover {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.06);
             color: #fff;
         }
 
-        /* Main Content */
+        /* Main Content wrapper */
         .main-content {
-            padding: 30px 15px;
-            min-height: calc(100vh - 85px);
+            padding: 20px 16px;
+            min-height: calc(100vh - 100px);
+            max-width: 1280px;
+            margin: 0 auto;
         }
 
+        /* Glassmorphic Page Header */
         .page-header {
             background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 20px 30px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 24px 32px;
             margin-bottom: 30px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
             box-shadow: var(--card-shadow);
         }
 
-        /* Global UI Elements */
+        .page-header h4 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.6px;
+            background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Premium Modern Cards */
         .card {
-            border: 1px solid rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(226, 232, 240, 0.8);
             border-radius: 24px;
             box-shadow: var(--card-shadow);
-            background: #fff;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card:hover {
+            box-shadow: var(--card-shadow-hover);
+            border-color: rgba(226, 232, 240, 1);
+        }
+
+        /* Prevent ugly double-shadows and nested glassmorphism on child cards */
+        .card .card {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            padding: 0 !important;
+        }
+
+        /* Styled inputs, forms, selects */
+        .form-control, .form-select {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 10px 16px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #1e293b;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+            background-color: #ffffff;
+            color: #1e293b;
+        }
+
+        /* Button Redesign */
+        .btn {
+            border-radius: 12px;
+            padding: 10px 20px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
 
         .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-            padding: 10px 24px;
-            border-radius: 14px;
-            font-weight: 600;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%) !important;
+            border: none !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
         }
 
-        /* Animations - Simplified without transforms on large wrappers */
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            color: #475569;
+        }
+
+        .btn-secondary:hover {
+            background: #f8fafc;
+            color: #1e293b;
+            border-color: #cbd5e1;
+        }
+
+        /* SaaS Table Layout override */
+        .table-responsive {
+            border-radius: 16px;
+            overflow: visible;
+        }
+
+        .table {
+            border-collapse: separate;
+            border-spacing: 0 8px; /* Give space between rows for floating-card look */
+            margin-top: -8px;
+            width: 100%;
+        }
+
+        .table tr {
+            background-color: #ffffff;
+            border-radius: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .table tr:hover {
+            background-color: #f8fafc;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.02);
+        }
+
+        .table th {
+            background: transparent !important;
+            border: none !important;
+            color: #64748b !important;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 14px 18px !important;
+        }
+
+        .table td {
+            background: transparent !important;
+            border: none !important;
+            border-top: 1px solid #f1f5f9;
+            border-bottom: 1px solid #f1f5f9;
+            padding: 16px 18px !important;
+            vertical-align: middle;
+            color: #334155;
+            font-size: 0.85rem;
+        }
+
+        /* Corner rounding for tr cards */
+        .table tr td:first-child {
+            border-left: 1px solid #f1f5f9;
+            border-top-left-radius: 14px;
+            border-bottom-left-radius: 14px;
+        }
+
+        .table tr td:last-child {
+            border-right: 1px solid #f1f5f9;
+            border-top-right-radius: 14px;
+            border-bottom-right-radius: 14px;
+        }
+
+        /* Modal styling */
+        .modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            animation: modalSlide 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes modalSlide {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #e2e8f0;
+            padding: 20px 24px;
+        }
+
+        .modal-header .modal-title {
+            font-weight: 800;
+            font-size: 1.15rem;
+            color: #0f172a;
+            letter-spacing: -0.3px;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #e2e8f0;
+            padding: 16px 24px;
+        }
+
+        /* Animations */
         .animate-fade-in {
             animation: fadeInSimple 0.4s ease-out forwards;
         }
@@ -155,13 +375,19 @@ if (!function_exists('get_branch_badge_style')) {
         }
 
         @media (max-width: 991.98px) {
-            body { padding-top: 70px; }
+            body { padding-top: 90px; }
             .main-content { padding: 15px; }
+            .navbar-custom {
+                border-radius: 16px;
+                margin: 10px;
+                width: calc(100% - 20px);
+            }
             .navbar-collapse { 
-                background: var(--navbar-bg); 
+                background: #0f172a; 
                 padding: 15px; 
                 border-radius: 15px; 
                 margin-top: 10px; 
+                border: 1px solid rgba(255, 255, 255, 0.05);
             }
         }
     </style>
@@ -187,53 +413,115 @@ if (!function_exists('get_branch_badge_style')) {
                     </a>
                 </li>
 
+                <?php if (hasRole('admin')): ?>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle <?= in_array($page, ['cabang', 'divisi', 'karyawan']) ? 'active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-building me-1"></i> Master
+                        <i class="bi bi-database me-1"></i> Data Master
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="index.php?page=cabang">Daftar Cabang</a></li>
-                        <li><a class="dropdown-item" href="index.php?page=divisi">Bagian / Divisi</a></li>
-                        <li><a class="dropdown-item" href="index.php?page=karyawan">Data Karyawan</a></li>
+                        <li><a class="dropdown-item" href="index.php?page=cabang">Cabang</a></li>
+                        <li><a class="dropdown-item" href="index.php?page=divisi">Divisi</a></li>
+                        <li><a class="dropdown-item" href="index.php?page=karyawan">Karyawan</a></li>
+                        <li><a class="dropdown-item" href="index.php?page=pengguna">Pengguna</a></li>
                     </ul>
                 </li>
+                <?php endif; ?>
 
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle <?= in_array($page, ['kategori', 'inventaris', 'mutasi']) ? 'active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-laptop me-1"></i> Inventaris
+                        <i class="bi bi-laptop me-1"></i> Aset
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="index.php?page=kategori">Kategori</a></li>
                         <li><a class="dropdown-item" href="index.php?page=inventaris">Data Aset</a></li>
+                        <li><a class="dropdown-item" href="index.php?page=kategori">Kategori</a></li>
                         <li><a class="dropdown-item" href="index.php?page=mutasi">Mutasi</a></li>
                     </ul>
                 </li>
 
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle <?= in_array($page, ['maintenance', 'laporan_maintenance', 'perbaikan', 'sparepart']) ? 'active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-tools me-1"></i> Operasional
+                    <a class="nav-link dropdown-toggle <?= ($page == 'maintenance') ? 'active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-calendar-check me-1"></i> Maintenance
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="index.php?page=maintenance">Perawatan</a></li>
-                        <li><a class="dropdown-item" href="index.php?page=laporan_maintenance">Laporan Maint.</a></li>
-                        <li><a class="dropdown-item" href="index.php?page=perbaikan">Perbaikan</a></li>
-                        <li><a class="dropdown-item" href="index.php?page=sparepart">Sparepart</a></li>
+                        <li><a class="dropdown-item" href="index.php?page=maintenance&sub=history">History Maintenance</a></li>
+                        <li><a class="dropdown-item" href="index.php?page=maintenance&sub=massal">Bulk Maintenance</a></li>
                     </ul>
                 </li>
 
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle <?= in_array($page, ['audit', 'logs', 'laporan']) ? 'active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown">
+                    <a class="nav-link dropdown-toggle <?= in_array($page, ['perbaikan', 'sparepart']) ? 'active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-tools me-1"></i> Perbaikan
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="index.php?page=perbaikan">Tiket Perbaikan</a></li>
+                        <li><a class="dropdown-item" href="index.php?page=sparepart">Sparepart</a></li>
+                    </ul>
+                </li>
+
+                <?php if (hasRole('admin')): ?>
+                <li class="nav-item">
+                    <a href="index.php?page=audit" class="nav-link <?= ($page == 'audit') ? 'active' : '' ?>">
+                        <i class="bi bi-shield-check me-1"></i> Audit
+                    </a>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle <?= in_array($page, ['laporan', 'logs', 'laporan_maintenance']) ? 'active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown">
                         <i class="bi bi-file-earmark-bar-graph me-1"></i> Laporan
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="index.php?page=audit">Audit Fisik</a></li>
-                        <li><a class="dropdown-item" href="index.php?page=logs">Log Aktivitas</a></li>
                         <li><a class="dropdown-item" href="index.php?page=laporan">Export Excel</a></li>
+                        <li><a class="dropdown-item" href="index.php?page=laporan_maintenance">Laporan Maintenance</a></li>
+                        <li><a class="dropdown-item" href="index.php?page=logs">Log Aktivitas</a></li>
                     </ul>
                 </li>
+                <?php endif; ?>
             </ul>
 
             <div class="navbar-nav align-items-center">
+                <!-- Notifications -->
+                <div class="dropdown me-3">
+                    <button class="nav-link position-relative p-2 border-0 bg-transparent" data-bs-toggle="dropdown" aria-expanded="false" id="notifDropdown">
+                        <i class="bi bi-bell fs-5"></i>
+                        <?php if ($notifCount > 0): ?>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-dark" style="font-size: 0.6rem;">
+                                <?= $notifCount ?>
+                            </span>
+                        <?php endif; ?>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2 animate-slide-down" style="width: 320px; border-radius: 20px; overflow: hidden; z-index: 9999;">
+                        <li class="px-4 py-3 border-bottom bg-light">
+                            <h6 class="m-0 fw-bold text-dark">Notifikasi Maintenance</h6>
+                            <small class="text-muted"><?= $notifCount ?> jadwal dalam 7 hari kedepan</small>
+                        </li>
+                        <div style="max-height: 300px; overflow-y: auto;">
+                            <?php if ($notifCount === 0): ?>
+                                <li class="px-4 py-3 text-muted small">Tidak ada jadwal maintenance</li>
+                            <?php else: ?>
+                                <?php foreach ($notifications as $n): ?>
+                                    <li class="border-bottom">
+                                        <a class="dropdown-item px-4 py-3 text-dark transition-hover" href="index.php?page=maintenance">
+                                            <div class="d-flex align-items-center">
+                                                <div class="bg-primary bg-opacity-10 p-2 rounded-circle me-3">
+                                                    <i class="bi bi-tools text-primary"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <div class="fw-bold small text-truncate"><?= $n['kode_aset'] ?> - <?= $n['nama_aset'] ?></div>
+                                                    <small class="text-muted"><?= date('d M Y', strtotime($n['tanggal'])) ?></small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                        <li class="px-4 py-2 border-top bg-light text-center">
+                            <a href="index.php?page=maintenance" class="text-primary text-decoration-none small fw-bold">Lihat Semua</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- User Profile -->
                 <div class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown">
                         <img src="https://ui-avatars.com/api/?name=<?= urlencode($_SESSION['nama']) ?>&background=4361ee&color=fff" class="rounded-circle" width="32">
@@ -260,13 +548,34 @@ if (!function_exists('get_branch_badge_style')) {
         </div>
         <div class="d-none d-md-flex align-items-center gap-3">
             <div class="text-end">
-                <div class="small fw-bold">Kamis, 18 Juni 2026</div>
+                <div class="small fw-bold" id="realtime-clock">Loading time...</div>
                 <div class="text-muted" style="font-size: 0.7rem;">Status: <span class="text-success fw-bold">Online</span></div>
             </div>
-            <div class="vr opacity-25"></div>
-            <button class="btn btn-light btn-sm rounded-circle"><i class="bi bi-bell"></i></button>
+            <!-- Notifications moved out -->
         </div>
     </div>
 
+<style>
+    .animate-slide-down {
+        animation: slideDown 0.3s ease-out forwards;
+    }
+    @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .transition-hover { transition: all 0.2s ease; }
+    .transition-hover:hover { background-color: #f8fafc; }
+</style>
+
+
     <div class="content-body">
         <div class="animate-fade-in">
+<script>
+    function updateClock() {
+        const now = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+        document.getElementById('realtime-clock').textContent = now.toLocaleDateString('id-ID', options);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+</script>

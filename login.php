@@ -24,6 +24,7 @@ if (isset($_POST['login'])) {
             $_SESSION['username'] = $user['username'];
             $_SESSION['nama']     = $user['nama'];
             $_SESSION['role']     = $user['role'];
+            $_SESSION['id_cabang'] = $user['id_cabang']; // Simpan id_cabang
 
             // Log Login
             require_once 'models/ActivityLog.php';
@@ -55,9 +56,10 @@ if (isset($_POST['login'])) {
     
     <style>
         :root {
-            --primary-color: #4361ee;
-            --primary-hover: #3f37c9;
-            --primary-light: rgba(67, 97, 238, 0.08);
+            --primary-color: #6366f1;
+            --primary-hover: #4f46e5;
+            --primary-light: rgba(99, 102, 241, 0.08);
+            --secondary-color: #a855f7;
             --bg-body: #0f172a; /* Dark tech slate background */
             --glass-bg: rgba(30, 41, 59, 0.7); /* Deep slate-800 with transparency */
             --glass-border: rgba(255, 255, 255, 0.08);
@@ -103,7 +105,7 @@ if (isset($_POST['login'])) {
             left: -10%;
             width: 500px;
             height: 500px;
-            background: #4361ee;
+            background: var(--primary-color);
             animation-delay: 0s;
         }
 
@@ -112,7 +114,7 @@ if (isset($_POST['login'])) {
             right: -10%;
             width: 600px;
             height: 600px;
-            background: #7209b7;
+            background: var(--secondary-color);
             animation-delay: -5s;
         }
 
@@ -121,7 +123,7 @@ if (isset($_POST['login'])) {
             left: 50%;
             width: 300px;
             height: 300px;
-            background: #4cc9f0;
+            background: #06b6d4;
             opacity: 0.15;
             animation-delay: -10s;
         }
@@ -174,9 +176,9 @@ if (isset($_POST['login'])) {
             width: 60px;
             height: 60px;
             border-radius: 18px;
-            background: linear-gradient(135deg, var(--primary-color), #7209b7);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             margin-bottom: 16px;
-            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.3);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
         }
 
         .brand-icon i {
@@ -220,7 +222,7 @@ if (isset($_POST['login'])) {
 
         .input-group-custom:focus-within {
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.15);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
             background: rgba(15, 23, 42, 0.6);
         }
 
@@ -273,7 +275,7 @@ if (isset($_POST['login'])) {
 
         /* Button styling */
         .btn-login {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             border: none;
             color: white;
             padding: 14px;
@@ -281,13 +283,13 @@ if (isset($_POST['login'])) {
             font-weight: 700;
             font-size: 0.95rem;
             transition: all 0.3s ease;
-            box-shadow: 0 10px 20px -5px rgba(67, 97, 238, 0.35);
+            box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.35);
         }
 
         .btn-login:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 25px -5px rgba(67, 97, 238, 0.5);
-            background: linear-gradient(135deg, #4f46e5, #3730a3);
+            box-shadow: 0 12px 25px -5px rgba(99, 102, 241, 0.5);
+            background: linear-gradient(135deg, var(--primary-hover), #9333ea);
         }
 
         .btn-login:active {
@@ -347,6 +349,29 @@ if (isset($_POST['login'])) {
             padding: 2px 6px;
             border-radius: 4px;
         }
+
+        /* 3D Model Canvas Container */
+        #canvas-container {
+            background: rgba(30, 41, 59, 0.35);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #gltf-loader {
+            pointer-events: none;
+            z-index: 20;
+            transition: opacity 0.5s ease;
+        }
     </style>
 </head>
 <body>
@@ -358,56 +383,73 @@ if (isset($_POST['login'])) {
     <div class="blob blob-3"></div>
 </div>
 
-<div class="login-card">
-    <div class="brand-wrapper">
-        <div class="brand-icon">
-            <i class="fa-solid fa-laptop-code"></i>
+<div class="d-flex align-items-center justify-content-center w-100 h-100 flex-wrap gap-5">
+    
+    <!-- 3D Model Area -->
+    <div class="d-none d-lg-block" style="width: 480px; height: 480px;">
+        <div id="canvas-container"> 
+            <!-- Loader -->
+            <div id="gltf-loader" class="position-absolute top-50 start-50 translate-middle text-center d-flex flex-column align-items-center justify-content-center">
+                <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                    <span class="visually-hidden">Memuat model...</span>
+                </div>
+                <div class="text-muted fw-semibold" style="font-size: 0.8rem; letter-spacing: 0.05em; text-transform: uppercase;">MEMUAT MODEL 3D...</div>
+            </div>
+            <!-- Canvas will be loaded here dynamically -->
         </div>
-        <h1 class="brand-name">Rekap IT</h1>
-        <p class="brand-tagline">Sistem Manajemen Aset & Maintenance</p>
     </div>
 
-    <?php if ($error): ?>
-        <div class="alert-custom">
-            <i class="bi bi-exclamation-triangle-fill"></i>
-            <div><?= htmlspecialchars($error) ?></div>
-        </div>
-    <?php endif; ?>
-
-    <form method="POST" autocomplete="off">
-        <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <div class="input-group-custom">
-                <span class="input-group-icon">
-                    <i class="bi bi-person"></i>
-                </span>
-                <input type="text" name="username" class="input-control-custom" id="username" placeholder="Masukkan username" required autofocus>
+    <div class="login-card">
+        <div class="brand-wrapper">
+            <div class="brand-icon">
+                <i class="fa-solid fa-laptop-code"></i>
             </div>
+            <h1 class="brand-name">Rekap IT</h1>
+            <p class="brand-tagline">Sistem Manajemen Aset & Maintenance</p>
         </div>
 
-        <div class="mb-4">
-            <label for="password" class="form-label">Password</label>
-            <div class="input-group-custom">
-                <span class="input-group-icon">
-                    <i class="bi bi-shield-lock"></i>
-                </span>
-                <input type="password" name="password" class="input-control-custom" id="password" placeholder="Masukkan password" required>
-                <button type="button" class="password-toggle" id="togglePassword">
-                    <i class="bi bi-eye" id="toggleIcon"></i>
-                </button>
+        <?php if ($error): ?>
+            <div class="alert-custom">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <div><?= htmlspecialchars($error) ?></div>
             </div>
+        <?php endif; ?>
+
+        <form method="POST" autocomplete="off">
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <div class="input-group-custom">
+                    <span class="input-group-icon">
+                        <i class="bi bi-person"></i>
+                    </span>
+                    <input type="text" name="username" class="input-control-custom" id="username" placeholder="Masukkan username" required autofocus>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="password" class="form-label">Password</label>
+                <div class="input-group-custom">
+                    <span class="input-group-icon">
+                        <i class="bi bi-shield-lock"></i>
+                    </span>
+                    <input type="password" name="password" class="input-control-custom" id="password" placeholder="Masukkan password" required>
+                    <button type="button" class="password-toggle" id="togglePassword">
+                        <i class="bi bi-eye" id="toggleIcon"></i>
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" name="login" class="btn btn-login w-100">
+                Masuk ke Sistem <i class="bi bi-arrow-right-short ms-1" style="font-size: 1.15rem; vertical-align: middle;"></i>
+            </button>
+        </form>
+
+        <div class="hint-box">
+            <div class="hint-title">Informasi Akses Default</div>
+            <p class="hint-text">
+                Username: <code>admin</code> &bull; Password: <code>password</code>
+            </p>
         </div>
-
-        <button type="submit" name="login" class="btn btn-login w-100">
-            Masuk ke Sistem <i class="bi bi-arrow-right-short ms-1" style="font-size: 1.15rem; vertical-align: middle;"></i>
-        </button>
-    </form>
-
-    <div class="hint-box">
-        <div class="hint-title">Informasi Akses Default</div>
-        <p class="hint-text">
-            Username: <code>admin</code> &bull; Password: <code>password</code>
-        </p>
     </div>
 </div>
 
@@ -426,5 +468,155 @@ if (isset($_POST['login'])) {
     });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Three.js Library & GLTF Loader -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const container = document.getElementById('canvas-container');
+        if (!container) return;
+
+        // Initialize Three.js scene, camera, renderer
+        const scene = new THREE.Scene();
+
+        // Create camera
+        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+        camera.position.set(0, 0, 8);
+
+        // Create renderer with alpha (transparent background) and antialiasing
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.shadowMap.enabled = true;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.2;
+        container.appendChild(renderer.domElement);
+
+        // Add Ambient light for soft global lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+        scene.add(ambientLight);
+
+        // Main Directional light for shadows/highlights
+        const dirLight1 = new THREE.DirectionalLight(0xffffff, 1.5);
+        dirLight1.position.set(5, 10, 7);
+        scene.add(dirLight1);
+
+        const dirLight2 = new THREE.DirectionalLight(0xffffff, 0.5);
+        dirLight2.position.set(-5, -5, -5);
+        scene.add(dirLight2);
+
+        // Tech theme glowing accent lights (blue and purple)
+        const blueLight = new THREE.PointLight(0x4361ee, 8, 15);
+        blueLight.position.set(-3, 2, 3);
+        scene.add(blueLight);
+
+        const purpleLight = new THREE.PointLight(0x7209b7, 8, 15);
+        purpleLight.position.set(3, -2, -3);
+        scene.add(purpleLight);
+
+        // Add OrbitControls for interactive 3D navigation
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.enableZoom = true;
+        controls.maxPolarAngle = Math.PI / 2 + 0.1; // Restrict camera from going too far below the floor
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 1.5; // Smooth slow rotation
+
+        const loaderSpinner = document.getElementById('gltf-loader');
+
+        // Load GLTF / GLB model
+        const loader = new THREE.GLTFLoader();
+        let loadedModel;
+
+        loader.load(
+            'retro_computer_-_pc_low_poly_3d_model.glb',
+            function (gltf) {
+                loadedModel = gltf.scene;
+
+                // Robust auto-scaling and auto-centering
+                const box = new THREE.Box3().setFromObject(loadedModel);
+                const center = box.getCenter(new THREE.Vector3());
+                const size = box.getSize(new THREE.Vector3());
+
+                // Offset model to be centered at origin (0,0,0)
+                loadedModel.position.x += (loadedModel.position.x - center.x);
+                loadedModel.position.y += (loadedModel.position.y - center.y);
+                loadedModel.position.z += (loadedModel.position.z - center.z);
+
+                // Compute ideal camera distance based on model's dimensions
+                const maxDim = Math.max(size.x, size.y, size.z);
+                const fov = camera.fov * (Math.PI / 180);
+                let cameraDistance = Math.abs(maxDim / 2 / Math.tan(fov / 2));
+                cameraDistance *= 1.4; // Add visual padding/margin
+
+                // Position camera & look at center
+                camera.position.set(cameraDistance * 0.7, cameraDistance * 0.5, cameraDistance * 1.1);
+                camera.lookAt(0, 0, 0);
+
+                // Configure control boundaries based on computed distance
+                controls.target.set(0, 0, 0);
+                controls.maxDistance = cameraDistance * 2.2;
+                controls.minDistance = cameraDistance * 0.4;
+
+                // Enable shadow casting and standard material properties for all meshes
+                loadedModel.traverse(function (node) {
+                    if (node.isMesh) {
+                        node.castShadow = true;
+                        node.receiveShadow = true;
+                        if (node.material) {
+                            node.material.roughness = 0.3;
+                            node.material.metalness = 0.7;
+                        }
+                    }
+                });
+
+                scene.add(loadedModel);
+
+                // Fade out and remove loading spinner smoothly
+                if (loaderSpinner) {
+                    loaderSpinner.style.opacity = '0';
+                    setTimeout(() => loaderSpinner.style.display = 'none', 500);
+                }
+            },
+            // Loader progress
+            function (xhr) {
+                if (xhr.lengthComputable && loaderSpinner) {
+                    const percent = Math.round((xhr.loaded / xhr.total) * 100);
+                    const label = loaderSpinner.querySelector('.text-muted');
+                    if (label) label.textContent = `MEMUAT MODEL 3D (${percent}%)`;
+                }
+            },
+            // Loader error
+            function (error) {
+                console.error('Error loading GLTF model:', error);
+                if (loaderSpinner) {
+                    loaderSpinner.innerHTML = '<div class="text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill fs-3 d-block mb-2"></i> GAGAL MEMUAT MODEL 3D</div>';
+                }
+            }
+        );
+
+        // Animation rendering loop
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Responsive handling on window resize
+        window.addEventListener('resize', function () {
+            if (!container) return;
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
+        });
+    });
+</script>
 </body>
 </html>

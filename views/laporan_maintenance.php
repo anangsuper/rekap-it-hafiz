@@ -142,6 +142,23 @@ $months = [
     </div>
 
     <?php if ($selected_cabang): ?>
+    <!-- Branch Info -->
+    <div class="card shadow-sm border-0 mb-4 bg-light">
+        <div class="card-body">
+            <h5 class="fw-bold text-primary mb-1"><?= $branchName ?></h5>
+            <?php
+            $branchDetails = null;
+            foreach ($cabangs as $c) {
+                if ($c['id'] == $selected_cabang) {
+                    $branchDetails = $c;
+                    break;
+                }
+            }
+            ?>
+            <p class="text-muted mb-0"><i class="fas fa-map-marker-alt me-2"></i><?= $branchDetails['alamat'] ?? 'Alamat tidak tersedia' ?></p>
+        </div>
+    </div>
+
     <!-- Stats Row -->
     <div class="row g-3 mb-4">
         <div class="col-md-3">
@@ -152,6 +169,17 @@ $months = [
                         <h3 class="fw-bold mb-0"><?= $stats['total_asset'] ?></h3>
                     </div>
                     <i class="fas fa-boxes fa-2x opacity-50"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm bg-secondary text-white p-3">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <div class="small opacity-75">Total Komputer/Laptop</div>
+                        <h3 class="fw-bold mb-0"><?= $stats['total_komputer'] ?></h3>
+                    </div>
+                    <i class="fas fa-desktop fa-2x opacity-50"></i>
                 </div>
             </div>
         </div>
@@ -174,17 +202,6 @@ $months = [
                         <h3 class="fw-bold mb-0"><?= $stats['persentase'] ?>%</h3>
                     </div>
                     <i class="fas fa-check-circle fa-2x opacity-50"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm bg-warning text-dark p-3">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <div class="small opacity-75">Total Temuan</div>
-                        <h3 class="fw-bold mb-0"><?= $stats['total_temuan'] ?></h3>
-                    </div>
-                    <i class="fas fa-exclamation-triangle fa-2x opacity-50"></i>
                 </div>
             </div>
         </div>

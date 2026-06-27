@@ -7,6 +7,16 @@ class Repair {
         $this->conn = $db;
     }
 
+    public function getById($id) {
+        $query = "SELECT r.*, a.nama_aset, a.kode_aset 
+                  FROM " . $this->table . " r
+                  JOIN assets a ON r.asset_id = a.id
+                  WHERE r.id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([$id]);
+        return $stmt->fetch();
+    }
+
     public function getAll($id_cabang = null, $tgl_mulai = null, $tgl_selesai = null) {
         $query = "SELECT r.*, a.nama_aset, a.kode_aset 
                   FROM " . $this->table . " r

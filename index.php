@@ -2,6 +2,9 @@
 ob_start();
 session_start();
 require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/helpers/auth.php';
+require_once __DIR__ . '/helpers/pagination.php'; // Include pagination helper
+require_once __DIR__ . '/helpers/ui.php'; // Include UI helper
 
 if (!isset($_SESSION['user_id'])) {
     $currentPage = basename($_SERVER['PHP_SELF']);
@@ -13,6 +16,15 @@ if (!isset($_SESSION['user_id'])) {
 
 $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
 $file = __DIR__ . '/views/' . $page . '.php';
+
+// Restricted pages for teknisi
+$restrictedPages = [
+    'audit', 'cabang', 'divisi', 'inventaris', 'karyawan', 'kategori', 'laporan', 'logs', 'mutasi', 'pengguna'
+];
+
+if (in_array($page, $restrictedPages)) {
+    checkAccess('admin');
+}
 
 include __DIR__ . '/views/header.php';
 

@@ -30,15 +30,15 @@ class Maintenance {
     }
 
     public function create($data) {
-        $query = "INSERT INTO " . $this->table . " (asset_id, tanggal, teknisi, temuan, tindakan, rekomendasi, id_detail_jadwal) 
-                  VALUES (:asset_id, :tanggal, :teknisi, :temuan, :tindakan, :rekomendasi, :id_detail_jadwal)";
+        $query = "INSERT INTO " . $this->table . " (asset_id, tanggal, teknisi, temuan, tindakan, rekomendasi, status, id_detail_jadwal) 
+                  VALUES (:asset_id, :tanggal, :teknisi, :temuan, :tindakan, :rekomendasi, :status, :id_detail_jadwal)";
         $stmt = $this->conn->prepare($query);
         return $stmt->execute($data);
     }
 
     public function createBulk($asset_ids, $commonData) {
-        $query = "INSERT INTO " . $this->table . " (asset_id, tanggal, teknisi, temuan, tindakan, rekomendasi) 
-                  VALUES (?, ?, ?, ?, ?, ?)";
+        $query = "INSERT INTO " . $this->table . " (asset_id, tanggal, teknisi, temuan, tindakan, rekomendasi, status) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->conn->prepare($query);
         
         $this->conn->beginTransaction();
@@ -50,7 +50,8 @@ class Maintenance {
                     $commonData['teknisi'],
                     $commonData['temuan'],
                     $commonData['tindakan'],
-                    $commonData['rekomendasi']
+                    $commonData['rekomendasi'],
+                    $commonData['status']
                 ]);
             }
             $this->conn->commit();
@@ -172,6 +173,20 @@ class Maintenance {
         return $stmt->fetchAll();
     }
 
+    public function getUpcomingNotifications($days = 7) {
+        // Find maintenance tasks scheduled within the next $days days
+        $query = "SELECT m.*, a.nama_aset, a.kode_aset 
+                  FROM " . $this->table . " m
+                  JOIN assets a ON m.asset_id = a.id
+                  WHERE m.tanggal BETWEEN CURRENT_DATE AND DATE_ADD(CURRENT_DATE, INTERVAL :days DAY)
+                  ORDER BY m.tanggal ASC";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':days', $days, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
     public function getYearlyStats($id_cabang, $tahun) {
         $query = "SELECT MONTH(tanggal) as bulan, COUNT(*) as jumlah 
                   FROM maintenance m
@@ -183,5 +198,3 @@ class Maintenance {
         return $stmt->fetchAll();
     }
 }
-
-?>
