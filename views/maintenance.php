@@ -32,6 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $asset_ids = $_POST['asset_ids'] ?? [];
         $conn->beginTransaction();
         try {
+            require_once 'models/Maintenance.php';
+            $maintModel = new Maintenance($conn);
             foreach ($asset_ids as $id) {
                 $data = [
                     'asset_id' => $id,
@@ -43,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     'status' => $_POST['status'][$id],
                     'id_detail_jadwal' => null
                 ];
-                $maintenanceModel->create($data);
+                $maintModel->create($data);
             }
             $conn->commit();
             header("Location: index.php?page=maintenance&sub=history&status=mass_success");
@@ -56,6 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // Prepare data
+$maintenanceModel = new Maintenance($conn);
 $maintenances = $maintenanceModel->getAll();
 $assetsAvailable = $assetModel->getAssetsAvailableForMaintenance(date('m'), date('Y'));
 $cabangs = $cabangModel->getAll();
