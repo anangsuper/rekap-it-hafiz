@@ -302,6 +302,21 @@ document.querySelectorAll('.btn-edit').forEach(button => {
         document.getElementById('update_status').value = this.getAttribute('data-status');
     });
 });
+
+<?php if (isset($_GET['asset_id'])): ?>
+document.addEventListener("DOMContentLoaded", function() {
+    var assetId = "<?= (int)$_GET['asset_id'] ?>";
+    var item = document.querySelector('.custom-asset-item[data-id="' + assetId + '"]');
+    if (item) {
+        // Select custom asset
+        selectCustomAsset(item);
+        
+        // Open modal
+        var myModal = new bootstrap.Modal(document.getElementById('modalTambah'));
+        myModal.show();
+    }
+});
+<?php endif; ?>
 </script>
 
 <style>

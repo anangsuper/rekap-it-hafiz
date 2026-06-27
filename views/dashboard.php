@@ -345,7 +345,7 @@ try {
                                         </span>
                                     </td>
                                     <td class="text-end">
-                                        <a href="index.php?page=perbaikan" class="btn btn-sm btn-primary py-1.5 shadow-sm rounded-3">
+                                        <a href="index.php?page=perbaikan&asset_id=<?= $asset['id'] ?>" class="btn btn-sm btn-primary py-1.5 shadow-sm rounded-3">
                                             <i class="bi bi-wrench-adjustable"></i> Perbaiki
                                         </a>
                                     </td>
