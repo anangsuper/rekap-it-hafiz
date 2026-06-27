@@ -417,10 +417,19 @@ $selected_ids = $_POST['asset_ids'] ?? [];
                             </div>
                             <div class="col-md-2">
                                 <label class="form-label small fw-bold text-muted">Kondisi <span class="text-danger">*</span></label>
+                                <?php 
+                                $currentKondisi = $a['kondisi'] ?? 'Baik';
+                                $selectedStatus = 'Baik';
+                                if ($currentKondisi === 'Rusak Ringan') {
+                                    $selectedStatus = 'Perlu Perbaikan';
+                                } elseif ($currentKondisi === 'Rusak Berat') {
+                                    $selectedStatus = 'Rusak';
+                                }
+                                ?>
                                 <select name="status[<?= $id ?>]" class="form-select row-status bg-light border-0">
-                                    <option value="Baik">Baik</option>
-                                    <option value="Perlu Perbaikan">Perlu Perbaikan</option>
-                                    <option value="Rusak">Rusak</option>
+                                    <option value="Baik" <?= $selectedStatus === 'Baik' ? 'selected' : '' ?>>Baik</option>
+                                    <option value="Perlu Perbaikan" <?= $selectedStatus === 'Perlu Perbaikan' ? 'selected' : '' ?>>Perlu Perbaikan</option>
+                                    <option value="Rusak" <?= $selectedStatus === 'Rusak' ? 'selected' : '' ?>>Rusak</option>
                                 </select>
                             </div>
                             <div class="col-md-2">
