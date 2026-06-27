@@ -1,3 +1,4 @@
+<?php
 require_once 'controllers/MaintenanceController.php';
 require_once 'models/Asset.php';
 require_once 'models/Cabang.php';
