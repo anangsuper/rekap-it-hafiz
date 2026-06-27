@@ -26,16 +26,17 @@ if (isset($_POST['hapus'])) {
 
 // Batasi akses cabang untuk teknisi
 $id_cabang_filter = ($_SESSION['role'] === 'teknisi') ? $_SESSION['id_cabang'] : (isset($_GET['filter_cabang']) ? $_GET['filter_cabang'] : null);
+$filter_kondisi = isset($_GET['filter_kondisi']) ? $_GET['filter_kondisi'] : null;
 
 // Pagination logic
 $limit = 10;
 $pageNumber = isset($_GET['p']) ? (int)$_GET['p'] : 1;
 $offset = ($pageNumber - 1) * $limit;
 
-$totalAssets = $assetModel->countAll($id_cabang_filter);
+$totalAssets = $assetModel->countAll($id_cabang_filter, $filter_kondisi);
 $totalPages = ceil($totalAssets / $limit);
 
-$assets = $assetModel->getPaginated($limit, $offset, $id_cabang_filter);
+$assets = $assetModel->getPaginated($limit, $offset, $id_cabang_filter, $filter_kondisi);
 $kategoris = $kategoriModel->getAll();
 $cabangs = $cabangModel->getAll();
 $divisis = $divisiModel->getAll();
@@ -132,6 +133,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
+<?php endif; ?>
+
+<?php if ($filter_kondisi): ?>
+    <div class="alert alert-warning alert-dismissible fade show mb-4 border-0 shadow-sm rounded-4 d-flex justify-content-between align-items-center" role="alert">
+        <div class="m-0">
+            <i class="bi bi-exclamation-triangle-fill me-2 text-warning fs-5"></i> Menampilkan aset dengan kondisi: <span class="badge bg-warning text-dark rounded-pill px-2.5 py-1.5 fw-bold"><?= strtoupper($filter_kondisi === 'rusak' ? 'Rusak Ringan & Rusak Berat' : $filter_kondisi) ?></span>
+        </div>
+        <a href="index.php?page=inventaris" class="btn btn-sm btn-light border-0 shadow-sm rounded-pill px-3 py-1.5 fw-bold"><i class="bi bi-arrow-counterclockwise me-1"></i> Reset Filter</a>
+    </div>
 <?php endif; ?>
 
 <div class="card border-0 shadow-sm animate-fade-in" style="animation-delay: 0.1s;">

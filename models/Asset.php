@@ -116,29 +116,47 @@ class Asset {
         return $stats;
     }
 
-    public function countAll($id_cabang = null) {
-        $query = "SELECT COUNT(*) FROM " . $this->table;
+    public function countAll($id_cabang = null, $kondisi = null) {
+        $query = "SELECT COUNT(*) FROM " . $this->table . " WHERE 1=1";
         if ($id_cabang) {
-            $query .= " WHERE id_cabang = :id_cabang";
-            $stmt = $this->conn->prepare($query);
-            $stmt->execute(['id_cabang' => $id_cabang]);
-        } else {
-            $stmt = $this->conn->prepare($query);
-            $stmt->execute();
+            $query .= " AND id_cabang = :id_cabang";
         }
+        if ($kondisi) {
+            if ($kondisi === 'rusak') {
+                $query .= " AND kondisi IN ('Rusak Ringan', 'Rusak Berat')";
+            } else {
+                $query .= " AND kondisi = :kondisi";
+            }
+        }
+        $stmt = $this->conn->prepare($query);
+        if ($id_cabang) {
+            $stmt->bindValue(':id_cabang', $id_cabang, PDO::PARAM_INT);
+        }
+        if ($kondisi && $kondisi !== 'rusak') {
+            $stmt->bindValue(':kondisi', $kondisi, PDO::PARAM_STR);
+        }
+        $stmt->execute();
         return $stmt->fetchColumn();
     }
 
-    public function getPaginated($limit, $offset, $id_cabang = null) {
+    public function getPaginated($limit, $offset, $id_cabang = null, $kondisi = null) {
         $query = "SELECT a.*, k.nama_kategori, c.nama_cabang, d.nama_divisi, kr.nama_karyawan 
                   FROM " . $this->table . " a
                   LEFT JOIN kategori_aset k ON a.id_kategori = k.id
                   LEFT JOIN cabang c ON a.id_cabang = c.id
                   LEFT JOIN divisi d ON a.id_divisi = d.id
-                  LEFT JOIN karyawan kr ON a.id_karyawan = kr.id";
+                  LEFT JOIN karyawan kr ON a.id_karyawan = kr.id
+                  WHERE 1=1";
         
         if ($id_cabang) {
-            $query .= " WHERE a.id_cabang = :id_cabang";
+            $query .= " AND a.id_cabang = :id_cabang";
+        }
+        if ($kondisi) {
+            if ($kondisi === 'rusak') {
+                $query .= " AND a.kondisi IN ('Rusak Ringan', 'Rusak Berat')";
+            } else {
+                $query .= " AND a.kondisi = :kondisi";
+            }
         }
         
         $query .= " ORDER BY a.created_at DESC LIMIT :limit OFFSET :offset";
@@ -146,6 +164,9 @@ class Asset {
         $stmt = $this->conn->prepare($query);
         if ($id_cabang) {
             $stmt->bindValue(':id_cabang', $id_cabang, PDO::PARAM_INT);
+        }
+        if ($kondisi && $kondisi !== 'rusak') {
+            $stmt->bindValue(':kondisi', $kondisi, PDO::PARAM_STR);
         }
         $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);

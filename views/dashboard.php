@@ -13,6 +13,18 @@ try {
     $stmtCost = $conn->query("SELECT SUM(biaya) as total FROM repairs WHERE status = 'Selesai' AND MONTH(created_at) = MONTH(CURRENT_DATE())");
     $totalCost = $stmtCost->fetch()['total'] ?? 0;
 
+    // Perlu Tindakan: Aset Rusak Ringan / Rusak Berat
+    $stmtPerluTindakan = $conn->query("SELECT COUNT(*) as total FROM assets WHERE kondisi IN ('Rusak Ringan', 'Rusak Berat')");
+    $totalPerluTindakan = $stmtPerluTindakan->fetch()['total'];
+
+    $stmtBroken = $conn->query("SELECT a.*, c.nama_cabang, d.nama_divisi 
+                                FROM assets a 
+                                LEFT JOIN cabang c ON a.id_cabang = c.id 
+                                LEFT JOIN divisi d ON a.id_divisi = d.id 
+                                WHERE a.kondisi IN ('Rusak Ringan', 'Rusak Berat') 
+                                ORDER BY a.kondisi DESC, a.created_at DESC LIMIT 5");
+    $brokenAssets = $stmtBroken->fetchAll();
+
     // Tambahan: Aktivitas Terbaru
     $stmtLogs = $conn->query("SELECT al.*, u.nama as user_nama FROM activity_logs al LEFT JOIN users u ON al.user_id = u.id ORDER BY al.created_at DESC LIMIT 5");
     $recentLogs = $stmtLogs->fetchAll();
@@ -22,7 +34,8 @@ try {
     $branchDistribution = $stmtBranch->fetchAll();
 
 } catch (PDOException $e) {
-    $totalAssets = $totalMaintenance = $totalRepairs = $totalCost = 0;
+    $totalAssets = $totalMaintenance = $totalRepairs = $totalCost = $totalPerluTindakan = 0;
+    $brokenAssets = [];
     $recentLogs = [];
     $branchDistribution = [];
 }
@@ -54,6 +67,15 @@ try {
         border-color: rgba(99, 102, 241, 0.3) !important; 
         transform: translateY(-4px); 
         box-shadow: 0 12px 25px -5px rgba(99, 102, 241, 0.08); 
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.6; transform: scale(1.1); }
+    }
+    .animate-pulse {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        display: inline-block;
     }
     
     /* Progress Bars & Custom badges */
@@ -120,22 +142,24 @@ try {
 
     <!-- Stat Card 3 -->
     <div class="col-md-3">
-        <div class="lux-card" style="background: linear-gradient(135deg, #d97706 0%, #db2777 100%);">
-            <!-- Glossy Glass Overlay -->
-            <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 100%); pointer-events: none; z-index: 0;"></div>
-            <div class="card-body p-4 position-relative text-white" style="z-index: 1;">
-                <div class="position-absolute top-0 end-0 p-3 opacity-20" style="font-size: 5rem; transform: translate(15%, -15%); pointer-events: none; z-index: 0;">
-                    <i class="bi bi-exclamation-triangle"></i>
-                </div>
-                <div class="small fw-bold mb-1 opacity-70" style="letter-spacing: 0.05em;">ACTIVE REPAIRS</div>
-                <h2 class="fw-800 mb-0"><?= $totalRepairs ?></h2>
-                <div class="mt-3">
-                    <span class="badge bg-white bg-opacity-20 text-white border border-white border-opacity-30 rounded-pill small">
-                        <i class="bi bi-clock-history me-1"></i> In progress
-                    </span>
+        <a href="index.php?page=inventaris&filter_kondisi=rusak" class="text-decoration-none d-block h-100" style="color: inherit;">
+            <div class="lux-card h-100" style="background: linear-gradient(135deg, #d97706 0%, #db2777 100%);">
+                <!-- Glossy Glass Overlay -->
+                <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 100%); pointer-events: none; z-index: 0;"></div>
+                <div class="card-body p-4 position-relative text-white" style="z-index: 1;">
+                    <div class="position-absolute top-0 end-0 p-3 opacity-20" style="font-size: 5rem; transform: translate(15%, -15%); pointer-events: none; z-index: 0;">
+                        <i class="bi bi-exclamation-triangle"></i>
+                    </div>
+                    <div class="small fw-bold mb-1 opacity-70" style="letter-spacing: 0.05em;">PERLU TINDAKAN</div>
+                    <h2 class="fw-800 mb-0"><?= $totalPerluTindakan ?></h2>
+                    <div class="mt-3">
+                        <span class="badge bg-white bg-opacity-20 text-white border border-white border-opacity-30 rounded-pill small">
+                            <i class="bi bi-exclamation-circle me-1"></i> Perangkat Bermasalah
+                        </span>
+                    </div>
                 </div>
             </div>
-        </div>
+        </a>
     </div>
 
     <!-- Stat Card 4 -->
@@ -262,6 +286,74 @@ try {
                         </div>
                     </div>
                 <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Perangkat Perlu Tindakan / Bermasalah -->
+<div class="row g-4 mb-5 animate-fade-in" style="animation-delay: 0.2s;">
+    <div class="col-md-12">
+        <div class="card p-4 border-0 shadow-sm">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                <h6 class="fw-800 text-dark d-flex align-items-center m-0">
+                    <i class="bi bi-exclamation-octagon-fill me-2 text-danger animate-pulse"></i> Perangkat Rusak / Perlu Tindakan
+                </h6>
+                <a href="index.php?page=inventaris&filter_kondisi=rusak" class="btn btn-outline-danger btn-sm rounded-pill px-3 py-1 fw-bold">
+                    Lihat Semua
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light border-bottom">
+                        <tr>
+                            <th>Kode Aset</th>
+                            <th>Nama Aset</th>
+                            <th>Cabang</th>
+                            <th>Divisi</th>
+                            <th>Kondisi</th>
+                            <th class="text-end">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($brokenAssets)): ?>
+                            <tr>
+                                <td colspan="6" class="text-center py-4 text-muted small">
+                                    <i class="bi bi-emoji-smile me-1 text-success fs-5"></i> Semua perangkat saat ini dalam kondisi Baik.
+                                </td>
+                            </tr>
+                        <?php else: ?>
+                            <?php foreach ($brokenAssets as $asset): 
+                                $is_heavy = $asset['kondisi'] === 'Rusak Berat';
+                                $badge_class = $is_heavy ? 'bg-danger bg-opacity-10 text-danger' : 'bg-warning bg-opacity-10 text-warning';
+                            ?>
+                                <tr>
+                                    <td><span class="fw-bold text-dark"><?= $asset['kode_aset'] ?></span></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-light p-2 rounded-circle me-3">
+                                                <i class="bi bi-pc-display text-muted"></i>
+                                            </div>
+                                            <strong><?= $asset['nama_aset'] ?></strong>
+                                        </div>
+                                    </td>
+                                    <td><?= $asset['nama_cabang'] ?: '-' ?></td>
+                                    <td><?= $asset['nama_divisi'] ?: '-' ?></td>
+                                    <td>
+                                        <span class="badge <?= $badge_class ?> rounded-pill px-2.5 py-1.5 fw-bold">
+                                            <i class="bi bi-exclamation-circle-fill me-1"></i><?= $asset['kondisi'] ?>
+                                        </span>
+                                    </td>
+                                    <td class="text-end">
+                                        <a href="index.php?page=perbaikan" class="btn btn-sm btn-primary py-1.5 shadow-sm rounded-3">
+                                            <i class="bi bi-wrench-adjustable"></i> Perbaiki
+                                        </a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
