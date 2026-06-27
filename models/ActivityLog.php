@@ -56,7 +56,12 @@ class ActivityLog {
                 ),
             ));
 
-            curl_exec($curl);
+            $response = curl_exec($curl);
+            if (curl_errno($curl)) {
+                error_log("cURL Error (Fonnte WA): " . curl_error($curl));
+            } else {
+                error_log("Fonnte WA Response: " . $response);
+            }
             curl_close($curl);
         } catch (Exception $e) {
             error_log("Gagal mengirim notifikasi WhatsApp: " . $e->getMessage());
