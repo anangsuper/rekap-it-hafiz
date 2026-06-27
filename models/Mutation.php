@@ -43,8 +43,37 @@ class Mutation {
                   LEFT JOIN karyawan k1 ON m.id_karyawan_lama = k1.id
                   LEFT JOIN karyawan k2 ON m.id_karyawan_baru = k2.id
                   LEFT JOIN users u ON m.user_id = u.id
-                  ORDER BY m.created_at DESC";
+                  ORDER BY m.id DESC";
         $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    public function countAll() {
+        $query = "SELECT COUNT(*) FROM " . $this->table;
+        return $this->conn->query($query)->fetchColumn();
+    }
+
+    public function getPaginated($limit, $offset) {
+        $query = "SELECT m.*, a.nama_aset, a.kode_aset, 
+                         c1.nama_cabang as cabang_lama, c2.nama_cabang as cabang_baru,
+                         d1.nama_divisi as divisi_lama, d2.nama_divisi as divisi_baru,
+                         k1.nama_karyawan as karyawan_lama, k2.nama_karyawan as karyawan_baru,
+                         u.nama as pelaksana
+                  FROM " . $this->table . " m
+                  JOIN assets a ON m.asset_id = a.id
+                  LEFT JOIN cabang c1 ON m.id_cabang_lama = c1.id
+                  LEFT JOIN cabang c2 ON m.id_cabang_baru = c2.id
+                  LEFT JOIN divisi d1 ON m.id_divisi_lama = d1.id
+                  LEFT JOIN divisi d2 ON m.id_divisi_baru = d2.id
+                  LEFT JOIN karyawan k1 ON m.id_karyawan_lama = k1.id
+                  LEFT JOIN karyawan k2 ON m.id_karyawan_baru = k2.id
+                  LEFT JOIN users u ON m.user_id = u.id
+                  ORDER BY m.id DESC
+                  LIMIT :limit OFFSET :offset";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll();
     }

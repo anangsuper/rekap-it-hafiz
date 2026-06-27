@@ -40,17 +40,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['proses_mutasi'])) {
     }
 }
 
-$mutations = $mutationModel->getAll();
+$allMutations = $mutationModel->getAll();
+
+// Pagination logic
+$limit = 10;
+$pageNumber = isset($_GET['p']) ? (int)$_GET['p'] : 1;
+$offset = ($pageNumber - 1) * $limit;
+
+$totalMutations = $mutationModel->countAll();
+$totalPages = ceil($totalMutations / $limit);
+
+$mutations = $mutationModel->getPaginated($limit, $offset);
+$paginationUrl = "index.php?page=mutasi";
+
 $assets = $assetModel->getAll();
 $cabangs = $cabangModel->getAll();
 $divisis = $divisiModel->getAll();
 $karyawans = $karyawanModel->getAll();
 
 // Calculate Stats
-$totalMutasi = count($mutations);
+$totalMutasi = count($allMutations);
 $mutasiBulanIni = 0;
 $uniqueAssets = [];
-foreach ($mutations as $m) {
+foreach ($allMutations as $m) {
     $uniqueAssets[$m['asset_id']] = true;
     if (date('m-Y', strtotime($m['tanggal_mutasi'])) === date('m-Y')) {
         $mutasiBulanIni++;
@@ -252,6 +264,11 @@ $totalAsetTerlibat = count($uniqueAssets);
                 <?php endforeach; ?>
             </div>
         </div>
+        <?php if ($totalPages > 1): ?>
+        <div class="card-footer bg-white border-top-0 pt-2 pb-4 d-flex justify-content-center">
+            <?= getPaginationControls($pageNumber, $totalPages, $paginationUrl) ?>
+        </div>
+        <?php endif; ?>
     </div>
 </div>
 
@@ -321,6 +338,17 @@ $totalAsetTerlibat = count($uniqueAssets);
                     <p class="text-muted small mb-4">Pilih aset yang akan dimutasi dan tentukan lokasi atau pemegang baru.</p>
                     
                     <div class="row g-4">
+                        <!-- Filter Cabang Aset -->
+                        <div class="col-md-12">
+                            <label class="form-label small fw-bold text-muted">Filter Cabang Asal Aset</label>
+                            <select id="mutasi_filter_cabang_asset" class="form-select bg-light border-0">
+                                <option value="">-- Semua Cabang --</option>
+                                <?php foreach ($cabangs as $c): ?>
+                                    <option value="<?= htmlspecialchars($c['nama_cabang']) ?>"><?= htmlspecialchars($c['nama_cabang']) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
                         <!-- Pilih Aset -->
                         <div class="col-md-12">
                             <label class="form-label small fw-bold text-muted">Pilih Aset</label>
@@ -328,6 +356,7 @@ $totalAsetTerlibat = count($uniqueAssets);
                                 <option value="">-- Pilih Aset --</option>
                                 <?php foreach ($assets as $a): ?>
                                     <option value="<?= $a['id'] ?>" 
+                                            data-cabang-name="<?= htmlspecialchars($a['nama_cabang']) ?>"
                                             data-cabang="<?= $a['nama_cabang'] ?>" 
                                             data-divisi="<?= $a['nama_divisi'] ?>" 
                                             data-karyawan="<?= $a['nama_karyawan'] ?: 'Unassigned' ?>">
@@ -396,6 +425,24 @@ $totalAsetTerlibat = count($uniqueAssets);
 </div>
 
 <script>
+// Smart Filter Aset based on Branch
+document.getElementById('mutasi_filter_cabang_asset').addEventListener('change', function() {
+    const selectedCabangName = this.value;
+    const selectAsset = document.getElementById('mutasi_asset_id');
+    const options = selectAsset.querySelectorAll('option');
+
+    options.forEach(option => {
+        const cabangName = option.getAttribute('data-cabang-name');
+        if (!cabangName || selectedCabangName === "") {
+            option.style.display = 'block';
+        } else {
+            option.style.display = (cabangName === selectedCabangName) ? 'block' : 'none';
+        }
+    });
+    selectAsset.value = "";
+    document.getElementById('info_lokasi_lama').innerText = "Pilih aset terlebih dahulu";
+});
+
 // Show current location when asset is selected
 document.getElementById('mutasi_asset_id').addEventListener('change', function() {
     const selectedOption = this.options[this.selectedIndex];
