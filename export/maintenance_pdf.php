@@ -140,9 +140,10 @@ $html .= '
             <tr>
                 <th width="12%">Tanggal</th>
                 <th width="15%">Kode Aset</th>
-                <th width="20%">User (Nama)</th>
-                <th width="38%">Aksi / Tindakan</th>
-                <th width="15%">Status</th>
+                <th width="18%">User (Nama)</th>
+                <th width="30%">Aksi / Tindakan</th>
+                <th width="13%">Status</th>
+                <th width="12%" align="center">Jml Cek</th>
             </tr>
         </thead>
         <tbody>';
@@ -161,6 +162,7 @@ $html .= '
                 <td>' . ($dm['nama_karyawan'] ?? '-') . '</td>
                 <td><small>' . ($dm['tindakan'] ?: 'Pengecekan Rutin') . '</small></td>
                 <td align="center">' . $statusHtml . '</td>
+                <td align="center">' . ($dm['frekuensi'] ?? 1) . 'x</td>
             </tr>';
         }
         if (empty($detailedMaintenance)) {

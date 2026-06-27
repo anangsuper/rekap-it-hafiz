@@ -179,7 +179,11 @@ class Maintenance {
     }
 
     public function getDetailedByMonth($id_cabang, $bulan, $tahun) {
-        $query = "SELECT m.*, a.nama_aset, a.kode_aset, k.nama_karyawan 
+        $query = "SELECT m.*, a.nama_aset, a.kode_aset, k.nama_karyawan,
+                         (SELECT COUNT(*) FROM " . $this->table . " m2 
+                          WHERE m2.asset_id = m.asset_id 
+                          AND MONTH(m2.tanggal) = :bulan 
+                          AND YEAR(m2.tanggal) = :tahun) as frekuensi
                   FROM " . $this->table . " m
                   JOIN assets a ON m.asset_id = a.id
                   LEFT JOIN karyawan k ON a.id_karyawan = k.id

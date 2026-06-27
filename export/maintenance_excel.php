@@ -78,7 +78,7 @@ header("Content-Disposition: attachment; filename=\"$filename\"");
     <?php endforeach; ?>
     <tr><td colspan="4"></td></tr>
     <tr>
-        <th colspan="5" align="left">DETAIL CHECKLIST MAINTENANCE</th>
+        <th colspan="6" align="left">DETAIL CHECKLIST MAINTENANCE</th>
     </tr>
     <tr>
         <th>Tanggal</th>
@@ -86,14 +86,25 @@ header("Content-Disposition: attachment; filename=\"$filename\"");
         <th>User (Nama)</th>
         <th>Aksi / Tindakan</th>
         <th>Status</th>
+        <th>Jml Cek</th>
     </tr>
-    <?php foreach ($detailedMaintenance as $dm): ?>
+    <?php foreach ($detailedMaintenance as $dm): 
+        $status = $dm['status'] ?? 'Baik';
+        if ($status === 'Baik') {
+            $statusText = 'OK';
+        } elseif ($status === 'Perlu Perbaikan') {
+            $statusText = 'PERLU PERBAIKAN';
+        } else {
+            $statusText = 'RUSAK';
+        }
+    ?>
     <tr>
         <td><?= date('d/m/Y', strtotime($dm['tanggal'])) ?></td>
         <td><?= $dm['kode_aset'] ?></td>
         <td><?= $dm['nama_karyawan'] ?? '-' ?></td>
         <td><?= $dm['tindakan'] ?: 'Pengecekan Rutin' ?></td>
-        <td align="center">OK</td>
+        <td align="center"><?= $statusText ?></td>
+        <td align="center"><?= ($dm['frekuensi'] ?? 1) ?>x</td>
     </tr>
     <?php endforeach; ?>
 </table>
