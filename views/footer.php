@@ -28,6 +28,24 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Maintain Sidebar Scroll Position
+    if (sidebar) {
+        const savedScroll = localStorage.getItem('sidebar-scroll');
+        if (savedScroll !== null) {
+            sidebar.scrollTop = parseInt(savedScroll, 10);
+        }
+
+        sidebar.querySelectorAll('.sidebar-link').forEach(link => {
+            link.addEventListener('click', function() {
+                localStorage.setItem('sidebar-scroll', sidebar.scrollTop);
+            });
+        });
+
+        window.addEventListener('beforeunload', function() {
+            localStorage.setItem('sidebar-scroll', sidebar.scrollTop);
+        });
+    }
+
     // Live Clock Update
     function updateClock() {
         const clockEl = document.getElementById('realtime-clock');
