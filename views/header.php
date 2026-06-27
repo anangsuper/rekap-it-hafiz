@@ -202,6 +202,34 @@ $notifCount = count($notifications);
         }
 
         /* Prevent ugly double-shadows and nested glassmorphism on child cards */
+        
+        /* Bell shake animation */
+        @keyframes bell-shake {
+            0%, 100% { transform: rotate(0); }
+            10%, 30%, 50%, 70%, 90% { transform: rotate(12deg); }
+            20%, 40%, 60%, 80% { transform: rotate(-12deg); }
+        }
+        .animate-bell {
+            animation: bell-shake 2.5s cubic-bezier(.36,.07,.19,.97) both;
+            animation-iteration-count: infinite;
+            transform-origin: top center;
+            display: inline-block;
+        }
+
+        .notif-scroll-container::-webkit-scrollbar {
+            width: 5px;
+        }
+        .notif-scroll-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .notif-scroll-container::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        .notif-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
         .card .card {
             background: transparent !important;
             border: none !important;
@@ -481,33 +509,66 @@ $notifCount = count($notifications);
             <div class="navbar-nav align-items-center">
                 <!-- Notifications -->
                 <div class="dropdown me-3">
-                    <button class="nav-link position-relative p-2 border-0 bg-transparent" data-bs-toggle="dropdown" aria-expanded="false" id="notifDropdown">
-                        <i class="bi bi-bell fs-5"></i>
+                    <button class="nav-link position-relative p-2 border-0 bg-transparent text-white opacity-75 hover-opacity-100 transition-all" data-bs-toggle="dropdown" aria-expanded="false" id="notifDropdown">
+                        <i class="bi bi-bell fs-5 <?= ($notifCount > 0) ? 'animate-bell' : '' ?>"></i>
                         <?php if ($notifCount > 0): ?>
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-dark" style="font-size: 0.6rem;">
-                                <?= $notifCount ?>
+                            <span class="position-absolute top-1 start-75 translate-middle p-1.5 bg-danger border border-2 border-dark rounded-circle">
+                                <span class="visually-hidden">New alerts</span>
                             </span>
                         <?php endif; ?>
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2 animate-slide-down" style="width: 320px; border-radius: 20px; overflow: hidden; z-index: 9999;">
-                        <li class="px-4 py-3 border-bottom bg-light">
-                            <h6 class="m-0 fw-bold text-dark">Notifikasi Maintenance</h6>
-                            <small class="text-muted"><?= $notifCount ?> jadwal dalam 7 hari kedepan</small>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2 p-0 overflow-hidden" style="width: 340px; border-radius: 16px; z-index: 9999; background: #ffffff;">
+                        <li class="px-4 py-3 bg-light border-bottom d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="m-0 fw-bold text-dark"><i class="bi bi-bell-fill text-primary me-2"></i>Notifikasi</h6>
+                                <small class="text-muted"><?= $notifCount ?> jadwal perlu tindakan</small>
+                            </div>
+                            <?php if ($notifCount > 0): ?>
+                                <span class="badge bg-primary rounded-pill small"><?= $notifCount ?> Baru</span>
+                            <?php endif; ?>
                         </li>
-                        <div style="max-height: 300px; overflow-y: auto;">
+                        <div class="notif-scroll-container" style="max-height: 320px; overflow-y: auto;">
                             <?php if ($notifCount === 0): ?>
-                                <li class="px-4 py-3 text-muted small">Tidak ada jadwal maintenance</li>
+                                <li class="px-4 py-5 text-center text-muted">
+                                    <div class="bg-success bg-opacity-10 text-success rounded-circle d-inline-flex p-3 mb-3">
+                                        <i class="bi bi-shield-check fs-3"></i>
+                                    </div>
+                                    <p class="small fw-semibold mb-0">Semua Terkendali!</p>
+                                    <small class="text-muted d-block mt-1">Tidak ada jadwal maintenance mendesak.</small>
+                                </li>
                             <?php else: ?>
-                                <?php foreach ($notifications as $n): ?>
+                                <?php foreach ($notifications as $n): 
+                                    // Calculate days remaining
+                                    $today = new DateTime(date('Y-m-d'));
+                                    $target = new DateTime(date('Y-m-d', strtotime($n['tanggal'])));
+                                    $diff = $today->diff($target)->days;
+                                    $is_past = $target < $today;
+                                    
+                                    if ($is_past) {
+                                        $timeText = "Terlewat";
+                                        $timeBadge = "bg-danger";
+                                    } elseif ($diff === 0) {
+                                        $timeText = "Hari ini";
+                                        $timeBadge = "bg-danger";
+                                    } elseif ($diff === 1) {
+                                        $timeText = "Besok";
+                                        $timeBadge = "bg-warning text-dark";
+                                    } else {
+                                        $timeText = "H-" . $diff;
+                                        $timeBadge = "bg-primary bg-opacity-10 text-primary";
+                                    }
+                                ?>
                                     <li class="border-bottom">
-                                        <a class="dropdown-item px-4 py-3 text-dark transition-hover" href="index.php?page=maintenance">
-                                            <div class="d-flex align-items-center">
-                                                <div class="bg-primary bg-opacity-10 p-2 rounded-circle me-3">
-                                                    <i class="bi bi-tools text-primary"></i>
-                                                </div>
-                                                <div class="flex-grow-1">
-                                                    <div class="fw-bold small text-truncate"><?= $n['kode_aset'] ?> - <?= $n['nama_aset'] ?></div>
-                                                    <small class="text-muted"><?= date('d M Y', strtotime($n['tanggal'])) ?></small>
+                                        <a class="dropdown-item px-4 py-3 text-dark transition-all d-flex align-items-start gap-3" href="index.php?page=maintenance" style="white-space: normal;">
+                                            <div class="bg-primary bg-opacity-10 p-2 rounded-3 text-primary d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">
+                                                <i class="bi bi-pc-display"></i>
+                                            </div>
+                                            <div class="flex-grow-1 min-w-0">
+                                                <div class="fw-bold small text-dark mb-0 text-truncate"><?= $n['kode_aset'] ?></div>
+                                                <div class="text-muted small text-truncate mb-2"><?= $n['nama_aset'] ?></div>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span class="text-muted small" style="font-size: 0.75rem;"><i class="bi bi-calendar-event me-1"></i><?= date('d M Y', strtotime($n['tanggal'])) ?></span>
+                                                    <span class="badge <?= $timeBadge ?> rounded-pill px-2 py-0.5" style="font-size: 0.7rem; font-weight: 700;"><?= $timeText ?></span>
                                                 </div>
                                             </div>
                                         </a>
@@ -515,8 +576,10 @@ $notifCount = count($notifications);
                                 <?php endforeach; ?>
                             <?php endif; ?>
                         </div>
-                        <li class="px-4 py-2 border-top bg-light text-center">
-                            <a href="index.php?page=maintenance" class="text-primary text-decoration-none small fw-bold">Lihat Semua</a>
+                        <li class="px-4 py-2 bg-light border-top text-center">
+                            <a href="index.php?page=maintenance" class="text-primary text-decoration-none small fw-bold d-block py-1 hover-underline">
+                                Lihat Semua Jadwal <i class="bi bi-arrow-right ms-1"></i>
+                            </a>
                         </li>
                     </ul>
                 </div>
