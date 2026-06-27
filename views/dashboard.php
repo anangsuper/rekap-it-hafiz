@@ -181,17 +181,35 @@ try {
     <!-- Aktivitas Terbaru -->
     <div class="col-md-4">
         <div class="card p-4 border-0 shadow-sm mb-4 h-100">
-            <h6 class="fw-800 mb-3 text-dark">Aktivitas Terkini</h6>
+            <h6 class="fw-800 mb-4 text-dark d-flex align-items-center">
+                <i class="bi bi-clock-history me-2 text-primary"></i> Aktivitas Terkini
+            </h6>
             <div class="list-group list-group-flush">
                 <?php foreach ($recentLogs as $log): ?>
-                    <div class="list-group-item px-0 border-0">
-                        <div class="small fw-bold text-dark"><?= $log['action'] ?></div>
-                        <div class="text-muted" style="font-size: 0.75rem;">
-                            <?= $log['user_nama'] ?> - <?= date('d M, H:i', strtotime($log['created_at'])) ?>
+                    <div class="list-group-item px-0 border-0 mb-3 d-flex align-items-start">
+                        <div class="bg-light p-2 rounded-circle me-3 mt-1">
+                            <i class="bi bi-person-fill text-secondary"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="small fw-bold text-dark text-truncate" style="max-width: 250px;" title="<?= htmlspecialchars($log['description']) ?>">
+                                <?= htmlspecialchars($log['action']) ?>
+                            </div>
+                            <div class="text-muted" style="font-size: 0.75rem;">
+                                <?= htmlspecialchars($log['user_nama'] ?: 'Sistem') ?> • 
+                                <span title="<?= date('d M Y, H:i:s', strtotime($log['created_at'])) ?>">
+                                    <?= date('d M, H:i', strtotime($log['created_at'])) ?>
+                                </span>
+                            </div>
+                            <div class="text-muted small mt-1" style="font-size: 0.7rem;">
+                                <?= htmlspecialchars($log['description']) ?>
+                            </div>
                         </div>
                     </div>
                 <?php endforeach; ?>
             </div>
+            <a href="index.php?page=logs" class="btn btn-outline-primary btn-sm w-100 mt-2 rounded-pill">
+                Lihat Semua Log
+            </a>
         </div>
     </div>
 </div>
