@@ -27,7 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit();
         }
     }
-    // ... rest of form handling
     } elseif (isset($_POST['proses_massal_final']) && $sub === 'massal') {
         // Final Processing
         $asset_ids = $_POST['asset_ids'] ?? [];
