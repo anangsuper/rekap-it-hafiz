@@ -11,7 +11,7 @@ define('TELEGRAM_CHAT_ID', '');
 
 // 2. Konfigurasi WhatsApp Fonnte
 // Masukkan Token API Fonnte dari dashboard Fonnte.com
-define('FONNTE_TOKEN', '');       
+define('FONNTE_TOKEN', 's2mQJNLGccCuqAKD7xcW');       
 define('WHATSAPP_NUMBER', '089523140757'); 
 
 ?>
