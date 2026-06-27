@@ -321,6 +321,18 @@ $notifCount = count($notifications);
             border-radius: 10px;
         }
 
+        /* Page transition & typography helper animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .fw-800 { font-weight: 800; }
+        .fw-700 { font-weight: 700; }
+        .fw-600 { font-weight: 600; }
+
         /* Responsive Mobile Layout overrides */
         @media (max-width: 991.98px) {
             .sidebar {
