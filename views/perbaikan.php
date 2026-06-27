@@ -2,15 +2,29 @@
 require_once 'controllers/RepairController.php';
 require_once 'models/Asset.php';
 require_once 'models/Cabang.php';
+require_once 'models/Sparepart.php';
+require_once 'models/Repair.php';
+
+// Self-healing database check for penggunaan_sparepart
+$conn->exec("CREATE TABLE IF NOT EXISTS penggunaan_sparepart (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_repair INT NOT NULL,
+    id_sparepart INT NOT NULL,
+    jumlah INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_repair) REFERENCES repairs(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_sparepart) REFERENCES sparepart(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
 
 $repairController = new RepairController($conn);
 $assetModel = new Asset($conn);
 $cabangModel = new Cabang($conn);
+$sparepartModel = new Sparepart($conn);
 
 $repairs = $repairController->index();
 $cabangs = $cabangModel->getAll();
 $assets = $assetModel->getAll();
-// ... (rest of PHP code remains)
+$spareparts = $sparepartModel->getAll();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
     $data = [
@@ -32,6 +46,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
         'tanggal_selesai' => ($_POST['status'] == 'Selesai') ? date('Y-m-d') : null
     ];
     if ($repairController->update($id, $data)) {
+        // Process sparepart usage if selected
+        if (!empty($_POST['id_sparepart']) && !empty($_POST['jumlah_sparepart'])) {
+            $id_sp = $_POST['id_sparepart'];
+            $qty = (int)$_POST['jumlah_sparepart'];
+            
+            $repairModel = new Repair($conn);
+            $repairModel->addSparepart($id, $id_sp, $qty);
+            
+            // Auto-decrement sparepart stock
+            $sparepartModel->updateStok($id_sp, -$qty);
+        }
         header("Location: index.php?page=perbaikan&status=updated");
         exit();
     }
@@ -81,6 +106,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
                             <div class="small fw-500 text-dark"><?= $r['keluhan'] ?></div>
                             <?php if($r['tindakan']): ?>
                                 <div class="mt-1 small text-muted fst-italic">Sol: <?= $r['tindakan'] ?></div>
+                            <?php endif; ?>
+                            <?php 
+                            $repairModelInstance = new Repair($conn);
+                            $usedSp = $repairModelInstance->getSpareparts($r['id']);
+                            if (!empty($usedSp)): 
+                            ?>
+                                <div class="mt-1.5 d-flex flex-wrap gap-1">
+                                    <?php foreach ($usedSp as $usp): ?>
+                                        <span class="badge bg-secondary bg-opacity-10 text-secondary rounded px-2 py-0.5" style="font-size: 0.7rem; font-weight: 600;">
+                                            ⚙️ <?= $usp['nama_sparepart'] ?> (<?= $usp['jumlah'] ?>)
+                                        </span>
+                                    <?php endforeach; ?>
+                                </div>
                             <?php endif; ?>
                         </td>
                         <td>
@@ -141,6 +179,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
                     <div class="mb-3">
                         <label class="form-label small fw-bold">Solusi / Tindakan</label>
                         <textarea name="tindakan" id="update_tindakan" class="form-control" rows="3" placeholder="Jelaskan perbaikan yang dilakukan..." required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Gunakan Sparepart (Opsional)</label>
+                        <div class="row g-2">
+                            <div class="col-8">
+                                <select name="id_sparepart" class="form-select bg-light border-0">
+                                    <option value="">-- Tanpa Ganti Sparepart --</option>
+                                    <?php foreach ($spareparts as $sp): ?>
+                                        <option value="<?= $sp['id'] ?>">
+                                            <?= htmlspecialchars($sp['nama_sparepart']) ?> (Stok: <?= $sp['stok'] ?> <?= htmlspecialchars($sp['satuan']) ?>)
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="col-4">
+                                <input type="number" name="jumlah_sparepart" class="form-control bg-light border-0" value="1" min="1" placeholder="Qty">
+                            </div>
+                        </div>
                     </div>
                     <div class="row g-3">
                         <div class="col-md-6">

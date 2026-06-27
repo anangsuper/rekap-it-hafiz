@@ -61,6 +61,16 @@ $tables = [
         stok INT DEFAULT 0,
         satuan VARCHAR(20),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
+
+    "penggunaan_sparepart" => "CREATE TABLE IF NOT EXISTS penggunaan_sparepart (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        id_repair INT NOT NULL,
+        id_sparepart INT NOT NULL,
+        jumlah INT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (id_repair) REFERENCES repairs(id) ON DELETE CASCADE,
+        FOREIGN KEY (id_sparepart) REFERENCES sparepart(id) ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
 ];
 
