@@ -182,8 +182,8 @@ class Maintenance {
         $query = "SELECT m.*, a.nama_aset, a.kode_aset, k.nama_karyawan,
                          (SELECT COUNT(*) FROM " . $this->table . " m2 
                           WHERE m2.asset_id = m.asset_id 
-                          AND MONTH(m2.tanggal) = :bulan 
-                          AND YEAR(m2.tanggal) = :tahun) as frekuensi
+                          AND MONTH(m2.tanggal) = :bulan_sub 
+                          AND YEAR(m2.tanggal) = :tahun_sub) as frekuensi
                   FROM " . $this->table . " m
                   JOIN assets a ON m.asset_id = a.id
                   LEFT JOIN karyawan k ON a.id_karyawan = k.id
@@ -191,7 +191,13 @@ class Maintenance {
                   AND MONTH(m.tanggal) = :bulan AND YEAR(m.tanggal) = :tahun
                   ORDER BY m.tanggal ASC";
         $stmt = $this->conn->prepare($query);
-        $stmt->execute(['id_cabang' => $id_cabang, 'bulan' => $bulan, 'tahun' => $tahun]);
+        $stmt->execute([
+            'id_cabang' => $id_cabang, 
+            'bulan' => $bulan, 
+            'tahun' => $tahun,
+            'bulan_sub' => $bulan,
+            'tahun_sub' => $tahun
+        ]);
         return $stmt->fetchAll();
     }
 
