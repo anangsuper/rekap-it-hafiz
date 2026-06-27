@@ -73,13 +73,11 @@ if (isset($_POST['login'])) {
             background-color: var(--bg-body);
             color: var(--text-main);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
             position: relative;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            overflow-x: hidden;
+            overflow-y: auto;
         }
 
         /* Ambient Glowing Background Blobs */
@@ -384,7 +382,7 @@ if (isset($_POST['login'])) {
     <div class="blob blob-3"></div>
 </div>
 
-<div class="d-flex align-items-center justify-content-center w-100 h-100 flex-wrap gap-5">
+<div class="d-flex align-items-center justify-content-center w-100 flex-wrap gap-5 py-5 px-3" style="min-height: 100vh; position: relative; z-index: 10;">
     
     <!-- 3D Model Area -->
     <div class="d-none d-lg-block" style="width: 480px; height: 480px;">
