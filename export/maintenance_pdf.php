@@ -147,12 +147,20 @@ $html .= '
         </thead>
         <tbody>';
         foreach ($detailedMaintenance as $dm) {
+            $status = $dm['status'] ?? 'Baik';
+            if ($status === 'Baik') {
+                $statusHtml = '<span style="color: green; font-weight: bold;">OK</span>';
+            } elseif ($status === 'Perlu Perbaikan') {
+                $statusHtml = '<span style="color: orange; font-weight: bold;">PERLU PERBAIKAN</span>';
+            } else {
+                $statusHtml = '<span style="color: red; font-weight: bold;">RUSAK</span>';
+            }
             $html .= '<tr>
                 <td>' . date('d/m/y', strtotime($dm['tanggal'])) . '</td>
                 <td><strong>' . $dm['kode_aset'] . '</strong></td>
                 <td>' . ($dm['nama_karyawan'] ?? '-') . '</td>
                 <td><small>' . ($dm['tindakan'] ?: 'Pengecekan Rutin') . '</small></td>
-                <td align="center"><span style="color: green; font-weight: bold;">OK</span></td>
+                <td align="center">' . $statusHtml . '</td>
             </tr>';
         }
         if (empty($detailedMaintenance)) {
