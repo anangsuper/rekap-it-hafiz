@@ -9,8 +9,58 @@ class ActivityLog {
         
         // Kirim notifikasi ke Telegram jika token & chat_id terkonfigurasi
         $this->sendTelegramNotification($userId, $action, $description);
+
+        // Kirim notifikasi ke WhatsApp jika terkonfigurasi
+        $this->sendWhatsAppNotification($userId, $action, $description);
         
         return $result;
+    }
+
+    private function sendWhatsAppNotification($userId, $action, $description) {
+        $fonnteToken = getenv('FONNTE_TOKEN');
+        $targetPhone = getenv('WHATSAPP_NUMBER') ?: '089523140757';
+
+        if (!$fonnteToken) {
+            return; // Fonnte belum dikonfigurasi
+        }
+
+        try {
+            // Ambil nama pengguna
+            $stmt = $this->db->prepare("SELECT nama FROM users WHERE id = ?");
+            $stmt->execute([$userId]);
+            $user = $stmt->fetch();
+            $namaUser = $user ? $user['nama'] : 'Sistem';
+
+            $message = "⚠️ *LOG AKTIVITAS REKAP IT*\n\n";
+            $message .= "*Pengguna:* " . $namaUser . "\n";
+            $message .= "*Aksi:* " . $action . "\n";
+            $message .= "*Keterangan:* " . $description . "\n";
+            $message .= "*Waktu:* " . date('d M Y H:i:s') . " WIB";
+
+            $curl = curl_init();
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://api.fonnte.com/send',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 5,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => array(
+                    'target' => $targetPhone,
+                    'message' => $message,
+                ),
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: ' . $fonnteToken
+                ),
+            ));
+
+            curl_exec($curl);
+            curl_close($curl);
+        } catch (Exception $e) {
+            error_log("Gagal mengirim notifikasi WhatsApp: " . $e->getMessage());
+        }
     }
 
     private function sendTelegramNotification($userId, $action, $description) {
