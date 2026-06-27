@@ -334,8 +334,31 @@ $notifCount = count($notifications);
         .fw-700 { font-weight: 700; }
         .fw-600 { font-weight: 600; }
 
+        /* Sidebar Toggle styles for Desktop */
+        body.sidebar-hidden .sidebar {
+            transform: translateX(-260px);
+        }
+        body.sidebar-hidden .top-header-bar {
+            margin-left: 0;
+        }
+        body.sidebar-hidden .main-content {
+            margin-left: 0;
+        }
+
+        .sidebar-toggle-btn {
+            color: #475569 !important;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .sidebar-toggle-btn:hover {
+            color: var(--primary-color) !important;
+            transform: scale(1.08);
+        }
+
         /* Responsive Mobile Layout overrides */
         @media (max-width: 991.98px) {
+            .sidebar-toggle-btn {
+                color: #ffffff !important;
+            }
             .sidebar {
                 transform: translateX(-100%);
             }
@@ -479,9 +502,9 @@ $notifCount = count($notifications);
 <!-- Floating Top Header Bar -->
 <div class="top-header-bar">
     <div class="d-flex align-items-center gap-3">
-        <!-- Mobile Sidebar Toggle -->
-        <button class="btn btn-sm btn-link text-muted p-0 d-lg-none border-0" id="sidebarToggleBtn">
-            <i class="bi bi-justify fs-3 text-white"></i>
+        <!-- Sidebar Toggle -->
+        <button class="btn btn-sm btn-link p-0 border-0 sidebar-toggle-btn" id="sidebarToggleBtn">
+            <i class="bi bi-justify fs-3"></i>
         </button>
         <div>
             <h5 class="m-0 fw-bold top-bar-title text-dark"><?= ucwords(str_replace('_', ' ', $page)) ?></h5>

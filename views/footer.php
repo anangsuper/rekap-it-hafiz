@@ -12,20 +12,37 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.appendChild(modal);
     });
 
-    // Mobile Sidebar Toggler Drawer
+    // Sidebar Toggler (Desktop & Mobile)
     const toggleBtn = document.getElementById('sidebarToggleBtn');
     const sidebar = document.getElementById('sidebarContainer');
     if (toggleBtn && sidebar) {
         toggleBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            sidebar.classList.toggle('show');
+            if (window.innerWidth >= 992) {
+                // Desktop Toggle (Hide/Show)
+                document.body.classList.toggle('sidebar-hidden');
+                localStorage.setItem('sidebar-hidden-pref', document.body.classList.contains('sidebar-hidden') ? 'true' : 'false');
+            } else {
+                // Mobile Drawer Toggle
+                sidebar.classList.toggle('show');
+            }
         });
         
         document.addEventListener('click', function(e) {
-            if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
-                sidebar.classList.remove('show');
+            if (window.innerWidth < 992) {
+                if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+                    sidebar.classList.remove('show');
+                }
             }
         });
+    }
+
+    // Restore desktop sidebar preference on load
+    if (window.innerWidth >= 992) {
+        const isHidden = localStorage.getItem('sidebar-hidden-pref') === 'true';
+        if (isHidden) {
+            document.body.classList.add('sidebar-hidden');
+        }
     }
 
     // Maintain Sidebar Scroll Position
