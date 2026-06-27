@@ -206,6 +206,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                                    <li><a class="dropdown-item py-2 btn-qr" href="#" 
+                                           data-kode="<?= $a['kode_aset'] ?>"
+                                           data-nama="<?= $a['nama_aset'] ?>"
+                                           data-cabang="<?= $a['nama_cabang'] ?>"
+                                           data-divisi="<?= $a['nama_divisi'] ?>"
+                                           data-karyawan="<?= $a['nama_karyawan'] ?: 'Unassigned' ?>">
+                                        <i class="bi bi-qr-code me-2 text-primary"></i> Tampilkan QR Code</a></li>
                                     <li><a class="dropdown-item py-2 btn-edit" href="#" 
                                            data-id="<?= $a['id'] ?>"
                                            data-kode="<?= $a['kode_aset'] ?>"
@@ -480,7 +487,123 @@ document.querySelectorAll('.btn-edit').forEach(btn => {
         new bootstrap.Modal(document.getElementById('modalEdit')).show();
     });
 });
+
+// QR Code bindings
+document.querySelectorAll('.btn-qr').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const code = this.getAttribute('data-kode');
+        const name = this.getAttribute('data-nama');
+        const branch = this.getAttribute('data-cabang');
+        const division = this.getAttribute('data-divisi');
+        const user = this.getAttribute('data-karyawan');
+        
+        document.getElementById('qrCodeImage').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(code)}`;
+        document.getElementById('qrAssetCode').innerText = code;
+        document.getElementById('qrAssetName').innerText = name;
+        document.getElementById('qrAssetLocation').innerText = `${branch} - ${division}`;
+        document.getElementById('qrAssetUser').innerText = user;
+        
+        var qrModal = new bootstrap.Modal(document.getElementById('modalQRCode'));
+        qrModal.show();
+    });
+});
+
+function printQRLabel() {
+    const code = document.getElementById('qrAssetCode').innerText;
+    const name = document.getElementById('qrAssetName').innerText;
+    const location = document.getElementById('qrAssetLocation').innerText;
+    const user = document.getElementById('qrAssetUser').innerText;
+    const qrSrc = document.getElementById('qrCodeImage').src;
+
+    const printWindow = window.open('', '_blank', 'width=420,height=420');
+    printWindow.document.write(`
+        <html>
+        <head>
+            <title>Cetak QR - ${code}</title>
+            <style>
+                @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
+                body {
+                    font-family: 'Plus Jakarta Sans', sans-serif;
+                    text-align: center;
+                    padding: 20px;
+                    margin: 0;
+                    background: #fff;
+                }
+                .label-container {
+                    border: 2px solid #1e293b;
+                    border-radius: 14px;
+                    padding: 20px;
+                    display: inline-block;
+                    width: 280px;
+                    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+                }
+                .qr-img {
+                    margin-bottom: 12px;
+                }
+                .code {
+                    font-size: 1.35rem;
+                    font-weight: 800;
+                    color: #0f172a;
+                    margin: 5px 0;
+                    letter-spacing: -0.5px;
+                }
+                .title {
+                    font-size: 0.95rem;
+                    font-weight: 700;
+                    color: #334155;
+                    margin-bottom: 8px;
+                }
+                .detail {
+                    font-size: 0.78rem;
+                    color: #64748b;
+                    margin-top: 3px;
+                }
+            </style>
+        </head>
+        <body onload="window.print(); window.close();">
+            <div class="label-container">
+                <img class="qr-img" src="${qrSrc}" width="150" height="150">
+                <div class="code">${code}</div>
+                <div class="title">${name}</div>
+                <div class="detail">Lokasi: <strong>${location}</strong></div>
+                <div class="detail">User: <strong>${user}</strong></div>
+            </div>
+        </body>
+        </html>
+    `);
+    printWindow.document.close();
+}
 </script>
+
+<!-- Modal QR Code -->
+<div class="modal fade" id="modalQRCode" tabindex="-1">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 24px;">
+            <div class="modal-header border-0 p-4 pb-0 d-flex justify-content-between align-items-center">
+                <h6 class="fw-800 m-0"><i class="bi bi-qr-code text-primary me-2"></i> Label QR Code</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4 text-center">
+                <div class="p-3 bg-white rounded-4 shadow-sm border d-inline-block mb-3">
+                    <img id="qrCodeImage" src="" alt="QR Code" width="150" height="150">
+                </div>
+                <h5 class="fw-bold text-dark mb-1" id="qrAssetCode">-</h5>
+                <span class="text-muted small d-block text-truncate mb-3" style="max-width: 220px;" id="qrAssetName">-</span>
+                
+                <div class="p-3 rounded-3 bg-light text-start small">
+                    <div class="mb-1.5"><span class="text-muted text-xs">Lokasi:</span> <strong id="qrAssetLocation" class="text-dark">-</strong></div>
+                    <div><span class="text-muted text-xs">Assignee:</span> <strong id="qrAssetUser" class="text-dark">-</strong></div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 p-4 pt-0">
+                <button type="button" class="btn btn-primary w-100 py-2.5 rounded-pill shadow-sm" onclick="printQRLabel()">
+                    <i class="bi bi-printer me-2"></i> Cetak Label
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <style>
     .fw-800 { font-weight: 800; }
