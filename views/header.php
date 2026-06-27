@@ -26,14 +26,14 @@ $notifCount = count($notifications);
             --secondary-color: #a855f7; /* Purple */
             --secondary-hover: #9333ea;
             
-            /* Ambient premium mesh background */
-            --bg-body: radial-gradient(at 0% 0%, rgba(224, 231, 255, 0.6) 0px, transparent 50%),
-                       radial-gradient(at 50% 0%, rgba(243, 232, 255, 0.6) 0px, transparent 50%),
-                       radial-gradient(at 100% 0%, rgba(229, 231, 235, 0.4) 0px, transparent 50%),
+            /* Ambient premium background */
+            --bg-body: radial-gradient(at 0% 0%, rgba(224, 231, 255, 0.4) 0px, transparent 50%),
+                       radial-gradient(at 50% 0%, rgba(243, 232, 255, 0.4) 0px, transparent 50%),
+                       radial-gradient(at 100% 0%, rgba(229, 231, 235, 0.3) 0px, transparent 50%),
                        #f8fafc;
             
-            --navbar-bg: rgba(15, 23, 42, 0.95);
-            --navbar-text: #94a3b8;
+            --sidebar-bg: #0f172a; /* Slate 900 */
+            --sidebar-border: rgba(255, 255, 255, 0.06);
             --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.02), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
             --card-shadow-hover: 0 20px 35px -8px rgba(99, 102, 241, 0.08), 0 10px 15px -3px rgba(0, 0, 0, 0.03);
             --glass-bg: rgba(255, 255, 255, 0.75);
@@ -42,8 +42,8 @@ $notifCount = count($notifications);
 
         /* Smooth scrollbar styling */
         ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
         }
         ::-webkit-scrollbar-track {
             background: #f1f5f9;
@@ -63,134 +63,121 @@ $notifCount = count($notifications);
             min-height: 100vh;
             color: #1e293b;
             letter-spacing: -0.015em;
-            padding-top: 110px;
+            padding-top: 0;
             overflow-x: hidden;
             line-height: 1.6;
         }
 
-        /* Floating Pill Glass Navbar */
-        .navbar-custom {
-            background: var(--navbar-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            padding: 10px 0;
-            box-shadow: 0 12px 30px -10px rgba(15, 23, 42, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 24px;
-            margin: 15px auto;
-            width: calc(100% - 32px);
-            max-width: 1280px;
-            left: 50% !important;
-            transform: translateX(-50%) !important;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        /* Premium Left Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 260px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--sidebar-border);
             z-index: 1030;
+            padding: 24px 16px;
+            overflow-y: auto;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .modal {
-            z-index: 1060 !important;
-        }
-        .modal-backdrop {
-            z-index: 1050 !important;
-            backdrop-filter: blur(4px);
-            background-color: rgba(15, 23, 42, 0.4);
+        .sidebar-brand {
+            margin-bottom: 28px;
+            padding-left: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
         }
 
-        .navbar-brand h4 {
+        .sidebar-brand h4 {
             font-weight: 800;
             letter-spacing: -0.8px;
             margin: 0;
-            font-size: 1.35rem;
+            font-size: 1.3rem;
             background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .nav-link {
-            color: var(--navbar-text) !important;
+        .sidebar-heading {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #475569; /* Slate 600 */
+            font-weight: 700;
+            margin: 18px 0 8px 10px;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            color: #94a3b8;
+            text-decoration: none;
             font-weight: 600;
             font-size: 0.85rem;
-            padding: 8px 14px !important;
             border-radius: 12px;
-            transition: all 0.25s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+            transition: all 0.2s ease;
         }
 
-        .nav-link:hover {
-            color: #fff !important;
-            background: rgba(255, 255, 255, 0.06);
+        .sidebar-link:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.05);
         }
 
-        .nav-link.active {
-            color: #fff !important;
+        .sidebar-link.active {
+            color: #ffffff !important;
             background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%) !important;
             box-shadow: 0 4px 15px -3px rgba(99, 102, 241, 0.4);
         }
 
-        .dropdown-menu {
-            background: #0f172a;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 8px;
-            box-shadow: 0 15px 35px -5px rgba(0,0,0,0.3);
-            animation: dropdownAppear 0.2s ease;
+        .sidebar-link i {
+            font-size: 1.1rem;
         }
 
-        @keyframes dropdownAppear {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Top Header Bar */
+        .top-header-bar {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-left: 260px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .dropdown-item {
-            color: var(--navbar-text);
-            border-radius: 10px;
-            padding: 8px 14px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-
-        .dropdown-item:hover {
-            background: rgba(255, 255, 255, 0.06);
-            color: #fff;
-        }
-
-        /* Main Content wrapper */
         .main-content {
-            padding: 20px 16px;
-            min-height: calc(100vh - 100px);
-            max-width: 1280px;
-            margin: 0 auto;
+            margin-left: 260px;
+            padding: 40px;
+            min-height: calc(100vh - 72px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Glassmorphic Page Header */
-        .page-header {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 24px 32px;
-            margin-bottom: 30px;
-            border-radius: 24px;
-            border: 1px solid var(--glass-border);
-            box-shadow: var(--card-shadow);
-        }
-
-        .page-header h4 {
-            font-size: 1.5rem;
-            font-weight: 800;
-            letter-spacing: -0.6px;
-            background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* Premium Modern Cards */
+        /* Cards & Forms overrides */
         .card {
             border: 1px solid rgba(226, 232, 240, 0.8);
-            border-radius: 24px;
+            border-radius: 20px;
             box-shadow: var(--card-shadow);
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -201,45 +188,6 @@ $notifCount = count($notifications);
             border-color: rgba(226, 232, 240, 1);
         }
 
-        /* Prevent ugly double-shadows and nested glassmorphism on child cards */
-        
-        /* Bell shake animation */
-        @keyframes bell-shake {
-            0%, 100% { transform: rotate(0); }
-            10%, 30%, 50%, 70%, 90% { transform: rotate(12deg); }
-            20%, 40%, 60%, 80% { transform: rotate(-12deg); }
-        }
-        .animate-bell {
-            animation: bell-shake 2.5s cubic-bezier(.36,.07,.19,.97) both;
-            animation-iteration-count: infinite;
-            transform-origin: top center;
-            display: inline-block;
-        }
-
-        .notif-scroll-container::-webkit-scrollbar {
-            width: 5px;
-        }
-        .notif-scroll-container::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .notif-scroll-container::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
-        }
-        .notif-scroll-container::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-
-        .card .card {
-            background: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
-            backdrop-filter: none !important;
-            -webkit-backdrop-filter: none !important;
-            padding: 0 !important;
-        }
-
-        /* Styled inputs, forms, selects */
         .form-control, .form-select {
             background-color: #ffffff;
             border: 1px solid #e2e8f0;
@@ -248,17 +196,14 @@ $notifCount = count($notifications);
             font-size: 0.9rem;
             font-weight: 500;
             color: #1e293b;
-            transition: all 0.2s ease-in-out;
+            transition: all 0.2s ease;
         }
 
         .form-control:focus, .form-select:focus {
             border-color: var(--primary-color);
             box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
-            background-color: #ffffff;
-            color: #1e293b;
         }
 
-        /* Button Redesign */
         .btn {
             border-radius: 12px;
             padding: 10px 20px;
@@ -283,23 +228,7 @@ $notifCount = count($notifications);
             box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
         }
 
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-
-        .btn-secondary {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            color: #475569;
-        }
-
-        .btn-secondary:hover {
-            background: #f8fafc;
-            color: #1e293b;
-            border-color: #cbd5e1;
-        }
-
-        /* SaaS Table Layout override */
+        /* SaaS Table Layout */
         .table-responsive {
             border-radius: 16px;
             overflow: visible;
@@ -307,7 +236,7 @@ $notifCount = count($notifications);
 
         .table {
             border-collapse: separate;
-            border-spacing: 0 8px; /* Give space between rows for floating-card look */
+            border-spacing: 0 8px;
             margin-top: -8px;
             width: 100%;
         }
@@ -346,7 +275,6 @@ $notifCount = count($notifications);
             font-size: 0.85rem;
         }
 
-        /* Corner rounding for tr cards */
         .table tr td:first-child {
             border-left: 1px solid #f1f5f9;
             border-top-left-radius: 14px;
@@ -361,284 +289,291 @@ $notifCount = count($notifications);
 
         /* Modal styling */
         .modal-content {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.96);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             border: 1px solid rgba(255, 255, 255, 0.7);
             border-radius: 24px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-            animation: modalSlide 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        @keyframes modalSlide {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        /* Bell shake animation */
+        @keyframes bell-shake {
+            0%, 100% { transform: rotate(0); }
+            10%, 30%, 50%, 70%, 90% { transform: rotate(12deg); }
+            20%, 40%, 60%, 80% { transform: rotate(-12deg); }
+        }
+        .animate-bell {
+            animation: bell-shake 2.5s cubic-bezier(.36,.07,.19,.97) both;
+            animation-iteration-count: infinite;
+            transform-origin: top center;
+            display: inline-block;
         }
 
-        .modal-header {
-            border-bottom: 1px solid #e2e8f0;
-            padding: 20px 24px;
+        .notif-scroll-container::-webkit-scrollbar {
+            width: 5px;
+        }
+        .notif-scroll-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .notif-scroll-container::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
         }
 
-        .modal-header .modal-title {
-            font-weight: 800;
-            font-size: 1.15rem;
-            color: #0f172a;
-            letter-spacing: -0.3px;
-        }
-
-        .modal-footer {
-            border-top: 1px solid #e2e8f0;
-            padding: 16px 24px;
-        }
-
-        /* Animations */
-        .animate-fade-in {
-            animation: fadeInSimple 0.4s ease-out forwards;
-        }
-
-        @keyframes fadeInSimple {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
+        /* Responsive Mobile Layout overrides */
         @media (max-width: 991.98px) {
-            body { padding-top: 90px; }
-            .main-content { padding: 15px; }
-            .navbar-custom {
-                border-radius: 16px;
-                margin: 10px;
-                width: calc(100% - 20px);
+            .sidebar {
+                transform: translateX(-100%);
             }
-            .navbar-collapse { 
-                background: #0f172a; 
-                padding: 15px; 
-                border-radius: 15px; 
-                margin-top: 10px; 
-                border: 1px solid rgba(255, 255, 255, 0.05);
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            .top-header-bar {
+                margin-left: 0;
+                padding: 12px 20px;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                background: #0f172a;
+                color: white;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            }
+            .top-header-bar .top-bar-title {
+                color: #ffffff !important;
+            }
+            .top-header-bar .text-muted {
+                color: #94a3b8 !important;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px 16px;
+                padding-top: 88px;
+            }
+            body {
+                padding-top: 0;
             }
         }
     </style>
 </head>
-
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
-    <div class="container">
-        <a class="navbar-brand" href="index.php?page=dashboard">
-            <h4><i class="fas fa-microchip me-2"></i> REKAP IT</h4>
-        </a>
-        
-        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
+<!-- Left Sidebar Navigation -->
+<div class="sidebar" id="sidebarContainer">
+    <a class="sidebar-brand" href="index.php?page=dashboard">
+        <i class="fas fa-microchip text-primary fs-4"></i>
+        <h4>REKAP IT</h4>
+    </a>
+
+    <div class="sidebar-heading">MONITORING</div>
+    <ul class="sidebar-nav">
+        <li>
+            <a href="index.php?page=dashboard" class="sidebar-link <?= ($page == 'dashboard') ? 'active' : '' ?>">
+                <i class="bi bi-grid-1x2-fill"></i> Dashboard
+            </a>
+        </li>
+        <?php if (hasRole('admin')): ?>
+        <li>
+            <a href="index.php?page=logs" class="sidebar-link <?= ($page == 'logs') ? 'active' : '' ?>">
+                <i class="bi bi-clock-history"></i> Log Aktivitas
+            </a>
+        </li>
+        <?php endif; ?>
+    </ul>
+
+    <div class="sidebar-heading">OPERASIONAL</div>
+    <ul class="sidebar-nav">
+        <li>
+            <a href="index.php?page=maintenance&sub=history" class="sidebar-link <?= ($page == 'maintenance') ? 'active' : '' ?>">
+                <i class="bi bi-calendar-check"></i> Maintenance PC
+            </a>
+        </li>
+        <li>
+            <a href="index.php?page=perbaikan" class="sidebar-link <?= in_array($page, ['perbaikan', 'sparepart']) ? 'active' : '' ?>">
+                <i class="bi bi-tools"></i> Tiket Perbaikan
+            </a>
+        </li>
+        <?php if (hasRole('admin')): ?>
+        <li>
+            <a href="index.php?page=audit" class="sidebar-link <?= ($page == 'audit') ? 'active' : '' ?>">
+                <i class="bi bi-shield-check"></i> Audit Fisik
+            </a>
+        </li>
+        <?php endif; ?>
+    </ul>
+
+    <div class="sidebar-heading">MANAJEMEN ASET</div>
+    <ul class="sidebar-nav">
+        <li>
+            <a href="index.php?page=inventaris" class="sidebar-link <?= ($page == 'inventaris') ? 'active' : '' ?>">
+                <i class="bi bi-laptop"></i> Data Aset
+            </a>
+        </li>
+        <li>
+            <a href="index.php?page=kategori" class="sidebar-link <?= ($page == 'kategori') ? 'active' : '' ?>">
+                <i class="bi bi-tags"></i> Kategori Aset
+            </a>
+        </li>
+        <li>
+            <a href="index.php?page=mutasi" class="sidebar-link <?= ($page == 'mutasi') ? 'active' : '' ?>">
+                <i class="bi bi-arrow-left-right"></i> Mutasi Aset
+            </a>
+        </li>
+    </ul>
+
+    <?php if (hasRole('admin')): ?>
+    <div class="sidebar-heading">MASTER DATA</div>
+    <ul class="sidebar-nav">
+        <li>
+            <a href="index.php?page=cabang" class="sidebar-link <?= ($page == 'cabang') ? 'active' : '' ?>">
+                <i class="bi bi-building"></i> Cabang
+            </a>
+        </li>
+        <li>
+            <a href="index.php?page=divisi" class="sidebar-link <?= ($page == 'divisi') ? 'active' : '' ?>">
+                <i class="bi bi-people"></i> Divisi
+            </a>
+        </li>
+        <li>
+            <a href="index.php?page=karyawan" class="sidebar-link <?= ($page == 'karyawan') ? 'active' : '' ?>">
+                <i class="bi bi-person-badge"></i> Karyawan
+            </a>
+        </li>
+        <li>
+            <a href="index.php?page=pengguna" class="sidebar-link <?= ($page == 'pengguna') ? 'active' : '' ?>">
+                <i class="bi bi-person-gear"></i> Pengguna
+            </a>
+        </li>
+    </ul>
+
+    <div class="sidebar-heading">LAPORAN</div>
+    <ul class="sidebar-nav">
+        <li>
+            <a href="index.php?page=laporan_maintenance" class="sidebar-link <?= ($page == 'laporan_maintenance') ? 'active' : '' ?>">
+                <i class="bi bi-file-earmark-bar-graph"></i> Report Bulanan
+            </a>
+        </li>
+        <li>
+            <a href="index.php?page=laporan" class="sidebar-link <?= ($page == 'laporan') ? 'active' : '' ?>">
+                <i class="bi bi-file-earmark-excel"></i> Export Excel
+            </a>
+        </li>
+    </ul>
+    <?php endif; ?>
+</div>
+
+<!-- Floating Top Header Bar -->
+<div class="top-header-bar">
+    <div class="d-flex align-items-center gap-3">
+        <!-- Mobile Sidebar Toggle -->
+        <button class="btn btn-sm btn-link text-muted p-0 d-lg-none border-0" id="sidebarToggleBtn">
+            <i class="bi bi-justify fs-3 text-white"></i>
         </button>
-
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4 gap-1">
-                <li class="nav-item">
-                    <a href="index.php?page=dashboard" class="nav-link <?= ($page == 'dashboard') ? 'active' : '' ?>">
-                        <i class="bi bi-grid-1x2-fill me-1"></i> Dashboard
-                    </a>
-                </li>
-
-                <?php if (hasRole('admin')): ?>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle <?= in_array($page, ['cabang', 'divisi', 'karyawan']) ? 'active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-database me-1"></i> Data Master
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="index.php?page=cabang">Cabang</a></li>
-                        <li><a class="dropdown-item" href="index.php?page=divisi">Divisi</a></li>
-                        <li><a class="dropdown-item" href="index.php?page=karyawan">Karyawan</a></li>
-                        <li><a class="dropdown-item" href="index.php?page=pengguna">Pengguna</a></li>
-                    </ul>
-                </li>
-                <?php endif; ?>
-
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle <?= in_array($page, ['kategori', 'inventaris', 'mutasi']) ? 'active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-laptop me-1"></i> Aset
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="index.php?page=inventaris">Data Aset</a></li>
-                        <li><a class="dropdown-item" href="index.php?page=kategori">Kategori</a></li>
-                        <li><a class="dropdown-item" href="index.php?page=mutasi">Mutasi</a></li>
-                    </ul>
-                </li>
-
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle <?= ($page == 'maintenance') ? 'active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-calendar-check me-1"></i> Maintenance
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="index.php?page=maintenance&sub=history">History Maintenance</a></li>
-                        <li><a class="dropdown-item" href="index.php?page=maintenance&sub=massal">Bulk Maintenance</a></li>
-                    </ul>
-                </li>
-
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle <?= in_array($page, ['perbaikan', 'sparepart']) ? 'active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-tools me-1"></i> Perbaikan
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="index.php?page=perbaikan">Tiket Perbaikan</a></li>
-                        <li><a class="dropdown-item" href="index.php?page=sparepart">Sparepart</a></li>
-                    </ul>
-                </li>
-
-                <?php if (hasRole('admin')): ?>
-                <li class="nav-item">
-                    <a href="index.php?page=audit" class="nav-link <?= ($page == 'audit') ? 'active' : '' ?>">
-                        <i class="bi bi-shield-check me-1"></i> Audit
-                    </a>
-                </li>
-
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle <?= in_array($page, ['laporan', 'logs', 'laporan_maintenance']) ? 'active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-file-earmark-bar-graph me-1"></i> Laporan
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="index.php?page=laporan">Export Excel</a></li>
-                        <li><a class="dropdown-item" href="index.php?page=laporan_maintenance">Laporan Maintenance</a></li>
-                        <li><a class="dropdown-item" href="index.php?page=logs">Log Aktivitas</a></li>
-                    </ul>
-                </li>
-                <?php endif; ?>
-            </ul>
-
-            <div class="navbar-nav align-items-center">
-                <!-- Notifications -->
-                <div class="dropdown me-3">
-                    <button class="nav-link position-relative p-2 border-0 bg-transparent text-white opacity-75 hover-opacity-100 transition-all" data-bs-toggle="dropdown" aria-expanded="false" id="notifDropdown">
-                        <i class="bi bi-bell fs-5 <?= ($notifCount > 0) ? 'animate-bell' : '' ?>"></i>
-                        <?php if ($notifCount > 0): ?>
-                            <span class="position-absolute top-1 start-75 translate-middle p-1.5 bg-danger border border-2 border-dark rounded-circle">
-                                <span class="visually-hidden">New alerts</span>
-                            </span>
-                        <?php endif; ?>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2 p-0 overflow-hidden" style="width: 340px; border-radius: 16px; z-index: 9999; background: #ffffff;">
-                        <li class="px-4 py-3 bg-light border-bottom d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="m-0 fw-bold text-dark"><i class="bi bi-bell-fill text-primary me-2"></i>Notifikasi</h6>
-                                <small class="text-muted"><?= $notifCount ?> jadwal perlu tindakan</small>
-                            </div>
-                            <?php if ($notifCount > 0): ?>
-                                <span class="badge bg-primary rounded-pill small"><?= $notifCount ?> Baru</span>
-                            <?php endif; ?>
-                        </li>
-                        <div class="notif-scroll-container" style="max-height: 320px; overflow-y: auto;">
-                            <?php if ($notifCount === 0): ?>
-                                <li class="px-4 py-5 text-center text-muted">
-                                    <div class="bg-success bg-opacity-10 text-success rounded-circle d-inline-flex p-3 mb-3">
-                                        <i class="bi bi-shield-check fs-3"></i>
-                                    </div>
-                                    <p class="small fw-semibold mb-0">Semua Terkendali!</p>
-                                    <small class="text-muted d-block mt-1">Tidak ada jadwal maintenance mendesak.</small>
-                                </li>
-                            <?php else: ?>
-                                <?php foreach ($notifications as $n): 
-                                    // Calculate days remaining
-                                    $today = new DateTime(date('Y-m-d'));
-                                    $target = new DateTime(date('Y-m-d', strtotime($n['tanggal'])));
-                                    $diff = $today->diff($target)->days;
-                                    $is_past = $target < $today;
-                                    
-                                    if ($is_past) {
-                                        $timeText = "Terlewat";
-                                        $timeBadge = "bg-danger";
-                                    } elseif ($diff === 0) {
-                                        $timeText = "Hari ini";
-                                        $timeBadge = "bg-danger";
-                                    } elseif ($diff === 1) {
-                                        $timeText = "Besok";
-                                        $timeBadge = "bg-warning text-dark";
-                                    } else {
-                                        $timeText = "H-" . $diff;
-                                        $timeBadge = "bg-primary bg-opacity-10 text-primary";
-                                    }
-                                ?>
-                                    <li class="border-bottom">
-                                        <a class="dropdown-item px-4 py-3 text-dark transition-all d-flex align-items-start gap-3" href="index.php?page=maintenance" style="white-space: normal;">
-                                            <div class="bg-primary bg-opacity-10 p-2 rounded-3 text-primary d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; flex-shrink: 0;">
-                                                <i class="bi bi-pc-display"></i>
-                                            </div>
-                                            <div class="flex-grow-1 min-w-0">
-                                                <div class="fw-bold small text-dark mb-0 text-truncate"><?= $n['kode_aset'] ?></div>
-                                                <div class="text-muted small text-truncate mb-2"><?= $n['nama_aset'] ?></div>
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <span class="text-muted small" style="font-size: 0.75rem;"><i class="bi bi-calendar-event me-1"></i><?= date('d M Y', strtotime($n['tanggal'])) ?></span>
-                                                    <span class="badge <?= $timeBadge ?> rounded-pill px-2 py-0.5" style="font-size: 0.7rem; font-weight: 700;"><?= $timeText ?></span>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </div>
-                        <li class="px-4 py-2 bg-light border-top text-center">
-                            <a href="index.php?page=maintenance" class="text-primary text-decoration-none small fw-bold d-block py-1 hover-underline">
-                                Lihat Semua Jadwal <i class="bi bi-arrow-right ms-1"></i>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- User Profile -->
-                <div class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown">
-                        <img src="https://ui-avatars.com/api/?name=<?= urlencode($_SESSION['nama']) ?>&background=4361ee&color=fff" class="rounded-circle" width="32">
-                        <span class="small fw-bold text-white d-none d-xl-inline"><?= $_SESSION['nama'] ?></span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li class="px-3 py-2 border-bottom border-secondary mb-2">
-                            <div class="small text-muted">Signed in as</div>
-                            <div class="fw-bold text-white"><?= $_SESSION['username'] ?></div>
-                        </li>
-                        <li><a class="dropdown-item text-danger" href="logout.php"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-</nav>
-
-<div class="main-content container">
-    <div class="page-header d-flex justify-content-between align-items-center">
         <div>
-            <h4 class="m-0 fw-bold"><?= ucwords(str_replace('_', ' ', $page)) ?></h4>
-            <div class="small text-muted d-none d-sm-block">Sistem Manajemen Aset IT</div>
-        </div>
-        <div class="d-none d-md-flex align-items-center gap-3">
-            <div class="text-end">
-                <div class="small fw-bold" id="realtime-clock">Loading time...</div>
-                <div class="text-muted" style="font-size: 0.7rem;">Status: <span class="text-success fw-bold">Online</span></div>
-            </div>
-            <!-- Notifications moved out -->
+            <h5 class="m-0 fw-bold top-bar-title text-dark"><?= ucwords(str_replace('_', ' ', $page)) ?></h5>
+            <small class="text-muted d-none d-sm-block">Sistem Manajemen Aset IT</small>
         </div>
     </div>
 
-<style>
-    .animate-slide-down {
-        animation: slideDown 0.3s ease-out forwards;
-    }
-    @keyframes slideDown {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    .transition-hover { transition: all 0.2s ease; }
-    .transition-hover:hover { background-color: #f8fafc; }
-</style>
+    <div class="d-flex align-items-center gap-3">
+        <!-- Clock (Hidden on Mobile) -->
+        <div class="text-end d-none d-md-block me-2">
+            <div class="small fw-bold text-dark" id="realtime-clock">Loading time...</div>
+            <div class="text-muted" style="font-size: 0.7rem;">Status: <span class="text-success fw-bold">Online</span></div>
+        </div>
 
+        <!-- Notifications -->
+        <div class="dropdown">
+            <button class="nav-link position-relative p-2 border-0 bg-transparent text-muted opacity-75 hover-opacity-100 transition-all" data-bs-toggle="dropdown" aria-expanded="false" id="notifDropdown">
+                <i class="bi bi-bell fs-5 <?= ($notifCount > 0) ? 'animate-bell' : '' ?>"></i>
+                <?php if ($notifCount > 0): ?>
+                    <span class="position-absolute top-1 start-75 translate-middle p-1 bg-danger border border-2 border-light rounded-circle">
+                        <span class="visually-hidden">New alerts</span>
+                    </span>
+                <?php endif; ?>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2 p-0 overflow-hidden" style="width: 320px; border-radius: 16px; z-index: 1050; background: #ffffff;">
+                <li class="px-4 py-3 bg-light border-bottom d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="m-0 fw-bold text-dark"><i class="bi bi-bell-fill text-primary me-2"></i>Notifikasi</h6>
+                        <small class="text-muted"><?= $notifCount ?> jadwal perlu tindakan</small>
+                    </div>
+                </li>
+                <div class="notif-scroll-container" style="max-height: 280px; overflow-y: auto;">
+                    <?php if ($notifCount === 0): ?>
+                        <li class="px-4 py-5 text-center text-muted">
+                            <div class="bg-success bg-opacity-10 text-success rounded-circle d-inline-flex p-3 mb-3">
+                                <i class="bi bi-shield-check fs-3"></i>
+                            </div>
+                            <p class="small fw-semibold mb-0">Semua Terkendali!</p>
+                            <small class="text-muted d-block mt-1">Tidak ada jadwal maintenance mendesak.</small>
+                        </li>
+                    <?php else: ?>
+                        <?php foreach ($notifications as $n): 
+                            $today = new DateTime(date('Y-m-d'));
+                            $target = new DateTime(date('Y-m-d', strtotime($n['tanggal'])));
+                            $diff = $today->diff($target)->days;
+                            $is_past = $target < $today;
+                            
+                            if ($is_past) {
+                                $timeText = "Terlewat";
+                                $timeBadge = "bg-danger";
+                            } elseif ($diff === 0) {
+                                $timeText = "Hari ini";
+                                $timeBadge = "bg-danger";
+                            } elseif ($diff === 1) {
+                                $timeText = "Besok";
+                                $timeBadge = "bg-warning text-dark";
+                            } else {
+                                $timeText = "H-" . $diff;
+                                $timeBadge = "bg-primary bg-opacity-10 text-primary";
+                            }
+                        ?>
+                            <li class="border-bottom">
+                                <a class="dropdown-item px-4 py-3 text-dark transition-all d-flex align-items-start gap-3" href="index.php?page=maintenance" style="white-space: normal;">
+                                    <div class="bg-primary bg-opacity-10 p-2 rounded-3 text-primary d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; flex-shrink: 0;">
+                                        <i class="bi bi-pc-display"></i>
+                                    </div>
+                                    <div class="flex-grow-1 min-w-0">
+                                        <div class="fw-bold small text-dark mb-0 text-truncate"><?= $n['kode_aset'] ?></div>
+                                        <div class="text-muted small text-truncate mb-2"><?= $n['nama_aset'] ?></div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="text-muted small" style="font-size: 0.75rem;"><i class="bi bi-calendar-event me-1"></i><?= date('d M Y', strtotime($n['tanggal'])) ?></span>
+                                            <span class="badge <?= $timeBadge ?> rounded-pill px-2 py-0.5" style="font-size: 0.7rem; font-weight: 700;"><?= $timeText ?></span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+                <li class="px-4 py-2 bg-light border-top text-center">
+                    <a href="index.php?page=maintenance" class="text-primary text-decoration-none small fw-bold d-block py-1 hover-underline">
+                        Lihat Semua Jadwal <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
 
+        <!-- User Profile Dropdown -->
+        <div class="dropdown">
+            <button class="btn btn-link p-0 border-0 bg-transparent dropdown-toggle d-flex align-items-center gap-2 text-decoration-none" data-bs-toggle="dropdown">
+                <img src="https://ui-avatars.com/api/?name=<?= urlencode($_SESSION['nama']) ?>&background=4361ee&color=fff" class="rounded-circle border" width="34">
+                <span class="small fw-bold text-dark d-none d-lg-inline"><?= $_SESSION['nama'] ?></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2 rounded-3" style="min-width: 180px;">
+                <li class="px-3 py-2 border-bottom mb-2 bg-light">
+                    <div class="small text-muted">Signed in as</div>
+                    <div class="fw-bold text-dark"><?= $_SESSION['username'] ?></div>
+                </li>
+                <li><a class="dropdown-item text-danger" href="logout.php"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content Area -->
+<div class="main-content">
     <div class="content-body">
         <div class="animate-fade-in">
-<script>
-    function updateClock() {
-        const now = new Date();
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-        document.getElementById('realtime-clock').textContent = now.toLocaleDateString('id-ID', options);
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
-</script>
