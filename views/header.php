@@ -49,7 +49,7 @@ $notifCount = count($notifications);
             padding: 12px 0;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            z-index: 3000; /* Increased to ensure it's above dashboard content */
+            z-index: 1030;
         }
 
         .modal {
