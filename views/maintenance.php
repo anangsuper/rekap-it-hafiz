@@ -1,9 +1,8 @@
-<?php
-require_once 'models/Maintenance.php';
+require_once 'controllers/MaintenanceController.php';
 require_once 'models/Asset.php';
 require_once 'models/Cabang.php';
 
-$maintenanceModel = new Maintenance($conn);
+$maintenanceController = new MaintenanceController($conn);
 $assetModel = new Asset($conn);
 $cabangModel = new Cabang($conn);
 
@@ -19,14 +18,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'temuan' => $_POST['temuan'],
             'tindakan' => $_POST['tindakan'],
             'rekomendasi' => $_POST['rekomendasi'],
-            'status' => $_POST['status'], // Added
+            'status' => $_POST['status'],
             'id_detail_jadwal' => null
         ];
-        if ($maintenanceModel->create($data)) {
+        if ($maintenanceController->store($data)) {
             header("Location: index.php?page=maintenance&status=success");
             exit();
         }
-    } elseif (isset($_POST['proses_massal_final']) && $sub === 'massal') {
+    }
+    // ... rest of form handling
+
         // Final Processing
         $asset_ids = $_POST['asset_ids'] ?? [];
         $conn->beginTransaction();
