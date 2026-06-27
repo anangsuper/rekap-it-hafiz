@@ -20,13 +20,16 @@ if (getenv('RAILWAY_ENVIRONMENT') && empty($db_host)) {
 /**
  * OPSI 1: MENGGUNAKAN PDO (Direkomendasikan)
  */
+// Set default PHP timezone
+date_default_timezone_set('Asia/Jakarta');
+
 try {
     $dsn = "mysql:host=$db_host;port=$db_port;dbname=$db_name;charset=utf8mb4";
     $conn = new PDO($dsn, $db_user, $db_pass, [
         PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_EMULATE_PREPARES   => false,
-        PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4"
+        PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4; SET time_zone = '+07:00';"
     ]);
 } catch (PDOException $e) {
     // Log error secara aman (jangan tampilkan password di layar production)

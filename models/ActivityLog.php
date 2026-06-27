@@ -12,7 +12,7 @@ class ActivityLog {
         $sql = "SELECT l.*, u.nama 
                 FROM activity_logs l 
                 LEFT JOIN users u ON l.user_id = u.id 
-                ORDER BY l.created_at DESC 
+                ORDER BY l.id DESC 
                 LIMIT :limit";
         $stmt = $this->db->prepare($sql);
         $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
