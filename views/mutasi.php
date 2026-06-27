@@ -339,7 +339,7 @@ $totalAsetTerlibat = count($uniqueAssets);
                     
                     <div class="row g-4">
                         <!-- Filter Cabang Aset -->
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <label class="form-label small fw-bold text-muted">Filter Cabang Asal Aset</label>
                             <select id="mutasi_filter_cabang_asset" class="form-select bg-light border-0">
                                 <option value="">-- Semua Cabang --</option>
@@ -347,6 +347,12 @@ $totalAsetTerlibat = count($uniqueAssets);
                                     <option value="<?= htmlspecialchars($c['nama_cabang']) ?>"><?= htmlspecialchars($c['nama_cabang']) ?></option>
                                 <?php endforeach; ?>
                             </select>
+                        </div>
+
+                        <!-- Pencarian Kata Kunci Aset -->
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">Cari Nama / Kode Aset</label>
+                            <input type="text" id="mutasi_search_asset_input" class="form-control bg-light border-0" placeholder="Ketik nama atau kode...">
                         </div>
 
                         <!-- Pilih Aset -->
@@ -425,23 +431,42 @@ $totalAsetTerlibat = count($uniqueAssets);
 </div>
 
 <script>
-// Smart Filter Aset based on Branch
-document.getElementById('mutasi_filter_cabang_asset').addEventListener('change', function() {
-    const selectedCabangName = this.value;
+// Filter Asset list helper function
+function filterAssetOptions() {
+    const selectedCabangName = document.getElementById('mutasi_filter_cabang_asset').value;
+    const query = document.getElementById('mutasi_search_asset_input').value.toLowerCase();
     const selectAsset = document.getElementById('mutasi_asset_id');
     const options = selectAsset.querySelectorAll('option');
 
     options.forEach(option => {
+        if (option.value === "") {
+            option.style.display = 'block';
+            return;
+        }
+
+        const text = option.textContent.toLowerCase();
         const cabangName = option.getAttribute('data-cabang-name');
-        if (!cabangName || selectedCabangName === "") {
+        
+        const matchQuery = text.includes(query);
+        const matchBranch = (selectedCabangName === "" || cabangName === selectedCabangName);
+
+        if (matchQuery && matchBranch) {
             option.style.display = 'block';
         } else {
-            option.style.display = (cabangName === selectedCabangName) ? 'block' : 'none';
+            option.style.display = 'none';
         }
     });
-    selectAsset.value = "";
+}
+
+// Smart Filter Aset based on Branch
+document.getElementById('mutasi_filter_cabang_asset').addEventListener('change', function() {
+    filterAssetOptions();
+    document.getElementById('mutasi_asset_id').value = "";
     document.getElementById('info_lokasi_lama').innerText = "Pilih aset terlebih dahulu";
 });
+
+// Smart Filter Aset based on Search Query
+document.getElementById('mutasi_search_asset_input').addEventListener('input', filterAssetOptions);
 
 // Show current location when asset is selected
 document.getElementById('mutasi_asset_id').addEventListener('change', function() {
