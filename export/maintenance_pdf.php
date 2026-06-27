@@ -49,43 +49,59 @@ $html = '
 <html>
 <head>
     <style>
-        body { font-family: "Helvetica", sans-serif; font-size: 12px; color: #333; }
-        .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #444; padding-bottom: 10px; }
-        .header h1 { margin: 0; font-size: 20px; text-transform: uppercase; }
-        .header p { margin: 5px 0 0; font-size: 14px; color: #666; }
-        .info-table { width: 100%; margin-bottom: 20px; }
-        .info-table td { padding: 5px 0; }
-        .section-title { background: #f4f4f4; padding: 8px; font-weight: bold; margin-bottom: 15px; border-left: 4px solid #0d6efd; }
+        body { font-family: "Helvetica", sans-serif; font-size: 11px; color: #334155; line-height: 1.4; }
+        .page-header { width: 100%; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 20px; }
+        .page-title { font-size: 20px; font-weight: bold; color: #0f172a; margin: 0; letter-spacing: -0.5px; }
+        .page-subtitle { font-size: 11px; color: #64748b; margin: 4px 0 0; }
+        .badge { font-size: 10px; font-weight: bold; color: #4361ee; background: #e0e7ff; padding: 4px 10px; border-radius: 10px; text-transform: uppercase; }
+        .info-card { width: 100%; background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 20px; }
+        .info-card td { padding: 4px 0; font-size: 11px; }
+        .info-label { color: #64748b; }
+        .info-value { color: #0f172a; font-weight: bold; }
+        .section-title { font-size: 11px; font-weight: bold; color: #0f172a; border-bottom: 2px solid #4361ee; padding-bottom: 4px; margin-top: 25px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
         .stats-grid { width: 100%; margin-bottom: 20px; border-collapse: collapse; }
-        .stats-grid td { width: 25%; padding: 15px; border: 1px solid #ddd; text-align: center; }
-        .stats-grid .label { font-size: 10px; color: #666; display: block; margin-bottom: 5px; }
-        .stats-grid .value { font-size: 18px; font-weight: bold; color: #0d6efd; }
+        .stats-grid td { width: 25%; padding: 12px; border: 1px solid #e2e8f0; text-align: center; background: #ffffff; }
+        .stats-grid .label { font-size: 9px; color: #64748b; display: block; margin-bottom: 4px; text-transform: uppercase; font-weight: bold; }
+        .stats-grid .value { font-size: 16px; font-weight: bold; color: #4361ee; }
         .data-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        .data-table th, .data-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        .data-table th { background: #f8f9fa; }
-        .footer-table { width: 100%; margin-top: 50px; }
+        .data-table th { background: #4361ee; color: #ffffff; font-weight: bold; font-size: 11px; padding: 8px; border: 1px solid #4361ee; }
+        .data-table td { border: 1px solid #e2e8f0; padding: 8px; font-size: 10.5px; color: #334155; }
+        .data-table tr:nth-child(even) { background: #f8fafc; }
+        .conclusion-card { padding: 15px; border-left: 4px solid #4361ee; background: #f8fafc; border-radius: 4px; margin-bottom: 25px; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; }
+        .conclusion-title { margin: 0 0 5px; color: #4361ee; font-weight: bold; font-size: 11px; }
+        .conclusion-text { margin: 0; line-height: 1.5; color: #334155; }
+        .footer-table { width: 100%; margin-top: 40px; }
         .footer-table td { width: 50%; text-align: center; }
-        .signature-space { height: 80px; }
+        .signature-space { height: 60px; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>CHECKLIST MAINTENANCE PC BULANAN</h1>
-        <p>Rekap IT - Sistem Manajemen Aset & Maintenance</p>
-    </div>
-
-    <table class="info-table">
+    <div style="background: #4361ee; height: 5px; margin-bottom: 15px;"></div>
+    
+    <table class="page-header">
         <tr>
-            <td width="15%">Periode</td>
-            <td width="35%">: <strong>' . $namaBulan . ' ' . $selected_tahun . '</strong></td>
-            <td width="15%">Kantor/Cabang</td>
-            <td width="35%">: <strong>' . $branchName . '</strong></td>
+            <td style="width: 70%;">
+                <h1 class="page-title">CHECKLIST MAINTENANCE PC</h1>
+                <p class="page-subtitle">Rekap IT &bull; Sistem Manajemen Aset & Maintenance</p>
+            </td>
+            <td style="width: 30%; text-align: right; vertical-align: middle;">
+                <span class="badge">Laporan Bulanan</span>
+            </td>
+        </tr>
+    </table>
+
+    <table class="info-card">
+        <tr>
+            <td width="18%" class="info-label">Periode Laporan</td>
+            <td width="32%" class="info-value">: ' . $namaBulan . ' ' . $selected_tahun . '</td>
+            <td width="18%" class="info-label">Kantor / Cabang</td>
+            <td width="32%" class="info-value">: ' . $branchName . '</td>
         </tr>
         <tr>
-            <td>Petugas IT</td>
-            <td>: <strong>Hafizh</strong></td>
-            <td>Dokumen No.</td>
-            <td>: <strong>MIS/' . $selected_bulan . '/' . $selected_tahun . '</strong></td>
+            <td class="info-label">Petugas IT</td>
+            <td class="info-value">: Hafizh</td>
+            <td class="info-label">Nomor Dokumen</td>
+            <td class="info-value" style="font-family: monospace;">: MIS/' . $selected_bulan . '/' . $selected_tahun . '</td>
         </tr>
     </table>
 
@@ -115,10 +131,10 @@ $html = '
     <table class="data-table">
         <thead>
             <tr>
-                <th>Divisi</th>
-                <th align="center">Total Perangkat</th>
-                <th align="center">Selesai</th>
-                <th align="center">Belum Selesai</th>
+                <th align="left">Divisi</th>
+                <th align="center" width="20%">Total Perangkat</th>
+                <th align="center" width="20%">Selesai</th>
+                <th align="center" width="20%">Belum Selesai</th>
             </tr>
         </thead>
         <tbody>';
@@ -126,8 +142,8 @@ $html = '
             $html .= '<tr>
                 <td>' . ($sd['nama_divisi'] ?? 'Tanpa Divisi') . '</td>
                 <td align="center">' . $sd['total_perangkat'] . '</td>
-                <td align="center">' . $sd['selesai'] . '</td>
-                <td align="center">' . $sd['belum'] . '</td>
+                <td align="center" style="color: green; font-weight: bold;">' . $sd['selesai'] . '</td>
+                <td align="center" style="color: ' . ($sd['belum'] > 0 ? 'red' : '#334155') . '; font-weight: ' . ($sd['belum'] > 0 ? 'bold' : 'normal') . ';">' . $sd['belum'] . '</td>
             </tr>';
         }
 $html .= '
@@ -152,7 +168,7 @@ $html .= '
             if ($status === 'Baik') {
                 $statusHtml = '<span style="color: green; font-weight: bold;">OK</span>';
             } elseif ($status === 'Perlu Perbaikan') {
-                $statusHtml = '<span style="color: orange; font-weight: bold;">PERLU PERBAIKAN</span>';
+                $statusHtml = '<span style="color: orange; font-weight: bold;">PERBAIKAN</span>';
             } else {
                 $statusHtml = '<span style="color: red; font-weight: bold;">RUSAK</span>';
             }
@@ -166,31 +182,31 @@ $html .= '
             </tr>';
         }
         if (empty($detailedMaintenance)) {
-            $html .= '<tr><td colspan="5" align="center">Tidak ada data maintenance untuk periode ini.</td></tr>';
+            $html .= '<tr><td colspan="6" align="center">Tidak ada data maintenance untuk periode ini.</td></tr>';
         }
 $html .= '
         </tbody>
     </table>
 
     <div class="section-title">KESIMPULAN & REKOMENDASI</div>
-    <div style="padding: 10px; border: 1px solid #ddd; background: #fff;">
-        <p><strong>Kesimpulan:</strong></p>
-        <p style="line-height: 1.5;">' . generateConclusionPdf($stats, $selected_bulan, $selected_tahun, $branchName) . '</p>
+    <div class="conclusion-card">
+        <div class="conclusion-title"><i class="bi bi-info-circle-fill"></i> Analisis Hasil Pemeriksaan</div>
+        <p class="conclusion-text">' . generateConclusionPdf($stats, $selected_bulan, $selected_tahun, $branchName) . '</p>
     </div>
 
     <table class="footer-table">
         <tr>
             <td>
                 <p>Mengetahui,</p>
-                <p><strong>Kepala Cabang / Operasional</strong></p>
+                <p style="margin-top: 5px; font-weight: bold; color: #0f172a;">Kepala Cabang / Operasional</p>
                 <div class="signature-space"></div>
                 <p>( __________________________ )</p>
             </td>
             <td>
                 <p>Dilaporkan Oleh,</p>
-                <p><strong>Petugas MIS & IT</strong></p>
+                <p style="margin-top: 5px; font-weight: bold; color: #0f172a;">Petugas MIS & IT</p>
                 <div class="signature-space"></div>
-                <p><strong>Hafizh</strong><br>MIS & IT Department</p>
+                <p><strong>Hafizh</strong><br><span style="color: #64748b; font-size: 10px;">MIS & IT Department</span></p>
             </td>
         </tr>
     </table>
