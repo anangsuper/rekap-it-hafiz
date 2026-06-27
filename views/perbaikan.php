@@ -227,8 +227,6 @@ function filterAssetsByBranch() {
         }
     }
 }
-// ... rest of scripts
-</script>
 
 document.querySelectorAll('.btn-edit').forEach(button => {
     button.addEventListener('click', function() {
