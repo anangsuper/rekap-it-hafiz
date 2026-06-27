@@ -26,7 +26,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header("Location: index.php?page=maintenance&status=success");
             exit();
         }
-    }
     } elseif (isset($_POST['proses_massal_final']) && $sub === 'massal') {
         // Final Processing
         $asset_ids = $_POST['asset_ids'] ?? [];
