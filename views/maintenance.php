@@ -81,62 +81,131 @@ $assets = $id_cabang ? $assetModel->getAll($id_cabang) : [];
 </div>
 
 <?php if ($sub === 'history'): ?>
-<div class="card border-0 shadow-sm animate-fade-in">
+<div class="card border-0 shadow-sm animate-fade-in overflow-hidden">
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
+                <thead class="table-light border-bottom">
                     <tr>
-                        <th class="ps-4">Tanggal</th>
-                        <th>Aset</th>
-                        <th>Teknisi</th>
-                        <th>Temuan / Kondisi</th>
-                        <th>Tindakan</th>
-                        <th class="text-end pe-4">Detail</th>
+                        <th class="ps-4" width="150">Tanggal</th>
+                        <th width="220">Aset</th>
+                        <th width="150">Teknisi</th>
+                        <th width="200">Kondisi / Temuan</th>
+                        <th>Tindakan & Rekomendasi</th>
+                        <th class="text-end pe-4" width="100">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if(empty($maintenances)): ?>
-                        <tr><td colspan="6" class="text-center py-5 text-muted">Belum ada riwayat maintenance.</td></tr>
+                        <tr>
+                            <td colspan="6" class="text-center py-5">
+                                <img src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png" alt="No data" width="80" class="opacity-50 mb-3">
+                                <p class="text-muted mb-0">Belum ada riwayat maintenance.</p>
+                            </td>
+                        </tr>
                     <?php endif; ?>
                     <?php foreach ($maintenances as $m): 
-                        $is_bad = (!empty($m['temuan']) && strtolower($m['temuan']) !== 'baik' && strtolower($m['temuan']) !== 'normal');
+                        // Map status to classes
+                        $status = $m['status'] ?? 'Baik';
+                        if ($status === 'Baik') {
+                            $badge_class = 'bg-success bg-opacity-10 text-success';
+                            $status_icon = 'bi-check-circle-fill';
+                        } elseif ($status === 'Perlu Perbaikan') {
+                            $badge_class = 'bg-warning bg-opacity-10 text-warning';
+                            $status_icon = 'bi-exclamation-triangle-fill';
+                        } else {
+                            $badge_class = 'bg-danger bg-opacity-10 text-danger';
+                            $status_icon = 'bi-x-circle-fill';
+                        }
                     ?>
-                    <tr>
+                    <tr class="align-middle">
                         <td class="ps-4">
-                            <div class="fw-bold text-dark"><?= date('d M Y', strtotime($m['tanggal'])) ?></div>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-calendar3 text-muted me-2"></i>
+                                <span class="fw-semibold text-dark"><?= date('d M Y', strtotime($m['tanggal'])) ?></span>
+                            </div>
                         </td>
                         <td>
-                            <div class="fw-bold text-primary"><?= $m['kode_aset'] ?></div>
-                            <div class="small text-muted"><?= $m['nama_aset'] ?></div>
+                            <div class="fw-bold text-primary mb-0"><?= $m['kode_aset'] ?></div>
+                            <div class="text-muted small text-truncate" style="max-width: 200px;" title="<?= $m['nama_aset'] ?>"><?= $m['nama_aset'] ?></div>
                         </td>
                         <td>
                             <div class="d-flex align-items-center">
-                                <span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill"><?= $m['teknisi'] ?></span>
+                                <div class="bg-secondary bg-opacity-10 text-secondary rounded-pill px-3 py-1 small fw-medium">
+                                    <i class="bi bi-person-fill me-1"></i><?= $m['teknisi'] ?>
+                                </div>
                             </div>
                         </td>
                         <td>
-                            <span class="badge <?= $is_bad ? 'bg-danger' : 'bg-success' ?> bg-opacity-10 text-<?= $is_bad ? 'danger' : 'success' ?> rounded-pill">
-                                <?= $m['temuan'] ?: 'Normal' ?>
-                            </span>
+                            <div class="d-flex flex-column gap-1">
+                                <div>
+                                    <span class="badge <?= $badge_class ?> rounded-pill px-2.5 py-1.5 fw-bold">
+                                        <i class="bi <?= $status_icon ?> me-1"></i><?= $status ?>
+                                    </span>
+                                </div>
+                                <?php if (!empty($m['temuan'])): ?>
+                                    <small class="text-muted text-wrap" style="max-width: 180px;"><i class="bi bi-search me-1 small"></i><?= $m['temuan'] ?></small>
+                                <?php endif; ?>
+                            </div>
                         </td>
                         <td>
-                            <div class="text-truncate" style="max-width: 200px;" title="<?= $m['tindakan'] ?>">
-                                <?= $m['tindakan'] ?: '-' ?>
+                            <div class="small">
+                                <div class="text-dark fw-medium text-truncate mb-1" style="max-width: 300px;" title="<?= $m['tindakan'] ?>">
+                                    <strong>Tindakan:</strong> <?= $m['tindakan'] ?: '<span class="text-muted">-</span>' ?>
+                                </div>
+                                <?php if (!empty($m['rekomendasi'])): ?>
+                                <div class="text-muted text-truncate" style="max-width: 300px;" title="<?= $m['rekomendasi'] ?>">
+                                    <strong>Rekomendasi:</strong> <?= $m['rekomendasi'] ?>
+                                </div>
+                                <?php endif; ?>
                             </div>
                         </td>
                         <td class="text-end pe-4">
-                            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#detail<?= $m['id'] ?>">
-                                <i class="bi bi-eye"></i>
+                            <button type="button" class="btn btn-sm btn-light border btn-hover-primary" data-bs-toggle="collapse" data-bs-target="#detail<?= $m['id'] ?>">
+                                <i class="bi bi-chevron-down"></i> Detail
                             </button>
                         </td>
                     </tr>
                     <tr class="collapse" id="detail<?= $m['id'] ?>">
-                        <td colspan="6" class="bg-light p-3">
-                            <div class="row small">
-                                <div class="col-md-4"><strong>Tindakan:</strong><br><?= $m['tindakan'] ?></div>
-                                <div class="col-md-4"><strong>Rekomendasi:</strong><br><?= $m['rekomendasi'] ?: '-' ?></div>
-                                <div class="col-md-4 text-muted"><em>Dicatat pada: <?= $m['created_at'] ?></em></div>
+                        <td colspan="6" class="bg-light p-4">
+                            <div class="card border-0 shadow-sm rounded-3">
+                                <div class="card-body">
+                                    <h6 class="fw-bold text-dark border-bottom pb-2 mb-3"><i class="bi bi-info-circle text-primary me-2"></i>Rincian Lengkap Maintenance</h6>
+                                    <div class="row g-3">
+                                        <div class="col-md-3">
+                                            <span class="text-muted small d-block">Aset & Kode</span>
+                                            <span class="fw-bold text-dark"><?= $m['nama_aset'] ?> (<?= $m['kode_aset'] ?>)</span>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <span class="text-muted small d-block">Kondisi / Status</span>
+                                            <span class="badge <?= $badge_class ?> rounded-pill px-2.5 py-1 fw-bold"><?= $status ?></span>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <span class="text-muted small d-block">Teknisi Pelaksana</span>
+                                            <span class="fw-semibold text-dark"><?= $m['teknisi'] ?></span>
+                                        </div>
+                                        <div class="col-md-3 text-md-end">
+                                            <span class="text-muted small d-block">Waktu Input</span>
+                                            <span class="text-muted font-monospace small"><?= $m['created_at'] ?></span>
+                                        </div>
+                                        <div class="col-12 mt-3 pt-3 border-top">
+                                            <div class="row">
+                                                <div class="col-md-4 mb-2">
+                                                    <strong class="d-block text-secondary small mb-1">Temuan Lapangan:</strong>
+                                                    <div class="p-2.5 bg-light rounded text-dark small"><?= $m['temuan'] ?: 'Tidak ada temuan khusus' ?></div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <strong class="d-block text-secondary small mb-1">Tindakan Perbaikan:</strong>
+                                                    <div class="p-2.5 bg-light rounded text-dark small"><?= $m['tindakan'] ?: 'Tidak ada tindakan' ?></div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <strong class="d-block text-secondary small mb-1">Rekomendasi Lanjutan:</strong>
+                                                    <div class="p-2.5 bg-light rounded text-dark small"><?= $m['rekomendasi'] ?: 'Tidak ada rekomendasi' ?></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </td>
                     </tr>

@@ -16,7 +16,7 @@ class Maintenance {
         if ($id_cabang) $query .= " AND a.id_cabang = :id_cabang";
         if ($tgl_mulai && $tgl_selesai) $query .= " AND m.tanggal BETWEEN :tgl_mulai AND :tgl_selesai";
         
-        $query .= " ORDER BY m.tanggal DESC";
+        $query .= " ORDER BY m.tanggal DESC, m.id DESC";
         $stmt = $this->conn->prepare($query);
         
         if ($id_cabang) $stmt->bindParam(':id_cabang', $id_cabang);
