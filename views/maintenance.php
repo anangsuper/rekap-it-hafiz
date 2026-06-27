@@ -276,13 +276,14 @@ $selected_ids = $_POST['asset_ids'] ?? [];
                                     </th>
                                     <th>Kode Aset</th>
                                     <th>Nama Aset</th>
-                                    <th class="text-end pe-4">Status</th>
+                                    <th>Kondisi Saat Ini</th>
+                                    <th class="text-end pe-4">Pemegang (User)</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php if(empty($assets)): ?>
                                     <tr>
-                                        <td colspan="4" class="text-center py-5">
+                                        <td colspan="5" class="text-center py-5">
                                             <img src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png" alt="No data" width="80" class="opacity-50 mb-3">
                                             <p class="text-muted mb-0">Tidak ada aset ditemukan untuk cabang ini.</p>
                                         </td>
@@ -306,8 +307,20 @@ $selected_ids = $_POST['asset_ids'] ?? [];
                                                 <span class="fw-medium"><?= $a['nama_aset'] ?></span>
                                             </div>
                                         </td>
+                                        <td>
+                                            <?php
+                                            $kondisi = $a['kondisi'] ?? 'Baik';
+                                            if ($kondisi === 'Baik') {
+                                                echo '<span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2.5">Baik</span>';
+                                            } elseif ($kondisi === 'Rusak Ringan') {
+                                                echo '<span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-2.5">Rusak Ringan</span>';
+                                            } else {
+                                                echo '<span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-2.5">Rusak Berat</span>';
+                                            }
+                                            ?>
+                                        </td>
                                         <td class="text-end pe-4">
-                                            <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">Tersedia</span>
+                                            <span class="fw-semibold text-muted"><?= $a['nama_karyawan'] ?? '-' ?></span>
                                         </td>
                                     </tr>
                                     <?php endforeach; ?>
