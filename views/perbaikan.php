@@ -1,13 +1,16 @@
 <?php
 require_once 'controllers/RepairController.php';
 require_once 'models/Asset.php';
+require_once 'models/Cabang.php';
 
 $repairController = new RepairController($conn);
 $assetModel = new Asset($conn);
+$cabangModel = new Cabang($conn);
 
 $repairs = $repairController->index();
-$id_cabang_filter = ($_SESSION['role'] === 'teknisi') ? $_SESSION['id_cabang'] : null;
-$assets = $assetModel->getAll($id_cabang_filter);
+$cabangs = $cabangModel->getAll();
+$assets = $assetModel->getAll();
+// ... (rest of PHP code remains)
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['tambah'])) {
     $data = [
@@ -174,13 +177,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
                 </div>
                 <div class="modal-body p-4">
                     <div class="mb-3">
+                        <label class="form-label small fw-bold">Pilih Cabang Aset</label>
+                        <select id="branchSelect" class="form-select shadow-sm mb-2" onchange="filterAssetsByBranch()">
+                            <option value="">Semua Cabang</option>
+                            <?php foreach ($cabangs as $c): ?>
+                                <option value="<?= $c['nama_cabang'] ?>"><?= $c['nama_cabang'] ?></option>
+                            <?php endforeach; ?>
+                        </select>
                         <label class="form-label small fw-bold">Pilih Aset Bermasalah</label>
-                        <input type="text" id="searchInput" class="form-control shadow-sm mb-2" placeholder="Cari berdasarkan kode atau nama aset..." onkeyup="filterAssets()">
                         <select name="asset_id" id="assetSelect" class="form-select shadow-sm" required>
                             <?php foreach ($assets as $a): ?>
-                                <option value="<?= $a['id'] ?>">
+                                <?php
+                                    $condColor = 'success';
+                                    if ($a['kondisi'] == 'Rusak Ringan') $condColor = 'warning';
+                                    if ($a['kondisi'] == 'Rusak Berat') $condColor = 'danger';
+                                ?>
+                                <option value="<?= $a['id'] ?>" data-branch="<?= $a['nama_cabang'] ?>">
                                     <?= $a['kode_aset'] ?> - <?= $a['nama_aset'] ?> 
-                                    | Cabang: <?= $a['nama_cabang'] ?> 
+                                    | Pemilik: <?= $a['nama_karyawan'] ?? 'Unassigned' ?> 
                                     | Kondisi: [<?= strtoupper($a['kondisi']) ?>]
                                 </option>
                             <?php endforeach; ?>
@@ -199,23 +213,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
         </div>
     </div>
 </div>
-
 <script>
-function filterAssets() {
-    var input, filter, select, options, i, txtValue;
-    input = document.getElementById("searchInput");
-    filter = input.value.toUpperCase();
-    select = document.getElementById("assetSelect");
-    options = select.getElementsByTagName("option");
-    for (i = 0; i < options.length; i++) {
-        txtValue = options[i].textContent || options[i].innerText;
-        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+function filterAssetsByBranch() {
+    var branch = document.getElementById("branchSelect").value;
+    var select = document.getElementById("assetSelect");
+    var options = select.getElementsByTagName("option");
+    for (var i = 0; i < options.length; i++) {
+        var assetBranch = options[i].getAttribute("data-branch");
+        if (branch === "" || assetBranch === branch) {
             options[i].style.display = "";
         } else {
             options[i].style.display = "none";
         }
     }
 }
+// ... rest of scripts
+</script>
 
 document.querySelectorAll('.btn-edit').forEach(button => {
     button.addEventListener('click', function() {
