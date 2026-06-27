@@ -33,7 +33,26 @@ class Maintenance {
         $query = "INSERT INTO " . $this->table . " (asset_id, tanggal, teknisi, temuan, tindakan, rekomendasi, status, id_detail_jadwal) 
                   VALUES (:asset_id, :tanggal, :teknisi, :temuan, :tindakan, :rekomendasi, :status, :id_detail_jadwal)";
         $stmt = $this->conn->prepare($query);
-        return $stmt->execute($data);
+        $result = $stmt->execute($data);
+        
+        if ($result) {
+            // Map maintenance status to asset kondisi
+            $maintStatus = $data['status'] ?? 'Baik';
+            $kondisi = 'Baik';
+            if ($maintStatus === 'Perlu Perbaikan') {
+                $kondisi = 'Rusak Ringan';
+            } elseif ($maintStatus === 'Rusak') {
+                $kondisi = 'Rusak Berat';
+            }
+            
+            $updateQuery = "UPDATE assets SET kondisi = :kondisi WHERE id = :id";
+            $updateStmt = $this->conn->prepare($updateQuery);
+            $updateStmt->execute([
+                'kondisi' => $kondisi,
+                'id' => $data['asset_id']
+            ]);
+        }
+        return $result;
     }
 
     public function createBulk($asset_ids, $commonData) {
@@ -53,6 +72,19 @@ class Maintenance {
                     $commonData['rekomendasi'],
                     $commonData['status']
                 ]);
+
+                // Map maintenance status to asset kondisi
+                $maintStatus = $commonData['status'] ?? 'Baik';
+                $kondisi = 'Baik';
+                if ($maintStatus === 'Perlu Perbaikan') {
+                    $kondisi = 'Rusak Ringan';
+                } elseif ($maintStatus === 'Rusak') {
+                    $kondisi = 'Rusak Berat';
+                }
+                
+                $updateQuery = "UPDATE assets SET kondisi = ? WHERE id = ?";
+                $updateStmt = $this->conn->prepare($updateQuery);
+                $updateStmt->execute([$kondisi, $id]);
             }
             $this->conn->commit();
             return true;
