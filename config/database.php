@@ -1,4 +1,6 @@
 <?php
+// Load local credentials config
+require_once __DIR__ . '/settings.php';
 
 /**
  * Konfigurasi Database - Rekap IT

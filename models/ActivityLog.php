@@ -17,8 +17,8 @@ class ActivityLog {
     }
 
     private function sendWhatsAppNotification($userId, $action, $description) {
-        $fonnteToken = getenv('FONNTE_TOKEN');
-        $targetPhone = getenv('WHATSAPP_NUMBER') ?: '089523140757';
+        $fonnteToken = (defined('FONNTE_TOKEN') && FONNTE_TOKEN !== '') ? FONNTE_TOKEN : getenv('FONNTE_TOKEN');
+        $targetPhone = (defined('WHATSAPP_NUMBER') && WHATSAPP_NUMBER !== '') ? WHATSAPP_NUMBER : (getenv('WHATSAPP_NUMBER') ?: '089523140757');
 
         if (!$fonnteToken) {
             return; // Fonnte belum dikonfigurasi
@@ -64,8 +64,8 @@ class ActivityLog {
     }
 
     private function sendTelegramNotification($userId, $action, $description) {
-        $botToken = getenv('TELEGRAM_BOT_TOKEN');
-        $chatId = getenv('TELEGRAM_CHAT_ID');
+        $botToken = (defined('TELEGRAM_BOT_TOKEN') && TELEGRAM_BOT_TOKEN !== '') ? TELEGRAM_BOT_TOKEN : getenv('TELEGRAM_BOT_TOKEN');
+        $chatId = (defined('TELEGRAM_CHAT_ID') && TELEGRAM_CHAT_ID !== '') ? TELEGRAM_CHAT_ID : getenv('TELEGRAM_CHAT_ID');
 
         if (!$botToken || !$chatId) {
             return; // Telegram tidak dikonfigurasi
