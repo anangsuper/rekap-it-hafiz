@@ -27,11 +27,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit();
         }
     } elseif (isset($_POST['proses_massal_final']) && $sub === 'massal') {
-        // Final Processing
         $asset_ids = $_POST['asset_ids'] ?? [];
         $conn->beginTransaction();
         try {
-            // Re-instantiate model here to ensure it's available
             require_once 'models/Maintenance.php';
             $maintModel = new Maintenance($conn);
             foreach ($asset_ids as $id) {
@@ -65,7 +63,6 @@ $cabangs = $cabangModel->getAll();
 $id_cabang = $_GET['id_cabang'] ?? '';
 $assets = $id_cabang ? $assetModel->getAll($id_cabang) : [];
 ?>
-
 <div class="d-flex justify-content-between align-items-center mb-4 animate-fade-in">
     <div>
         <h4 class="fw-800 m-0">Maintenance</h4>
@@ -84,7 +81,6 @@ $assets = $id_cabang ? $assetModel->getAll($id_cabang) : [];
 </div>
 
 <?php if ($sub === 'history'): ?>
-<!-- History Content -->
 <div class="card border-0 shadow-sm animate-fade-in">
     <div class="card-body p-0">
         <div class="table-responsive">
@@ -104,7 +100,6 @@ $assets = $id_cabang ? $assetModel->getAll($id_cabang) : [];
                         <tr><td colspan="6" class="text-center py-5 text-muted">Belum ada riwayat maintenance.</td></tr>
                     <?php endif; ?>
                     <?php foreach ($maintenances as $m): 
-                        // Logic untuk menentukan badge kondisi
                         $is_bad = (!empty($m['temuan']) && strtolower($m['temuan']) !== 'baik' && strtolower($m['temuan']) !== 'normal');
                     ?>
                     <tr>
@@ -152,12 +147,10 @@ $assets = $id_cabang ? $assetModel->getAll($id_cabang) : [];
     </div>
 </div>
 <?php else: ?>
-<!-- Massal Content -->
 <?php 
 $stage = $_POST['stage'] ?? 'select';
 $selected_ids = $_POST['asset_ids'] ?? [];
 ?>
-
 <form method="GET" action="index.php" class="card p-4 mb-4">
     <input type="hidden" name="page" value="maintenance">
     <input type="hidden" name="sub" value="massal">
@@ -211,7 +204,6 @@ $selected_ids = $_POST['asset_ids'] ?? [];
         <?php endforeach; ?>
         <h5 class="fw-bold mb-4">Edit Detail Maintenance Aset Terpilih</h5>
         
-        <!-- Apply to All -->
         <div class="card p-3 mb-4 bg-light border-0">
             <h6 class="fw-bold mb-3">Terapkan ke Semua Aset:</h6>
             <div class="row g-3">
@@ -260,8 +252,6 @@ $selected_ids = $_POST['asset_ids'] ?? [];
             }
         </script>
     <?php endif; ?>
-
-
 </form>
 
 <script>
@@ -283,4 +273,3 @@ $selected_ids = $_POST['asset_ids'] ?? [];
     });
 </script>
 <?php endif; ?>
-
