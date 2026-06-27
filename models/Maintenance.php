@@ -134,12 +134,12 @@ class Maintenance {
         $stmt->execute(['id_cabang' => $id_cabang, 'bulan' => $bulan, 'tahun' => $tahun]);
         $stats['total_maintenance'] = $stmt->fetchColumn();
 
-        // Total Temuan (Maintenance with non-empty temuan)
+        // Total Temuan (Maintenance with status not Good / 'Baik')
         $queryTemuan = "SELECT COUNT(*) FROM maintenance m
                         JOIN assets a ON m.asset_id = a.id
                         WHERE a.id_cabang = :id_cabang 
                         AND MONTH(m.tanggal) = :bulan AND YEAR(m.tanggal) = :tahun
-                        AND (m.temuan IS NOT NULL AND m.temuan != '')";
+                        AND m.status != 'Baik'";
         $stmt = $this->conn->prepare($queryTemuan);
         $stmt->execute(['id_cabang' => $id_cabang, 'bulan' => $bulan, 'tahun' => $tahun]);
         $stats['total_temuan'] = $stmt->fetchColumn();
@@ -207,7 +207,9 @@ class Maintenance {
                   JOIN assets a ON m.asset_id = a.id
                   WHERE a.id_cabang = :id_cabang 
                   AND MONTH(m.tanggal) = :bulan AND YEAR(m.tanggal) = :tahun
-                  AND temuan IS NOT NULL AND temuan != ''
+                  AND temuan IS NOT NULL 
+                  AND temuan != '' 
+                  AND LOWER(temuan) NOT IN ('baik', 'normal', 'aman', '-', 'ok')
                   GROUP BY temuan
                   ORDER BY jumlah DESC LIMIT 10";
         $stmt = $this->conn->prepare($query);
