@@ -85,164 +85,333 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
 }
 ?>
 
-<div class="d-flex justify-content-between align-items-center mb-4 animate-fade-in">
-    <div class="d-flex align-items-center">
-        <div class="bg-primary bg-opacity-10 p-2 rounded-3 me-3 text-primary">
-            <i class="bi bi-laptop fs-4"></i>
-        </div>
-        <div>
-            <h4 class="fw-800 m-0">Asset Inventory</h4>
-            <p class="text-muted small m-0">Manage and track company hardware</p>
-        </div>
-    </div>
-    <div class="d-flex align-items-center">
-        <form method="GET" action="index.php" class="me-3">
-            <input type="hidden" name="page" value="inventaris">
-            <?php if ($filter_kondisi): ?>
-                <input type="hidden" name="filter_kondisi" value="<?= htmlspecialchars($filter_kondisi) ?>">
-            <?php endif; ?>
-            <div class="input-group input-group-sm shadow-sm" style="width: 250px;">
-                <span class="input-group-text bg-white border-end-0"><i class="bi bi-filter text-primary"></i></span>
-                <select name="filter_cabang" class="form-select border-start-0" onchange="this.form.submit()">
-                    <option value="">All Branches</option>
-                    <?php foreach ($cabangs as $c): ?>
-                        <option value="<?= $c['id'] ?>" <?= ($id_cabang_filter == $c['id']) ? 'selected' : '' ?>>
-                            <?= $c['nama_cabang'] ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+<?php
+// Calculate global counters for KPI widgets
+$allAssetsCount = $assetModel->countAll();
+$allBaikCount = $assetModel->countAll(null, 'Baik');
+$allRusakRinganCount = $assetModel->countAll(null, 'Rusak Ringan');
+$allRusakBeratCount = $assetModel->countAll(null, 'Rusak Berat');
+?>
+
+<div class="container-fluid animate-fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div class="d-flex align-items-center">
+            <div class="bg-primary bg-opacity-10 p-2.5 rounded-3 me-3 text-primary">
+                <i class="bi bi-laptop fs-4"></i>
             </div>
-        </form>
+            <div>
+                <h4 class="fw-800 m-0">Inventaris Aset</h4>
+                <p class="text-muted small m-0">Kelola dan pantau seluruh aset hardware IT perusahaan</p>
+            </div>
+        </div>
         <button class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#modalTambah">
-            <i class="bi bi-plus-lg me-2"></i> Add Asset
+            <i class="bi bi-plus-lg me-2"></i> Tambah Aset
         </button>
     </div>
-</div>
 
-<?php if (isset($_GET['status'])): ?>
-    <?php if ($_GET['status'] == 'success'): ?>
-        <div class="alert alert-success alert-dismissible fade show mb-4 border-0 shadow-sm rounded-4" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i> Aset berhasil didaftarkan!
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <!-- Alert Status -->
+    <?php if (isset($_GET['status'])): ?>
+        <?php if ($_GET['status'] == 'success'): ?>
+            <div class="alert alert-success alert-dismissible fade show mb-4 border-0 shadow-sm rounded-4 animate-fade-in" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i> Aset baru berhasil didaftarkan ke sistem!
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <?php elseif ($_GET['status'] == 'updated'): ?>
+            <div class="alert alert-info alert-dismissible fade show mb-4 border-0 shadow-sm rounded-4 animate-fade-in" role="alert">
+                <i class="bi bi-info-circle-fill me-2"></i> Data spesifikasi aset berhasil diperbarui!
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <?php elseif ($_GET['status'] == 'deleted'): ?>
+            <div class="alert alert-warning alert-dismissible fade show mb-4 border-0 shadow-sm rounded-4 animate-fade-in" role="alert">
+                <i class="bi bi-trash-fill me-2"></i> Aset telah berhasil dihapus secara permanen!
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <?php endif; ?>
+    <?php endif; ?>
+
+    <!-- KPI Widgets Grid -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3 col-sm-6">
+            <div class="card border-0 shadow-sm rounded-4 position-relative overflow-hidden" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);">
+                <div class="card-body p-3.5 text-white">
+                    <div class="position-absolute top-0 end-0 p-3 opacity-20" style="font-size: 3rem; transform: translate(10%, -10%);">
+                        <i class="bi bi-pc-display"></i>
+                    </div>
+                    <span class="small fw-bold opacity-75 text-xs">TOTAL ASET</span>
+                    <h3 class="fw-800 mb-0 mt-1"><?= $allAssetsCount ?></h3>
+                    <small class="opacity-70 d-block mt-1">Seluruh unit hardware</small>
+                </div>
+            </div>
         </div>
-    <?php elseif ($_GET['status'] == 'updated'): ?>
-        <div class="alert alert-info alert-dismissible fade show mb-4 border-0 shadow-sm rounded-4" role="alert">
-            <i class="bi bi-info-circle-fill me-2"></i> Data aset berhasil diperbarui!
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="col-md-3 col-sm-6">
+            <div class="card border-0 shadow-sm rounded-4 position-relative overflow-hidden" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                <div class="card-body p-3.5 text-white">
+                    <div class="position-absolute top-0 end-0 p-3 opacity-20" style="font-size: 3rem; transform: translate(10%, -10%);">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+                    <span class="small fw-bold opacity-75 text-xs">KONDISI BAIK</span>
+                    <h3 class="fw-800 mb-0 mt-1"><?= $allBaikCount ?></h3>
+                    <small class="opacity-70 d-block mt-1">Siap digunakan operasional</small>
+                </div>
+            </div>
         </div>
-    <?php elseif ($_GET['status'] == 'deleted'): ?>
-        <div class="alert alert-warning alert-dismissible fade show mb-4 border-0 shadow-sm rounded-4" role="alert">
-            <i class="bi bi-trash-fill me-2"></i> Aset berhasil dihapus!
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="col-md-3 col-sm-6">
+            <div class="card border-0 shadow-sm rounded-4 position-relative overflow-hidden" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                <div class="card-body p-3.5 text-white">
+                    <div class="position-absolute top-0 end-0 p-3 opacity-20" style="font-size: 3rem; transform: translate(10%, -10%);">
+                        <i class="bi bi-exclamation-triangle"></i>
+                    </div>
+                    <span class="small fw-bold opacity-75 text-xs">RUSAK RINGAN</span>
+                    <h3 class="fw-800 mb-0 mt-1"><?= $allRusakRinganCount ?></h3>
+                    <small class="opacity-70 d-block mt-1">Butuh pemeriksaan minor</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card border-0 shadow-sm rounded-4 position-relative overflow-hidden" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+                <div class="card-body p-3.5 text-white">
+                    <div class="position-absolute top-0 end-0 p-3 opacity-20" style="font-size: 3rem; transform: translate(10%, -10%);">
+                        <i class="bi bi-x-circle"></i>
+                    </div>
+                    <span class="small fw-bold opacity-75 text-xs">RUSAK BERAT</span>
+                    <h3 class="fw-800 mb-0 mt-1"><?= $allRusakBeratCount ?></h3>
+                    <small class="opacity-70 d-block mt-1">Tidak dapat digunakan</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive Filters & Search Card -->
+    <div class="card border-0 shadow-sm mb-4 rounded-4">
+        <div class="card-body p-4">
+            <form method="GET" action="index.php" class="row g-3 align-items-end">
+                <input type="hidden" name="page" value="inventaris">
+                
+                <div class="col-md-3">
+                    <label class="form-label small fw-bold text-muted">🏢 Filter Kantor Cabang</label>
+                    <select name="filter_cabang" class="form-select bg-light border-0" onchange="this.form.submit()">
+                        <option value="">-- Semua Cabang --</option>
+                        <?php foreach ($cabangs as $c): ?>
+                            <option value="<?= $c['id'] ?>" <?= ($id_cabang_filter == $c['id']) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($c['nama_cabang']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label small fw-bold text-muted">🛠️ Filter Kondisi</label>
+                    <select name="filter_kondisi" class="form-select bg-light border-0" onchange="this.form.submit()">
+                        <option value="">-- Semua Kondisi --</option>
+                        <option value="Baik" <?= ($filter_kondisi === 'Baik') ? 'selected' : '' ?>>Baik (Excellent)</option>
+                        <option value="Rusak Ringan" <?= ($filter_kondisi === 'Rusak Ringan') ? 'selected' : '' ?>>Rusak Ringan</option>
+                        <option value="Rusak Berat" <?= ($filter_kondisi === 'Rusak Berat') ? 'selected' : '' ?>>Rusak Berat</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">🔍 Cari Cepat Aset</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-0"><i class="bi bi-search text-muted"></i></span>
+                        <input type="text" id="assetSearchInputClient" class="form-control bg-light border-0" placeholder="Ketik Kode, Nama, Serial, Merk..." onkeyup="filterAssetsClient()">
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <a href="index.php?page=inventaris" class="btn btn-outline-secondary w-100 fw-bold py-2 shadow-sm rounded-3">
+                        <i class="bi bi-arrow-counterclockwise"></i> Reset Filter
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Active Filter Condition Badge -->
+    <?php if ($filter_kondisi || $id_cabang_filter): ?>
+        <div class="alert alert-warning alert-dismissible fade show mb-4 border-0 shadow-sm rounded-4 d-flex justify-content-between align-items-center" role="alert">
+            <div class="m-0 small">
+                <i class="bi bi-filter-circle-fill text-warning me-2 fs-5"></i> 
+                Menampilkan filter aktif untuk: 
+                <?php if ($id_cabang_filter): ?>
+                    <span class="badge bg-primary rounded-pill px-2.5 py-1">Cabang ID: <?= $id_cabang_filter ?></span>
+                <?php endif; ?>
+                <?php if ($filter_kondisi): ?>
+                    <span class="badge bg-warning text-dark rounded-pill px-2.5 py-1">Kondisi: <?= strtoupper($filter_kondisi) ?></span>
+                <?php endif; ?>
+            </div>
+            <a href="index.php?page=inventaris" class="btn btn-sm btn-light border-0 shadow-sm rounded-pill px-3 py-1.5 fw-bold"><i class="bi bi-arrow-counterclockwise me-1"></i> Reset Filter</a>
         </div>
     <?php endif; ?>
-<?php endif; ?>
 
-<?php if ($filter_kondisi): ?>
-    <div class="alert alert-warning alert-dismissible fade show mb-4 border-0 shadow-sm rounded-4 d-flex justify-content-between align-items-center" role="alert">
-        <div class="m-0">
-            <i class="bi bi-exclamation-triangle-fill me-2 text-warning fs-5"></i> Menampilkan aset dengan kondisi: <span class="badge bg-warning text-dark rounded-pill px-2.5 py-1.5 fw-bold"><?= strtoupper($filter_kondisi === 'rusak' ? 'Rusak Ringan & Rusak Berat' : $filter_kondisi) ?></span>
-        </div>
-        <a href="index.php?page=inventaris" class="btn btn-sm btn-light border-0 shadow-sm rounded-pill px-3 py-1.5 fw-bold"><i class="bi bi-arrow-counterclockwise me-1"></i> Reset Filter</a>
-    </div>
-<?php endif; ?>
+    <!-- Assets Inventory Table -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5 animate-fade-in" style="animation-delay: 0.1s;">
+        <div class="card-body p-0">
+            <!-- Desktop Layout -->
+            <div class="table-responsive d-none d-md-block">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light border-bottom">
+                        <tr>
+                            <th class="ps-4">Kode Aset</th>
+                            <th>Detail Perangkat</th>
+                            <th>Lokasi</th>
+                            <th>Penanggung Jawab</th>
+                            <th>Kondisi</th>
+                            <th class="text-end pe-4" width="120">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if(empty($assets)): ?>
+                            <tr>
+                                <td colspan="6" class="text-center py-5 text-muted">
+                                    <i class="bi bi-laptop fs-2 d-block mb-2"></i> Tidak ada aset ditemukan.
+                                </td>
+                            </tr>
+                        <?php else: ?>
+                            <?php foreach ($assets as $a): ?>
+                            <tr class="asset-row-item" data-search="<?= htmlspecialchars(strtolower($a['kode_aset'] . ' ' . $a['nama_aset'] . ' ' . ($a['serial_number'] ?? '') . ' ' . ($a['merk'] ?? '') . ' ' . ($a['model'] ?? '') . ' ' . $a['nama_cabang'] . ' ' . ($a['nama_karyawan'] ?? ''))) ?>">
+                                <td class="ps-4">
+                                    <span class="badge bg-primary bg-opacity-10 text-primary rounded px-2.5 py-1.5 fw-bold" style="font-size: 0.72rem;">
+                                        <?= $a['kode_aset'] ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-dark mb-0.5"><?= htmlspecialchars($a['nama_aset']) ?></div>
+                                    <div class="text-muted" style="font-size: 0.76rem;">
+                                        <?= htmlspecialchars($a['nama_kategori']) ?> &bull; <?= htmlspecialchars($a['merk'] . ' ' . $a['model']) ?> &bull; <span class="text-dark">SN: <?= htmlspecialchars($a['serial_number'] ?: '-') ?></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="small fw-bold text-dark"><i class="bi bi-geo-alt text-muted me-1"></i><?= htmlspecialchars($a['nama_cabang']) ?></div>
+                                    <div class="text-muted text-xs" style="font-size: 0.72rem;"><?= htmlspecialchars($a['nama_divisi']) ?></div>
+                                </td>
+                                <td>
+                                    <?php if ($a['id_karyawan']): ?>
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-secondary bg-opacity-10 rounded-circle me-2 d-flex align-items-center justify-content-center text-secondary small fw-bold" style="width: 28px; height: 28px;">
+                                                <?= strtoupper(substr($a['nama_karyawan'], 0, 1)) ?>
+                                            </div>
+                                            <span class="small fw-semibold"><?= htmlspecialchars($a['nama_karyawan']) ?></span>
+                                        </div>
+                                    <?php else: ?>
+                                        <span class="badge bg-light text-muted fw-normal rounded px-2.5 py-1">Unassigned</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <?php 
+                                    $bg = 'success';
+                                    if ($a['kondisi'] == 'Rusak Ringan') $bg = 'warning';
+                                    if ($a['kondisi'] == 'Rusak Berat') $bg = 'danger';
+                                    ?>
+                                    <span class="badge bg-<?= $bg ?> bg-opacity-10 text-<?= $bg ?> rounded-pill px-3 py-1.5" style="font-size: 0.68rem; font-weight: 700;">
+                                        <i class="bi bi-circle-fill me-1" style="font-size: 0.35rem; vertical-align: middle;"></i> <?= strtoupper($a['kondisi']) ?>
+                                    </span>
+                                </td>
+                                <td class="pe-4 text-end">
+                                    <div class="dropdown">
+                                        <button class="btn btn-light btn-sm rounded-circle shadow-sm border" data-bs-toggle="dropdown">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-1" style="border-radius: 12px;">
+                                            <li><a class="dropdown-item py-2 btn-qr" href="#" 
+                                                   data-kode="<?= $a['kode_aset'] ?>"
+                                                   data-nama="<?= htmlspecialchars($a['nama_aset']) ?>"
+                                                   data-cabang="<?= htmlspecialchars($a['nama_cabang']) ?>"
+                                                   data-divisi="<?= htmlspecialchars($a['nama_divisi']) ?>"
+                                                   data-karyawan="<?= htmlspecialchars($a['nama_karyawan'] ?: 'Unassigned') ?>">
+                                                <i class="bi bi-qr-code me-2 text-primary"></i> Tampilkan QR Code</a></li>
+                                            <li><a class="dropdown-item py-2 btn-edit" href="#" 
+                                                   data-id="<?= $a['id'] ?>"
+                                                   data-kode="<?= $a['kode_aset'] ?>"
+                                                   data-nama="<?= htmlspecialchars($a['nama_aset']) ?>"
+                                                   data-sn="<?= htmlspecialchars($a['serial_number'] ?: '') ?>"
+                                                   data-kategori="<?= $a['id_kategori'] ?>"
+                                                   data-merk="<?= htmlspecialchars($a['merk'] ?: '') ?>"
+                                                   data-model="<?= htmlspecialchars($a['model'] ?: '') ?>"
+                                                   data-cabang="<?= $a['id_cabang'] ?>"
+                                                   data-divisi="<?= $a['id_divisi'] ?>"
+                                                   data-karyawan="<?= $a['id_karyawan'] ?>"
+                                                   data-kondisi="<?= $a['kondisi'] ?>">
+                                                <i class="bi bi-pencil me-2 text-warning"></i> Edit Aset</a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <form method="POST" onsubmit="return confirm('Hapus aset ini secara permanen?')">
+                                                    <input type="hidden" name="id" value="<?= $a['id'] ?>">
+                                                    <button type="submit" name="hapus" class="dropdown-item py-2 text-danger">
+                                                        <i class="bi bi-trash me-2"></i> Hapus Aset
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
 
-<div class="card border-0 shadow-sm animate-fade-in" style="animation-delay: 0.1s;">
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover mb-0">
-                <thead>
-                    <tr>
-                        <th class="ps-4">Asset Code</th>
-                        <th>Device Details</th>
-                        <th>Location</th>
-                        <th>Assignee</th>
-                        <th>Condition</th>
-                        <th class="text-end pe-4">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if(empty($assets)): ?>
-                        <tr><td colspan="6" class="text-center py-5 text-muted">No assets found matching criteria.</td></tr>
-                    <?php endif; ?>
-                    <?php foreach ($assets as $a): ?>
-                    <tr>
-                        <td class="ps-4">
-                            <span class="badge fw-bold" style="font-size: 0.75rem; <?= get_branch_badge_style($a['id_cabang']) ?>">
-                                <?= $a['kode_aset'] ?>
-                            </span>
-                        </td>
-                        <td>
-                            <div class="fw-bold"><?= $a['nama_aset'] ?></div>
-                            <div class="small text-muted"><?= $a['nama_kategori'] ?> &bull; <?= $a['merk'] ?> <?= $a['model'] ?></div>
-                        </td>
-                        <td>
-                            <div class="small fw-bold text-dark"><?= $a['nama_cabang'] ?></div>
-                            <div class="small text-muted" style="font-size: 0.7rem;"><?= $a['nama_divisi'] ?></div>
-                        </td>
-                        <td>
-                            <?php if ($a['id_karyawan']): ?>
-                                <div class="d-flex align-items-center">
-                                    <img src="https://ui-avatars.com/api/?name=<?= $a['nama_karyawan'] ?>&background=random&size=24" class="rounded-circle me-2">
-                                    <span class="small fw-500"><?= $a['nama_karyawan'] ?></span>
-                                </div>
-                            <?php else: ?>
-                                <span class="badge bg-light text-muted fw-normal">Unassigned</span>
-                            <?php endif; ?>
-                        </td>
-                        <td>
+            <!-- Mobile Layout -->
+            <div class="d-block d-md-none p-3" id="mobileAssetContainer">
+                <?php foreach ($assets as $a): ?>
+                    <div class="card border p-3.5 mb-3 rounded-3 shadow-sm mobile-asset-card-item" data-search="<?= htmlspecialchars(strtolower($a['kode_aset'] . ' ' . $a['nama_aset'] . ' ' . ($a['serial_number'] ?? '') . ' ' . ($a['merk'] ?? '') . ' ' . ($a['model'] ?? '') . ' ' . $a['nama_cabang'] . ' ' . ($a['nama_karyawan'] ?? ''))) ?>">
+                        <div class="d-flex justify-content-between align-items-start mb-2.5">
+                            <div>
+                                <span class="badge bg-primary bg-opacity-10 text-primary rounded px-2 py-1 small fw-bold" style="font-size: 0.7rem;"><?= $a['kode_aset'] ?></span>
+                                <h6 class="fw-bold text-dark mt-2 mb-0.5"><?= htmlspecialchars($a['nama_aset']) ?></h6>
+                                <small class="text-muted d-block"><?= htmlspecialchars($a['merk'] . ' ' . $a['model']) ?> &bull; SN: <?= htmlspecialchars($a['serial_number'] ?: '-') ?></small>
+                            </div>
                             <?php 
                             $bg = 'success';
                             if ($a['kondisi'] == 'Rusak Ringan') $bg = 'warning';
                             if ($a['kondisi'] == 'Rusak Berat') $bg = 'danger';
                             ?>
-                            <span class="badge bg-<?= $bg ?> bg-opacity-10 text-<?= $bg ?> rounded-pill px-3 py-2" style="font-size: 0.65rem;">
-                                <i class="bi bi-circle-fill me-1" style="font-size: 0.4rem; vertical-align: middle;"></i> <?= strtoupper($a['kondisi']) ?>
+                            <span class="badge bg-<?= $bg ?> bg-opacity-10 text-<?= $bg ?> rounded-pill px-2.5 py-1 small" style="font-size: 0.65rem; font-weight: 700;">
+                                <?= strtoupper($a['kondisi']) ?>
                             </span>
-                        </td>
-                        <td class="text-end pe-4">
-                            <div class="dropdown">
-                                <button class="btn btn-light btn-sm rounded-circle" data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-dots-vertical"></i>
+                        </div>
+                        
+                        <div class="p-2.5 bg-light rounded-3 mb-3 small row g-2">
+                            <div class="col-6"><span class="text-muted text-xs">Lokasi:</span><br><strong><?= htmlspecialchars($a['nama_cabang']) ?></strong></div>
+                            <div class="col-6"><span class="text-muted text-xs">Assignee:</span><br><strong><?= htmlspecialchars($a['nama_karyawan'] ?: 'Unassigned') ?></strong></div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-outline-primary flex-fill fw-bold py-2 btn-qr" 
+                                    data-kode="<?= $a['kode_aset'] ?>"
+                                    data-nama="<?= htmlspecialchars($a['nama_aset']) ?>"
+                                    data-cabang="<?= htmlspecialchars($a['nama_cabang']) ?>"
+                                    data-divisi="<?= htmlspecialchars($a['nama_divisi']) ?>"
+                                    data-karyawan="<?= htmlspecialchars($a['nama_karyawan'] ?: 'Unassigned') ?>">
+                                <i class="bi bi-qr-code me-1"></i> QR
+                            </button>
+                            <button class="btn btn-sm btn-outline-warning flex-fill fw-bold py-2 btn-edit" 
+                                   data-id="<?= $a['id'] ?>"
+                                   data-kode="<?= $a['kode_aset'] ?>"
+                                   data-nama="<?= htmlspecialchars($a['nama_aset']) ?>"
+                                   data-sn="<?= htmlspecialchars($a['serial_number'] ?: '') ?>"
+                                   data-kategori="<?= $a['id_kategori'] ?>"
+                                   data-merk="<?= htmlspecialchars($a['merk'] ?: '') ?>"
+                                   data-model="<?= htmlspecialchars($a['model'] ?: '') ?>"
+                                   data-cabang="<?= $a['id_cabang'] ?>"
+                                   data-divisi="<?= $a['id_divisi'] ?>"
+                                   data-karyawan="<?= $a['id_karyawan'] ?>"
+                                   data-kondisi="<?= $a['kondisi'] ?>">
+                                <i class="bi bi-pencil me-1"></i> Edit
+                            </button>
+                            <form method="POST" class="flex-fill" onsubmit="return confirm('Hapus aset ini secara permanen?')">
+                                <input type="hidden" name="id" value="<?= $a['id'] ?>">
+                                <button type="submit" name="hapus" class="btn btn-sm btn-outline-danger w-100 fw-bold py-2">
+                                    <i class="bi bi-trash"></i>
                                 </button>
-                                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
-                                    <li><a class="dropdown-item py-2 btn-qr" href="#" 
-                                           data-kode="<?= $a['kode_aset'] ?>"
-                                           data-nama="<?= $a['nama_aset'] ?>"
-                                           data-cabang="<?= $a['nama_cabang'] ?>"
-                                           data-divisi="<?= $a['nama_divisi'] ?>"
-                                           data-karyawan="<?= $a['nama_karyawan'] ?: 'Unassigned' ?>">
-                                        <i class="bi bi-qr-code me-2 text-primary"></i> Tampilkan QR Code</a></li>
-                                    <li><a class="dropdown-item py-2 btn-edit" href="#" 
-                                           data-id="<?= $a['id'] ?>"
-                                           data-kode="<?= $a['kode_aset'] ?>"
-                                           data-nama="<?= $a['nama_aset'] ?>"
-                                           data-sn="<?= $a['serial_number'] ?>"
-                                           data-kategori="<?= $a['id_kategori'] ?>"
-                                           data-merk="<?= $a['merk'] ?>"
-                                           data-model="<?= $a['model'] ?>"
-                                           data-cabang="<?= $a['id_cabang'] ?>"
-                                           data-divisi="<?= $a['id_divisi'] ?>"
-                                           data-karyawan="<?= $a['id_karyawan'] ?>"
-                                           data-kondisi="<?= $a['kondisi'] ?>">
-                                        <i class="bi bi-pencil me-2 text-warning"></i> Edit Asset</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li>
-                                        <form method="POST" onsubmit="return confirm('Hapus aset ini secara permanen?')">
-                                            <input type="hidden" name="id" value="<?= $a['id'] ?>">
-                                            <button type="submit" name="hapus" class="dropdown-item py-2 text-danger">
-                                                <i class="bi bi-trash me-2"></i> Delete
-                                            </button>
-                                        </form>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+                            </form>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
         </div>
+
+        <!-- Pagination Controls -->
         <?php 
         $paginationUrl = 'index.php?page=inventaris';
         if ($id_cabang_filter) {
@@ -252,7 +421,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
             $paginationUrl .= '&filter_kondisi=' . urlencode($filter_kondisi);
         }
         ?>
-        <?= getPaginationControls($pageNumber, $totalPages, $paginationUrl) ?>
+        <?php if ($totalPages > 1): ?>
+        <div class="card-footer bg-white border-top-0 pt-2 pb-4 d-flex justify-content-center">
+            <?= getPaginationControls($pageNumber, $totalPages, $paginationUrl) ?>
+        </div>
+        <?php endif; ?>
     </div>
 </div>
 
@@ -262,80 +435,80 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
         <div class="modal-content border-0 shadow-lg" style="border-radius: 28px;">
             <form method="POST">
                 <div class="modal-header border-0 p-4 pb-0">
-                    <h5 class="fw-800 m-0"><i class="bi bi-plus-circle-fill text-primary me-2"></i> New Asset Registration</h5>
+                    <h5 class="fw-800 m-0"><i class="bi bi-plus-circle-fill text-primary me-2"></i> Daftarkan Aset Baru</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
-                    <p class="text-muted small mb-4">Please provide the complete technical specifications and assignment details for the new asset.</p>
+                    <p class="text-muted small mb-4">Lengkapi formulir spesifikasi teknis dan unit alokasi penugasan baru di bawah ini.</p>
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold">Asset Code</label>
-                            <input type="text" name="kode_aset" class="form-control" placeholder="AST-001" required>
+                            <label class="form-label small fw-bold text-muted">Kode Aset <span class="text-danger">*</span></label>
+                            <input type="text" name="kode_aset" class="form-control bg-light border-0" placeholder="Contoh: LPT-001" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold">Serial Number</label>
-                            <input type="text" name="serial_number" class="form-control" placeholder="SN12345678">
+                            <label class="form-label small fw-bold text-muted">Serial Number (SN)</label>
+                            <input type="text" name="serial_number" class="form-control bg-light border-0" placeholder="Contoh: SN12345678">
                         </div>
                         <div class="col-md-12">
-                            <label class="form-label small fw-bold">Asset Name</label>
-                            <input type="text" name="nama_aset" class="form-control" placeholder="ThinkPad X1 Carbon" required>
+                            <label class="form-label small fw-bold text-muted">Nama Aset / Perangkat <span class="text-danger">*</span></label>
+                            <input type="text" name="nama_aset" class="form-control bg-light border-0" placeholder="Contoh: ThinkPad X1 Carbon Gen 11" required>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label small fw-bold">Category</label>
-                            <select name="id_kategori" class="form-select">
+                            <label class="form-label small fw-bold text-muted">Kategori</label>
+                            <select name="id_kategori" class="form-select bg-light border-0">
                                 <?php foreach ($kategoris as $k): ?>
-                                    <option value="<?= $k['id'] ?>"><?= $k['nama_kategori'] ?></option>
+                                    <option value="<?= $k['id'] ?>"><?= htmlspecialchars($k['nama_kategori']) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label small fw-bold">Brand</label>
-                            <input type="text" name="merk" class="form-control" placeholder="Lenovo">
+                            <label class="form-label small fw-bold text-muted">Merk</label>
+                            <input type="text" name="merk" class="form-control bg-light border-0" placeholder="Contoh: Lenovo">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label small fw-bold">Model</label>
-                            <input type="text" name="model" class="form-control" placeholder="2024 Gen 11">
+                            <label class="form-label small fw-bold text-muted">Model / Seri</label>
+                            <input type="text" name="model" class="form-control bg-light border-0" placeholder="Contoh: 20BS003A">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold">Branch</label>
-                            <select name="id_cabang" id="select_cabang" class="form-select" required>
-                                <option value="">-- Select Branch --</option>
+                            <label class="form-label small fw-bold text-muted">Kantor Cabang <span class="text-danger">*</span></label>
+                            <select name="id_cabang" id="select_cabang" class="form-select bg-light border-0" required>
+                                <option value="">-- Pilih Cabang --</option>
                                 <?php foreach ($cabangs as $c): ?>
-                                    <option value="<?= $c['id'] ?>"><?= $c['nama_cabang'] ?></option>
+                                    <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['nama_cabang']) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold">Division</label>
-                            <select name="id_divisi" id="select_divisi" class="form-select">
-                                <option value="">-- Select Division --</option>
+                            <label class="form-label small fw-bold text-muted">Divisi Departemen</label>
+                            <select name="id_divisi" id="select_divisi" class="form-select bg-light border-0">
+                                <option value="">-- Pilih Divisi --</option>
                                 <?php foreach ($divisis as $d): ?>
-                                    <option value="<?= $d['id'] ?>"><?= $d['nama_divisi'] ?></option>
+                                    <option value="<?= $d['id'] ?>"><?= htmlspecialchars($d['nama_divisi']) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold">Assign To</label>
-                            <select name="id_karyawan" id="select_karyawan" class="form-select">
-                                <option value="">-- Unassigned --</option>
+                            <label class="form-label small fw-bold text-muted">Penanggung Jawab (User)</label>
+                            <select name="id_karyawan" id="select_karyawan" class="form-select bg-light border-0">
+                                <option value="">-- Belum Ditugaskan (Unassigned) --</option>
                                 <?php foreach ($karyawans as $kr): ?>
-                                    <option value="<?= $kr['id'] ?>" data-cabang="<?= $kr['id_cabang'] ?>"><?= $kr['nama_karyawan'] ?></option>
+                                    <option value="<?= $kr['id'] ?>" data-cabang="<?= $kr['id_cabang'] ?>"><?= htmlspecialchars($kr['nama_karyawan']) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold">Condition</label>
-                            <select name="kondisi" class="form-select">
+                            <label class="form-label small fw-bold text-muted">Kondisi Fisik</label>
+                            <select name="kondisi" class="form-select bg-light border-0">
                                 <option value="Baik">Baik (Excellent)</option>
-                                <option value="Rusak Ringan">Rusak Ringan (Minor Issue)</option>
-                                <option value="Rusak Berat">Rusak Berat (Major Issue)</option>
+                                <option value="Rusak Ringan">Rusak Ringan</option>
+                                <option value="Rusak Berat">Rusak Berat</option>
                             </select>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer border-0 p-4">
-                    <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal" style="border-radius: 12px;">Cancel</button>
-                    <button type="submit" name="tambah" class="btn btn-primary px-4">Register Asset</button>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light px-4 shadow-sm" data-bs-dismiss="modal" style="border-radius: 12px;">Batal</button>
+                    <button type="submit" name="tambah" class="btn btn-primary px-4 shadow-sm">Daftarkan Aset</button>
                 </div>
             </form>
         </div>
@@ -349,79 +522,79 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
             <form method="POST">
                 <input type="hidden" name="id" id="edit_id">
                 <div class="modal-header border-0 p-4 pb-0">
-                    <h5 class="fw-800 m-0"><i class="bi bi-pencil-square text-warning me-2"></i> Update Asset Details</h5>
+                    <h5 class="fw-800 m-0"><i class="bi bi-pencil-square text-warning me-2"></i> Perbarui Detail Aset</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold">Asset Code</label>
-                            <input type="text" name="kode_aset" id="edit_kode" class="form-control" required>
+                            <label class="form-label small fw-bold text-muted">Kode Aset</label>
+                            <input type="text" name="kode_aset" id="edit_kode" class="form-control bg-light border-0" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold">Serial Number</label>
-                            <input type="text" name="serial_number" id="edit_sn" class="form-control">
+                            <label class="form-label small fw-bold text-muted">Serial Number</label>
+                            <input type="text" name="serial_number" id="edit_sn" class="form-control bg-light border-0">
                         </div>
                         <div class="col-md-12">
-                            <label class="form-label small fw-bold">Asset Name</label>
-                            <input type="text" name="nama_aset" id="edit_nama" class="form-control" required>
+                            <label class="form-label small fw-bold text-muted">Nama Aset / Perangkat</label>
+                            <input type="text" name="nama_aset" id="edit_nama" class="form-control bg-light border-0" required>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label small fw-bold">Category</label>
-                            <select name="id_kategori" id="edit_kategori" class="form-select">
+                            <label class="form-label small fw-bold text-muted">Kategori</label>
+                            <select name="id_kategori" id="edit_kategori" class="form-select bg-light border-0">
                                 <?php foreach ($kategoris as $k): ?>
-                                    <option value="<?= $k['id'] ?>"><?= $k['nama_kategori'] ?></option>
+                                    <option value="<?= $k['id'] ?>"><?= htmlspecialchars($k['nama_kategori']) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label small fw-bold">Brand</label>
-                            <input type="text" name="merk" id="edit_merk" class="form-control">
+                            <label class="form-label small fw-bold text-muted">Merk</label>
+                            <input type="text" name="merk" id="edit_merk" class="form-control bg-light border-0">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label small fw-bold">Model</label>
-                            <input type="text" name="model" id="edit_model" class="form-control">
+                            <label class="form-label small fw-bold text-muted">Model</label>
+                            <input type="text" name="model" id="edit_model" class="form-control bg-light border-0">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold">Branch</label>
-                            <select name="id_cabang" id="edit_select_cabang" class="form-select" required>
-                                <option value="">-- Select Branch --</option>
+                            <label class="form-label small fw-bold text-muted">Kantor Cabang</label>
+                            <select name="id_cabang" id="edit_select_cabang" class="form-select bg-light border-0" required>
+                                <option value="">-- Pilih Cabang --</option>
                                 <?php foreach ($cabangs as $c): ?>
-                                    <option value="<?= $c['id'] ?>"><?= $c['nama_cabang'] ?></option>
+                                    <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['nama_cabang']) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold">Division</label>
-                            <select name="id_divisi" id="edit_select_divisi" class="form-select">
-                                <option value="">-- Select Division --</option>
+                            <label class="form-label small fw-bold text-muted">Divisi Departemen</label>
+                            <select name="id_divisi" id="edit_select_divisi" class="form-select bg-light border-0">
+                                <option value="">-- Pilih Divisi --</option>
                                 <?php foreach ($divisis as $d): ?>
-                                    <option value="<?= $d['id'] ?>"><?= $d['nama_divisi'] ?></option>
+                                    <option value="<?= $d['id'] ?>"><?= htmlspecialchars($d['nama_divisi']) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold">Assign To</label>
-                            <select name="id_karyawan" id="edit_select_karyawan" class="form-select">
-                                <option value="">-- Unassigned --</option>
+                            <label class="form-label small fw-bold text-muted">Penanggung Jawab (User)</label>
+                            <select name="id_karyawan" id="edit_select_karyawan" class="form-select bg-light border-0">
+                                <option value="">-- Belum Ditugaskan (Unassigned) --</option>
                                 <?php foreach ($karyawans as $kr): ?>
-                                    <option value="<?= $kr['id'] ?>" data-cabang="<?= $kr['id_cabang'] ?>"><?= $kr['nama_karyawan'] ?></option>
+                                    <option value="<?= $kr['id'] ?>" data-cabang="<?= $kr['id_cabang'] ?>"><?= htmlspecialchars($kr['nama_karyawan']) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small fw-bold">Condition</label>
-                            <select name="kondisi" id="edit_kondisi" class="form-select">
+                            <label class="form-label small fw-bold text-muted">Kondisi Fisik</label>
+                            <select name="kondisi" id="edit_kondisi" class="form-select bg-light border-0">
                                 <option value="Baik">Baik (Excellent)</option>
-                                <option value="Rusak Ringan">Rusak Ringan (Minor Issue)</option>
-                                <option value="Rusak Berat">Rusak Berat (Major Issue)</option>
+                                <option value="Rusak Ringan">Rusak Ringan</option>
+                                <option value="Rusak Berat">Rusak Berat</option>
                             </select>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer border-0 p-4">
-                    <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal" style="border-radius: 12px;">Cancel</button>
-                    <button type="submit" name="update" class="btn btn-warning px-4">Update Asset</button>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light px-4 shadow-sm" data-bs-dismiss="modal" style="border-radius: 12px;">Batal</button>
+                    <button type="submit" name="update" class="btn btn-warning px-4 shadow-sm text-dark fw-bold">Simpan Perubahan</button>
                 </div>
             </form>
         </div>
@@ -451,8 +624,37 @@ document.getElementById('select_cabang').addEventListener('change', function() {
 
 document.getElementById('edit_select_cabang').addEventListener('change', function() {
     filterKaryawan('edit_select_cabang', 'edit_select_karyawan');
+    document.getElementById('edit_select_karyawan').value = "";
 });
 
+// Client search query filtering
+function filterAssetsClient() {
+    const query = document.getElementById('assetSearchInputClient').value.toLowerCase();
+    
+    // Desktop items
+    const rows = document.querySelectorAll('.asset-row-item');
+    rows.forEach(row => {
+        const searchVal = row.getAttribute('data-search');
+        if (searchVal.includes(query)) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+    });
+
+    // Mobile items
+    const cards = document.querySelectorAll('.mobile-asset-card-item');
+    cards.forEach(card => {
+        const searchVal = card.getAttribute('data-search');
+        if (searchVal.includes(query)) {
+            card.style.display = "";
+        } else {
+            card.style.display = "none";
+        }
+    });
+}
+
+// Bind Edit Button Values to Edit Modal Input Fields
 document.querySelectorAll('.btn-edit').forEach(btn => {
     btn.addEventListener('click', function(e) {
         e.preventDefault();
@@ -478,17 +680,15 @@ document.querySelectorAll('.btn-edit').forEach(btn => {
         document.getElementById('edit_select_cabang').value = cabang;
         document.getElementById('edit_select_divisi').value = divisi;
         
-        // Filter karyawan first
         filterKaryawan('edit_select_cabang', 'edit_select_karyawan');
         document.getElementById('edit_select_karyawan').value = karyawan || "";
-        
         document.getElementById('edit_kondisi').value = kondisi;
 
         new bootstrap.Modal(document.getElementById('modalEdit')).show();
     });
 });
 
-// QR Code bindings
+// QR Code Modal Bindings
 document.querySelectorAll('.btn-qr').forEach(btn => {
     btn.addEventListener('click', function(e) {
         e.preventDefault();
