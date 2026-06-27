@@ -267,6 +267,62 @@ try {
     </div>
 </div>
 
+<!-- Panduan Penggunaan / Instruksi Cepat -->
+<div class="row g-4 mb-5 animate-fade-in" style="animation-delay: 0.15s;">
+    <div class="col-md-12">
+        <div class="card p-4 border-0 shadow-sm" style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 20px;">
+            <div class="d-flex align-items-center mb-4">
+                <div class="bg-primary bg-opacity-10 p-3 rounded-4 me-3 text-primary">
+                    <i class="bi bi-info-circle fs-4"></i>
+                </div>
+                <div>
+                    <h6 class="fw-800 m-0 text-dark">Panduan & Instruksi Penggunaan Sistem</h6>
+                    <p class="text-muted small m-0">Ikuti langkah-langkah berikut untuk mengoptimalkan pengelolaan aset IT Anda.</p>
+                </div>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="h-100 p-3 rounded-4 bg-white border border-light shadow-sm transition-hover">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="badge bg-primary rounded-circle p-2 me-2 d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">1</span>
+                            <h6 class="fw-bold m-0 text-dark">Registrasi Aset</h6>
+                        </div>
+                        <p class="small text-muted mb-0">Masuk ke menu <strong>Inventaris</strong>, klik <strong>Tambah Aset</strong>. Isi detail perangkat seperti Merk, SN, Lokasi Cabang, dan Kategori.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="h-100 p-3 rounded-4 bg-white border border-light shadow-sm transition-hover">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="badge bg-success rounded-circle p-2 me-2 d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">2</span>
+                            <h6 class="fw-bold m-0 text-dark">Perawatan Berkala</h6>
+                        </div>
+                        <p class="small text-muted mb-0">Lakukan pengecekan rutin di menu <strong>Maintenance</strong>. Aset yang sudah diperiksa bulan ini otomatis difilter agar tidak terinput ganda.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="h-100 p-3 rounded-4 bg-white border border-light shadow-sm transition-hover">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="badge bg-warning text-dark rounded-circle p-2 me-2 d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">3</span>
+                            <h6 class="fw-bold m-0 text-dark">Kelola Perbaikan</h6>
+                        </div>
+                        <p class="small text-muted mb-0">Jika aset bermasalah, buat tiket di menu <strong>Perbaikan</strong>. Anda bisa memantau status pengerjaan dan melacak total pengeluaran biaya.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="h-100 p-3 rounded-4 bg-white border border-light shadow-sm transition-hover">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="badge bg-info text-dark rounded-circle p-2 me-2 d-flex align-items-center justify-content-center" style="width: 28px; height: 28px;">4</span>
+                            <h6 class="fw-bold m-0 text-dark">Audit & Laporan</h6>
+                        </div>
+                        <p class="small text-muted mb-0">Lakukan pencocokan data fisik di menu <strong>Audit Fisik</strong>. Ekspor seluruh laporan ke format Excel melalui menu <strong>Laporan</strong>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Distribusi Aset per Cabang -->
 <div class="row g-4 mb-5 animate-fade-in">
     <div class="col-md-12">
