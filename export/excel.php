@@ -4,10 +4,6 @@ require_once __DIR__ . '/../models/Asset.php';
 require_once __DIR__ . '/../models/Maintenance.php';
 require_once __DIR__ . '/../models/Repair.php';
 
-$assetModel = new Asset($conn);
-$maintenanceModel = new Maintenance($conn);
-$repairModel = new Repair($conn);
-
 $tgl_mulai = $_GET['tgl_mulai'] ?? date('Y-m-01');
 $tgl_selesai = $_GET['tgl_selesai'] ?? date('Y-m-d');
 $id_cabang = $_GET['id_cabang'] ?? '';
@@ -20,9 +16,47 @@ header("Content-Disposition: attachment; filename=\"$filename\"");
 header("Pragma: no-cache");
 header("Expires: 0");
 
-$assets = $assetModel->getAll($id_cabang);
-$maintenances = $maintenanceModel->getAll($id_cabang, $tgl_mulai, $tgl_selesai);
-$repairs = $repairModel->getAll($id_cabang, $tgl_mulai, $tgl_selesai);
+// Helper to execute query and return statement for iterative fetching
+function getQueryStmt($conn, $table, $id_cabang = null, $tgl_mulai = null, $tgl_selesai = null) {
+    if ($table == 'assets') {
+        $query = "SELECT a.*, k.nama_kategori, c.nama_cabang, d.nama_divisi, kr.nama_karyawan 
+                  FROM assets a
+                  LEFT JOIN kategori_aset k ON a.id_kategori = k.id
+                  LEFT JOIN cabang c ON a.id_cabang = c.id
+                  LEFT JOIN divisi d ON a.id_divisi = d.id
+                  LEFT JOIN karyawan kr ON a.id_karyawan = kr.id";
+        if ($id_cabang) $query .= " WHERE a.id_cabang = :id_cabang";
+        $stmt = $conn->prepare($query);
+        if ($id_cabang) $stmt->bindParam(':id_cabang', $id_cabang);
+        $stmt->execute();
+        return $stmt;
+    } elseif ($table == 'maintenance') {
+        $query = "SELECT m.*, a.kode_aset, a.nama_aset 
+                  FROM maintenance m 
+                  JOIN assets a ON m.asset_id = a.id
+                  WHERE m.tanggal BETWEEN :tgl_mulai AND :tgl_selesai";
+        if ($id_cabang) $query .= " AND a.id_cabang = :id_cabang";
+        $stmt = $conn->prepare($query);
+        $stmt->bindParam(':tgl_mulai', $tgl_mulai);
+        $stmt->bindParam(':tgl_selesai', $tgl_selesai);
+        if ($id_cabang) $stmt->bindParam(':id_cabang', $id_cabang);
+        $stmt->execute();
+        return $stmt;
+    } elseif ($table == 'repairs') {
+        $query = "SELECT r.*, a.kode_aset, a.nama_aset 
+                  FROM repairs r 
+                  JOIN assets a ON r.asset_id = a.id
+                  WHERE r.tanggal_mulai BETWEEN :tgl_mulai AND :tgl_selesai";
+        if ($id_cabang) $query .= " AND a.id_cabang = :id_cabang";
+        $stmt = $conn->prepare($query);
+        $stmt->bindParam(':tgl_mulai', $tgl_mulai);
+        $stmt->bindParam(':tgl_selesai', $tgl_selesai);
+        if ($id_cabang) $stmt->bindParam(':id_cabang', $id_cabang);
+        $stmt->execute();
+        return $stmt;
+    }
+    return null;
+}
 ?>
 
 <style>
@@ -49,9 +83,12 @@ $repairs = $repairModel->getAll($id_cabang, $tgl_mulai, $tgl_selesai);
         </tr>
     </thead>
     <tbody>
-        <?php foreach ($assets as $i => $a): ?>
+        <?php 
+        $stmt = getQueryStmt($conn, 'assets', $id_cabang);
+        $i = 1;
+        while ($a = $stmt->fetch(PDO::FETCH_ASSOC)): ?>
         <tr>
-            <td><?= $i + 1 ?></td>
+            <td><?= $i++ ?></td>
             <td><?= $a['kode_aset'] ?></td>
             <td><?= $a['nama_aset'] ?></td>
             <td><?= $a['nama_kategori'] ?></td>
@@ -59,7 +96,7 @@ $repairs = $repairModel->getAll($id_cabang, $tgl_mulai, $tgl_selesai);
             <td><?= $a['nama_divisi'] ?></td>
             <td><?= $a['kondisi'] ?></td>
         </tr>
-        <?php endforeach; ?>
+        <?php endwhile; ?>
     </tbody>
 </table>
 
@@ -77,9 +114,12 @@ $repairs = $repairModel->getAll($id_cabang, $tgl_mulai, $tgl_selesai);
         </tr>
     </thead>
     <tbody>
-        <?php foreach ($maintenances as $i => $m): ?>
+        <?php 
+        $stmt = getQueryStmt($conn, 'maintenance', $id_cabang, $tgl_mulai, $tgl_selesai);
+        $i = 1;
+        while ($m = $stmt->fetch(PDO::FETCH_ASSOC)): ?>
         <tr>
-            <td><?= $i + 1 ?></td>
+            <td><?= $i++ ?></td>
             <td><?= $m['tanggal'] ?></td>
             <td><?= $m['kode_aset'] ?></td>
             <td><?= $m['nama_aset'] ?></td>
@@ -87,7 +127,7 @@ $repairs = $repairModel->getAll($id_cabang, $tgl_mulai, $tgl_selesai);
             <td><?= $m['temuan'] ?></td>
             <td><?= $m['tindakan'] ?></td>
         </tr>
-        <?php endforeach; ?>
+        <?php endwhile; ?>
     </tbody>
 </table>
 
@@ -104,15 +144,18 @@ $repairs = $repairModel->getAll($id_cabang, $tgl_mulai, $tgl_selesai);
         </tr>
     </thead>
     <tbody>
-        <?php foreach ($repairs as $i => $r): ?>
+        <?php 
+        $stmt = getQueryStmt($conn, 'repairs', $id_cabang, $tgl_mulai, $tgl_selesai);
+        $i = 1;
+        while ($r = $stmt->fetch(PDO::FETCH_ASSOC)): ?>
         <tr>
-            <td><?= $i + 1 ?></td>
+            <td><?= $i++ ?></td>
             <td><?= $r['nama_aset'] ?> (<?= $r['kode_aset'] ?>)</td>
             <td><?= $r['keluhan'] ?></td>
             <td><?= $r['tindakan'] ?></td>
             <td><?= $r['status'] ?></td>
             <td><?= $r['biaya'] ?></td>
         </tr>
-        <?php endforeach; ?>
+        <?php endwhile; ?>
     </tbody>
 </table>
