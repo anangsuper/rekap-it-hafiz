@@ -198,6 +198,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
                             </div>
                         </div>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Tanda Tangan Penerima</label>
+                        <canvas id="sigCanvas" width="400" height="200" style="border:1px solid #ddd; background:#f8f9fa; border-radius: 8px; touch-action: none;"></canvas>
+                        <button type="button" class="btn btn-sm btn-outline-secondary mt-2" onclick="clearSig()">Hapus Tanda Tangan</button>
+                        <input type="hidden" name="tanda_tangan" id="tanda_tangan_data">
+                    </div>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label small fw-bold">Biaya Perbaikan (Rp)</label>
@@ -300,6 +306,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
     </div>
 </div>
 <script>
+// Signature Canvas Logic
+const canvas = document.getElementById("sigCanvas");
+const ctx = canvas.getContext("2d");
+let painting = false;
+
+function startPosition(e) { painting = true; draw(e); }
+function finishedPosition() { painting = false; ctx.beginPath(); }
+function draw(e) {
+    if (!painting) return;
+    ctx.lineWidth = 2;
+    ctx.lineCap = "round";
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX || e.touches[0].clientX) - rect.left;
+    const y = (e.clientY || e.touches[0].clientY) - rect.top;
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+}
+
+canvas.addEventListener("mousedown", startPosition);
+canvas.addEventListener("mouseup", finishedPosition);
+canvas.addEventListener("mousemove", draw);
+canvas.addEventListener("touchstart", startPosition);
+canvas.addEventListener("touchend", finishedPosition);
+canvas.addEventListener("touchmove", draw);
+
+function clearSig() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
+
+// Update modal submission to capture signature
+document.querySelector("form").addEventListener("submit", function() {
+    document.getElementById("tanda_tangan_data").value = canvas.toDataURL();
+});
+
+// Existing script logic
 function selectCustomAsset(element) {
     var id = element.getAttribute("data-id");
     // Clone selection text to display in button
