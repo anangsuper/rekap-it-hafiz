@@ -17,11 +17,11 @@ try {
     $stmtPerluTindakan = $conn->query("SELECT COUNT(*) as total FROM assets WHERE kondisi IN ('Rusak Ringan', 'Rusak Berat')");
     $totalPerluTindakan = $stmtPerluTindakan->fetch()['total'];
 
-    $stmtBroken = $conn->query("SELECT a.*, c.nama_cabang, d.nama_divisi 
-                                FROM assets a 
-                                LEFT JOIN cabang c ON a.id_cabang = c.id 
-                                LEFT JOIN divisi d ON a.id_divisi = d.id 
-                                WHERE a.kondisi IN ('Rusak Ringan', 'Rusak Berat') 
+    $stmtBroken = $conn->query("SELECT a.*, c.nama_cabang, d.nama_divisi
+                                FROM assets a
+                                LEFT JOIN cabang c ON a.id_cabang = c.id
+                                LEFT JOIN divisi d ON a.id_divisi = d.id
+                                WHERE a.kondisi IN ('Rusak Ringan', 'Rusak Berat')
                                 ORDER BY a.kondisi DESC, a.created_at DESC LIMIT 5");
     $brokenAssets = $stmtBroken->fetchAll();
 
@@ -62,32 +62,43 @@ $upcomingMaint = $maintModel->getUpcomingNotifications(7); // Next 7 days
 
 <style>
     .lux-card {
-        border: 1px solid rgba(255, 255, 255, 0.18);
-        border-radius: 24px;
-        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.05), 0 10px 20px -10px rgba(0, 0, 0, 0.03);
+        background: #ffffff !important;
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
         position: relative;
         overflow: hidden;
         z-index: 1;
     }
+    .lux-card::before {
+        content: "";
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 5px;
+        background: #bef264;
+    }
+    .row > .col-md-3:nth-child(2) .lux-card::before { background: #93c5fd; }
+    .row > .col-md-3:nth-child(3) .lux-card::before { background: #f9a8d4; }
+    .row > .col-md-3:nth-child(4) .lux-card::before { background: #fdba74; }
     .lux-card:hover {
-        transform: translateY(-8px) scale(1.015);
-        box-shadow: 0 25px 45px -10px rgba(99, 102, 241, 0.15), 0 15px 25px -15px rgba(0, 0, 0, 0.05);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
     }
     .fw-800 { font-weight: 800; }
     .fw-700 { font-weight: 700; }
-    .transition-hover { 
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
-        border: 1px solid rgba(226, 232, 240, 0.8) !important; 
-        background: rgba(255, 255, 255, 0.45) !important;
+    .transition-hover {
+        transition: all 0.2s ease;
+        border: 1px solid #e5e7eb !important;
+        background: #f9fafb !important;
     }
-    .transition-hover:hover { 
-        background-color: #ffffff !important; 
-        border-color: rgba(99, 102, 241, 0.3) !important; 
-        transform: translateY(-4px); 
-        box-shadow: 0 12px 25px -5px rgba(99, 102, 241, 0.08); 
+    .transition-hover:hover {
+        background-color: #ffffff !important;
+        border-color: #d1d5db !important;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
     }
-    
+
     @keyframes pulse {
         0%, 100% { opacity: 1; transform: scale(1); }
         50% { opacity: 0.6; transform: scale(1.1); }
@@ -96,7 +107,7 @@ $upcomingMaint = $maintModel->getUpcomingNotifications(7); // Next 7 days
         animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         display: inline-block;
     }
-    
+
     /* Progress Bars & Custom badges */
     .progress {
         background-color: #e2e8f0;
@@ -105,16 +116,25 @@ $upcomingMaint = $maintModel->getUpcomingNotifications(7); // Next 7 days
         overflow: hidden;
     }
     .progress-bar {
-        background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
+        background: #111827 !important;
         border-radius: 99px;
     }
-    
+
     .list-group-item {
         background: transparent !important;
         border-bottom: 1px solid rgba(226, 232, 240, 0.5) !important;
     }
     .list-group-item:last-child {
         border-bottom: none !important;
+    }
+    .stat-label {
+        color: #6b7280 !important;
+        letter-spacing: 0.04em !important;
+    }
+    .stat-chip {
+        background: #f3f4f6 !important;
+        border: 1px solid #e5e7eb !important;
+        color: #111827 !important;
     }
 </style>
 
@@ -128,11 +148,11 @@ $upcomingMaint = $maintModel->getUpcomingNotifications(7); // Next 7 days
                 <div class="position-absolute top-0 end-0 p-3 opacity-20" style="font-size: 5rem; transform: translate(15%, -15%); pointer-events: none; z-index: 0;">
                     <i class="bi bi-box-seam"></i>
                 </div>
-                <div class="small fw-bold mb-1 opacity-70" style="letter-spacing: 0.05em;">TOTAL ASSETS</div>
+                <div class="small fw-bold mb-1 stat-label">TOTAL ASET</div>
                 <h2 class="fw-800 mb-0"><?= $totalAssets ?></h2>
                 <div class="mt-3">
-                    <span class="badge bg-white bg-opacity-20 text-white border border-white border-opacity-30 rounded-pill small">
-                        <i class="bi bi-arrow-up-right me-1"></i> Active devices
+                    <span class="badge stat-chip rounded-pill small">
+                        <i class="bi bi-arrow-up-right me-1"></i> Aktif
                     </span>
                 </div>
             </div>
@@ -148,11 +168,11 @@ $upcomingMaint = $maintModel->getUpcomingNotifications(7); // Next 7 days
                 <div class="position-absolute top-0 end-0 p-3 opacity-20" style="font-size: 5rem; transform: translate(15%, -15%); pointer-events: none; z-index: 0;">
                     <i class="bi bi-check2-circle"></i>
                 </div>
-                <div class="small fw-bold mb-1 opacity-70" style="letter-spacing: 0.05em;">MAINTENANCE</div>
+                <div class="small fw-bold mb-1 stat-label">MAINTENANCE</div>
                 <h2 class="fw-800 mb-0"><?= $totalMaintenance ?></h2>
                 <div class="mt-3">
-                    <span class="badge bg-white bg-opacity-20 text-white border border-white border-opacity-30 rounded-pill small">
-                        <i class="bi bi-calendar-event me-1"></i> This month
+                    <span class="badge stat-chip rounded-pill small">
+                        <i class="bi bi-calendar-event me-1"></i> Bulan ini
                     </span>
                 </div>
             </div>
@@ -169,11 +189,11 @@ $upcomingMaint = $maintModel->getUpcomingNotifications(7); // Next 7 days
                     <div class="position-absolute top-0 end-0 p-3 opacity-20" style="font-size: 5rem; transform: translate(15%, -15%); pointer-events: none; z-index: 0;">
                         <i class="bi bi-exclamation-triangle"></i>
                     </div>
-                    <div class="small fw-bold mb-1 opacity-70" style="letter-spacing: 0.05em;">PERLU TINDAKAN</div>
+                    <div class="small fw-bold mb-1 stat-label">PERLU TINDAKAN</div>
                     <h2 class="fw-800 mb-0"><?= $totalPerluTindakan ?></h2>
                     <div class="mt-3">
-                        <span class="badge bg-white bg-opacity-20 text-white border border-white border-opacity-30 rounded-pill small">
-                            <i class="bi bi-exclamation-circle me-1"></i> Perangkat Bermasalah
+                        <span class="badge stat-chip rounded-pill small">
+                            <i class="bi bi-exclamation-circle me-1"></i> Bermasalah
                         </span>
                     </div>
                 </div>
@@ -190,11 +210,11 @@ $upcomingMaint = $maintModel->getUpcomingNotifications(7); // Next 7 days
                 <div class="position-absolute top-0 end-0 p-3 opacity-20" style="font-size: 5rem; transform: translate(15%, -15%); pointer-events: none; z-index: 0;">
                     <i class="bi bi-wallet2"></i>
                 </div>
-                <div class="small fw-bold mb-1 opacity-70" style="letter-spacing: 0.05em;">REPAIR COSTS</div>
+                <div class="small fw-bold mb-1 stat-label">BIAYA REPAIR</div>
                 <h2 class="fw-800 mb-0 text-nowrap" style="font-size: 1.45rem;">Rp <?= number_format($totalCost, 0, ',', '.') ?></h2>
                 <div class="mt-3">
-                    <span class="badge bg-white bg-opacity-20 text-white border border-white border-opacity-30 rounded-pill small">
-                        <i class="bi bi-graph-up me-1"></i> Current period
+                    <span class="badge stat-chip rounded-pill small">
+                        <i class="bi bi-graph-up me-1"></i> Periode ini
                     </span>
                 </div>
             </div>
@@ -208,19 +228,19 @@ $upcomingMaint = $maintModel->getUpcomingNotifications(7); // Next 7 days
         <div class="card p-4 border-0 mb-4 h-100">
             <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
                 <div class="d-flex align-items-center">
-                    <div class="bg-primary bg-opacity-10 p-3 rounded-4 me-3 text-primary">
+                    <div class="bg-dark text-white p-3 rounded-4 me-3">
                         <i class="bi bi-stars fs-4"></i>
                     </div>
                     <div>
                         <h5 class="fw-800 m-0 text-dark">Selamat Datang, <?= isset($_SESSION['nama']) ? htmlspecialchars($_SESSION['nama']) : 'Pengguna' ?>!</h5>
-                        <p class="text-muted small m-0">Kelola infrastruktur IT Anda dengan presisi dan kemudahan.</p>
+                        <p class="text-muted small m-0">Kelola aset, maintenance, dan repair dari satu tempat.</p>
                     </div>
                 </div>
                 <a href="index.php?page=logs" class="btn btn-secondary btn-sm px-3 shadow-sm" style="border-radius: 20px;">
                     <i class="bi bi-clock-history me-1 text-primary"></i> Log Aktivitas
                 </a>
             </div>
-            
+
             <div class="row g-3">
                 <div class="col-md-4">
                     <div class="p-4 rounded-4 transition-hover">
@@ -235,7 +255,7 @@ $upcomingMaint = $maintModel->getUpcomingNotifications(7); // Next 7 days
                         <i class="bi bi-tools text-success fs-3 mb-3 d-block"></i>
                         <h6 class="fw-700 text-dark">Maintenance</h6>
                         <p class="small text-muted mb-3">Catat hasil pengecekan.</p>
-                        <a href="index.php?page=maintenance" class="btn btn-sm w-100 text-white" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; border-radius: 12px;">Catat Cek</a>
+                        <a href="index.php?page=maintenance" class="btn btn-primary btn-sm w-100 text-white">Catat Cek</a>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -243,7 +263,7 @@ $upcomingMaint = $maintModel->getUpcomingNotifications(7); // Next 7 days
                         <i class="bi bi-wrench-adjustable text-warning fs-3 mb-3 d-block"></i>
                         <h6 class="fw-700 text-dark">Tiket Perbaikan</h6>
                         <p class="small text-muted mb-3">Pantau status perbaikan.</p>
-                        <a href="index.php?page=perbaikan" class="btn btn-sm w-100 fw-bold" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border: none; color: #fff; border-radius: 12px;">Lihat Tiket</a>
+                        <a href="index.php?page=perbaikan" class="btn btn-primary btn-sm w-100 fw-bold">Lihat Tiket</a>
                     </div>
                 </div>
             </div>
@@ -267,7 +287,7 @@ $upcomingMaint = $maintModel->getUpcomingNotifications(7); // Next 7 days
                                 <?= htmlspecialchars($log['action']) ?>
                             </div>
                             <div class="text-muted" style="font-size: 0.75rem;">
-                                <?= htmlspecialchars($log['user_nama'] ?: 'Sistem') ?> • 
+                                <?= htmlspecialchars($log['user_nama'] ?: 'Sistem') ?> •
                                 <span title="<?= date('d M Y, H:i:s', strtotime($log['created_at'])) ?>">
                                     <?= date('d M, H:i', strtotime($log['created_at'])) ?>
                                 </span>
@@ -289,7 +309,7 @@ $upcomingMaint = $maintModel->getUpcomingNotifications(7); // Next 7 days
 <!-- Panduan Penggunaan / Instruksi Cepat -->
 <div class="row g-4 mb-5 animate-fade-in" style="animation-delay: 0.15s;">
     <div class="col-md-12">
-        <div class="card p-4 border-0 shadow-sm" style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 20px;">
+        <div class="card p-4 border-0 shadow-sm">
             <div class="d-flex align-items-center mb-4">
                 <div class="bg-primary bg-opacity-10 p-3 rounded-4 me-3 text-primary">
                     <i class="bi bi-info-circle fs-4"></i>
@@ -299,7 +319,7 @@ $upcomingMaint = $maintModel->getUpcomingNotifications(7); // Next 7 days
                     <p class="text-muted small m-0">Ikuti langkah-langkah berikut untuk mengoptimalkan pengelolaan aset IT Anda.</p>
                 </div>
             </div>
-            
+
             <div class="row g-4">
                 <div class="col-md-3">
                     <div class="h-100 p-3 rounded-4 bg-white border border-light shadow-sm transition-hover">
@@ -398,7 +418,7 @@ $upcomingMaint = $maintModel->getUpcomingNotifications(7); // Next 7 days
                                 </td>
                             </tr>
                         <?php else: ?>
-                            <?php foreach ($brokenAssets as $asset): 
+                            <?php foreach ($brokenAssets as $asset):
                                 $is_heavy = $asset['kondisi'] === 'Rusak Berat';
                                 $badge_class = $is_heavy ? 'bg-danger bg-opacity-10 text-danger' : 'bg-warning bg-opacity-10 text-warning';
                             ?>
@@ -433,4 +453,3 @@ $upcomingMaint = $maintModel->getUpcomingNotifications(7); // Next 7 days
         </div>
     </div>
 </div>
-

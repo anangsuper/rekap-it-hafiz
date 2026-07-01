@@ -371,6 +371,120 @@ if (isset($_POST['login'])) {
             z-index: 20;
             transition: opacity 0.5s ease;
         }
+
+        /* Minimal Gen Z refresh */
+        :root {
+            --primary-color: #111827;
+            --primary-hover: #000000;
+            --secondary-color: #bef264;
+            --bg-body: #f6f7f9;
+            --glass-bg: #ffffff;
+            --glass-border: #e5e7eb;
+            --text-muted: #6b7280;
+            --text-main: #111827;
+        }
+
+        body {
+            background: var(--bg-body);
+            color: var(--text-main);
+            letter-spacing: 0;
+        }
+
+        .bg-blobs,
+        #canvas-container,
+        .d-none.d-lg-block {
+            display: none !important;
+        }
+
+        .login-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 22px;
+            padding: 36px;
+            max-width: 430px;
+            box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+        }
+
+        .brand-wrapper {
+            margin-bottom: 28px;
+        }
+
+        .brand-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 18px;
+            background: #111827;
+            box-shadow: none;
+        }
+
+        .brand-icon i {
+            color: #bef264;
+        }
+
+        .brand-name {
+            color: #111827;
+            background: none;
+            -webkit-text-fill-color: #111827;
+            letter-spacing: 0;
+        }
+
+        .brand-tagline,
+        .form-label {
+            color: #6b7280;
+        }
+
+        .input-group-custom {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+        }
+
+        .input-group-custom:focus-within {
+            background: #ffffff;
+            border-color: #111827;
+            box-shadow: 0 0 0 4px rgba(17, 24, 39, 0.08);
+        }
+
+        .input-control-custom {
+            color: #111827 !important;
+        }
+
+        .input-control-custom:-webkit-autofill,
+        .input-control-custom:-webkit-autofill:hover,
+        .input-control-custom:-webkit-autofill:focus {
+            -webkit-text-fill-color: #111827 !important;
+        }
+
+        .password-toggle:hover {
+            color: #111827;
+        }
+
+        .btn-login {
+            background: #111827;
+            border-radius: 999px;
+            box-shadow: none;
+        }
+
+        .btn-login:hover {
+            background: #000000;
+            transform: translateY(-1px);
+            box-shadow: none;
+        }
+
+        .hint-box {
+            background: #f9fafb;
+            border: 1px dashed #d1d5db;
+            border-radius: 16px;
+        }
+
+        .hint-text code {
+            color: #111827;
+            background: #bef264;
+            border-radius: 999px;
+            padding: 3px 8px;
+        }
     </style>
 </head>
 <body>
@@ -477,6 +591,7 @@ if (isset($_POST['login'])) {
     document.addEventListener("DOMContentLoaded", function () {
         const container = document.getElementById('canvas-container');
         if (!container) return;
+        if (window.getComputedStyle(container).display === 'none') return;
 
         // Initialize Three.js scene, camera, renderer
         const scene = new THREE.Scene();
