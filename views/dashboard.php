@@ -41,6 +41,25 @@ try {
 }
 ?>
 
+<!-- Maintenance Reminder Alert -->
+<?php
+require_once __DIR__ . '/../models/Maintenance.php';
+$maintModel = new Maintenance($conn);
+$upcomingMaint = $maintModel->getUpcomingNotifications(7); // Next 7 days
+?>
+<?php if (!empty($upcomingMaint)): ?>
+<div class="alert alert-warning alert-dismissible fade show mb-4 border-0 shadow-sm rounded-4" role="alert">
+    <div class="d-flex align-items-center">
+        <i class="bi bi-calendar-event fs-4 me-3"></i>
+        <div>
+            <h6 class="fw-bold mb-1">Pengingat Maintenance!</h6>
+            <p class="mb-0 small">Ada <?= count($upcomingMaint) ?> aset yang dijadwalkan untuk maintenance dalam 7 hari ke depan.</p>
+        </div>
+    </div>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+<?php endif; ?>
+
 <style>
     .lux-card {
         border: 1px solid rgba(255, 255, 255, 0.18);
